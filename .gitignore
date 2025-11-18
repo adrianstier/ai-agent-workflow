@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+vendor/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+target/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+.directory
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# Test coverage
+coverage/
+.coverage
+.pytest_cache/
+
+# Temporary files
+*.tmp
+.temp/
+.cache/
+
+# Database
+*.db
+*.sqlite
+
+# Dashboard specific
+dashboard/backend/node_modules/
+dashboard/frontend/node_modules/
+dashboard/backend/.env
+dashboard/frontend/.env.local
