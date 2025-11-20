@@ -1,11 +1,11 @@
-// Prisma schema for AI Agent Dashboard
+// Prisma schema for AI Agent Dashboard (SQLite-compatible)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -33,18 +33,18 @@ model ApiKey {
 }
 
 model Project {
-  id          String      @id @default(uuid())
+  id          String   @id @default(uuid())
   userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String
   description String?
-  version     String      @default("0.1")
-  stage       Stage       @default(DISCOVER)
-  status      Status      @default(ACTIVE)
-  constraints Json?       // { timeline, budget, techStack }
-  metadata    Json?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  version     String   @default("0.1")
+  stage       String   @default("DISCOVER")  // DISCOVER|DESIGN|BUILD|TEST|DEPLOY|ANALYZE
+  status      String   @default("ACTIVE")     // ACTIVE|PAUSED|COMPLETED|ARCHIVED
+  constraints String?  // JSON string: { timeline, budget, techStack }
+  metadata    String?  // JSON string
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   artifacts  Artifact[]
   executions AgentExecution[]
@@ -55,34 +55,18 @@ model Project {
   @@index([status])
 }
 
-enum Stage {
-  DISCOVER
-  DESIGN
-  BUILD
-  TEST
-  DEPLOY
-  ANALYZE
-}
-
-enum Status {
-  ACTIVE
-  PAUSED
-  COMPLETED
-  ARCHIVED
-}
-
 model Artifact {
-  id         String         @id @default(uuid())
+  id         String   @id @default(uuid())
   projectId  String
-  project    Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  agentId    Int            // 0-9
-  type       ArtifactType
-  version    String         @default("0.1")
-  status     ArtifactStatus @default(DRAFT)
-  content    String         @db.Text
-  metadata   Json?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  agentId    Int      // 0-9
+  type       String   // PROBLEM_BRIEF|COMPETITIVE_ANALYSIS|PRD|UX_FLOWS|ARCHITECTURE|CODE|TEST_PLAN|DEPLOYMENT_PLAN|ANALYTICS_PLAN|OTHER
+  version    String   @default("0.1")
+  status     String   @default("DRAFT")  // DRAFT|REVIEW|LOCKED|ARCHIVED
+  content    String
+  metadata   String?  // JSON string
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   executions AgentExecution[] @relation("ExecutionArtifacts")
 
@@ -91,40 +75,20 @@ model Artifact {
   @@index([status])
 }
 
-enum ArtifactType {
-  PROBLEM_BRIEF
-  COMPETITIVE_ANALYSIS
-  PRD
-  UX_FLOWS
-  ARCHITECTURE
-  CODE
-  TEST_PLAN
-  DEPLOYMENT_PLAN
-  ANALYTICS_PLAN
-  OTHER
-}
-
-enum ArtifactStatus {
-  DRAFT
-  REVIEW
-  LOCKED
-  ARCHIVED
-}
-
 model AgentExecution {
-  id          String            @id @default(uuid())
+  id          String    @id @default(uuid())
   projectId   String
-  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  agentId     Int               // 0-9
-  status      ExecutionStatus   @default(QUEUED)
-  input       Json
-  output      Json?
-  artifacts   Artifact[]        @relation("ExecutionArtifacts")
-  duration    Int?              // milliseconds
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  agentId     Int       // 0-9
+  status      String    @default("QUEUED")  // QUEUED|RUNNING|COMPLETED|FAILED|CANCELLED
+  input       String    // JSON string
+  output      String?   // JSON string
+  artifacts   Artifact[] @relation("ExecutionArtifacts")
+  duration    Int?      // milliseconds
   tokensUsed  Int?
-  cost        Float?            // USD
-  error       String?           @db.Text
-  createdAt   DateTime          @default(now())
+  cost        Float?    // USD
+  error       String?
+  createdAt   DateTime  @default(now())
   completedAt DateTime?
   messages    Message[]
 
@@ -133,34 +97,20 @@ model AgentExecution {
   @@index([agentId])
 }
 
-enum ExecutionStatus {
-  QUEUED
-  RUNNING
-  COMPLETED
-  FAILED
-  CANCELLED
-}
-
 model Message {
   id          String          @id @default(uuid())
   projectId   String
   project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
   executionId String?
   execution   AgentExecution? @relation(fields: [executionId], references: [id], onDelete: SetNull)
-  role        MessageRole
+  role        String          // USER|AGENT|SYSTEM
   agentId     Int?            // nullable, only for agent messages
-  content     String          @db.Text
-  metadata    Json?
+  content     String
+  metadata    String?         // JSON string
   createdAt   DateTime        @default(now())
 
   @@index([projectId])
   @@index([executionId])
-}
-
-enum MessageRole {
-  USER
-  AGENT
-  SYSTEM
 }
 
 model Decision {
@@ -168,11 +118,11 @@ model Decision {
   projectId    String
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   title        String
-  context      String   @db.Text
-  decision     String   @db.Text
-  reasoning    String   @db.Text
-  alternatives String?  @db.Text
-  tradeoffs    String?  @db.Text
+  context      String
+  decision     String
+  reasoning    String
+  alternatives String?
+  tradeoffs    String?
   reversible   Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

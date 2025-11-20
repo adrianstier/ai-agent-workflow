@@ -7,7 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:smoke": "playwright test tests/smoke.spec.ts --project=chromium",
+    "test:github": "playwright test tests/github-integration.spec.ts --project=chromium",
+    "test:edge": "playwright test tests/edge-cases.spec.ts --project=chromium",
+    "test:all": "playwright test --project=chromium",
+    "test:report": "playwright show-report"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -37,6 +49,8 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@playwright/test": "^1.56.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

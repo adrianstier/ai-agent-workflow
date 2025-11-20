@@ -5,9 +5,8 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import { setupRoutes } from './api/routes';
-import { setupWebSocket } from './services/websocket';
-import { setupJobQueue } from './jobs/queue';
-import { logger } from './utils/logger';
+import { setupGitHubRoutes } from './api/github-routes';
+import generateRoutes from './api/generate-routes';
 
 // Load environment variables
 dotenv.config();
@@ -22,14 +21,24 @@ const httpServer = createServer(app);
 // Initialize Socket.IO
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      process.env.FRONTEND_URL || 'http://localhost:3000'
+    ],
     credentials: true,
   },
 });
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    process.env.FRONTEND_URL || 'http://localhost:3000'
+  ],
   credentials: true,
 }));
 app.use(express.json());
@@ -37,7 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Request logging
 app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.path}`);
+  console.log(`${req.method} ${req.path}`);
   next();
 });
 
@@ -48,16 +57,12 @@ app.get('/health', (req, res) => {
 
 // Setup routes
 setupRoutes(app);
-
-// Setup WebSocket
-setupWebSocket(io);
-
-// Setup job queue
-setupJobQueue();
+setupGitHubRoutes(app);
+app.use('/api', generateRoutes);
 
 // Error handling
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  logger.error('Error:', err);
+  console.error('Error:', err);
   res.status(err.status || 500).json({
     error: {
       message: err.message || 'Internal server error',
@@ -70,17 +75,17 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 const PORT = process.env.PORT || 4000;
 
 httpServer.listen(PORT, () => {
-  logger.info(`🚀 Server running on port ${PORT}`);
-  logger.info(`📊 Dashboard: http://localhost:${PORT}`);
-  logger.info(`🔌 WebSocket: ws://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 Dashboard: http://localhost:${PORT}`);
+  console.log(`🔌 WebSocket: ws://localhost:${PORT}`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  logger.info('SIGTERM received, shutting down gracefully');
+  console.log('SIGTERM received, shutting down gracefully');
   await prisma.$disconnect();
   httpServer.close(() => {
-    logger.info('Server closed');
+    console.log('Server closed');
     process.exit(0);
   });
 });

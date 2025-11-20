@@ -51,3 +51,8 @@ dashboard/backend/node_modules/
 dashboard/frontend/node_modules/
 dashboard/backend/.env
 dashboard/frontend/.env.local
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
