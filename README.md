@@ -1,30 +1,31 @@
-# AI-Augmented Product Development Workflow ✨
+# AI-Augmented Product Development Workflow
 
-**Build software products faster with 10 specialized, battle-tested AI agents**
+**Build software products faster with 20+ specialized, battle-tested AI agents**
 
-![Version](https://img.shields.io/badge/version-1.0-blue)
+![Version](https://img.shields.io/badge/version-1.1-blue)
+![Agents](https://img.shields.io/badge/agents-20+-purple)
 ![Tested](https://img.shields.io/badge/tested-yes-green)
-![Optimized](https://img.shields.io/badge/optimized-yes-brightgreen)
-![Rating](https://img.shields.io/badge/rating-4.5%2F5-yellow)
+![Rating](https://img.shields.io/badge/rating-91%25+-brightgreen)
 
 ---
 
-## 🎯 What's New (v1.0)
+## What's New (v1.1)
 
-### Comprehensive Testing & Optimization Complete!
+### 20+ Specialized Agents with Automated Testing
 
-All 10 agents have been:
-- ✅ **Tested** with real-world scenarios
-- ✅ **Optimized** based on performance data
-- ✅ **Validated** for solo builders
-- ✅ **Improved** by 14% average quality score
+**New in v1.1:**
+- **10 New Debug Agents** (Agents 10-16): Specialized debugging for visual bugs, performance, networking, state, errors, and memory leaks
+- **4 New Review Agents** (Agents 17-20): Security auditor, code reviewer, database engineer, design reviewer
+- **Automated Testing Framework**: JSON-based scenarios with weighted scoring (91%+ pass rates)
+- **Edge Case Protocols**: Vague input handling, security refusal, destructive operation safeguards
+- **Project Integration Guides**: Ready-to-use templates for integrating agents with existing projects
 
 **Key Improvements**:
-- 🎯 **Agent 3 (PM)**: HARD LIMIT of 5-8 MUST features (was 12-15!)
-- 🏗️ **Agent 5 (Architect)**: Strong anti-over-engineering guardrails
-- 📊 **All Agents**: Better scope control, consistency, actionability
+- All agents tested with automated scenarios and edge cases
+- Added failure recovery and unrealistic scope detection protocols
+- Strong guardrails for security, destructive operations, and over-engineering
 
-**See**: [AGENT_OPTIMIZATION_SUMMARY.md](AGENT_OPTIMIZATION_SUMMARY.md) for details
+**See**: [testing/](testing/) for the automated testing framework
 
 ---
 
@@ -32,14 +33,32 @@ All 10 agents have been:
 
 This repository contains a complete, production-ready system for building software products using AI agents that emulate:
 
-- 🧠 Product strategy & research
-- 📋 Product management (PRD writing)
-- 🎨 UX & interaction design
-- 🏗️ System architecture
-- 💻 Engineering / implementation
-- 🧪 QA & testing
-- 🚀 DevOps / deployment
-- 📈 Analytics & iteration
+**Core Development (Agents 0-9):**
+- Agent 0: Project Orchestrator
+- Agent 1: Problem Framer
+- Agent 2: Competitive Mapper
+- Agent 3: Product Manager (PRD writing)
+- Agent 4: UX Designer
+- Agent 5: System Architect
+- Agent 6: Engineer
+- Agent 7: QA Test Engineer
+- Agent 8: DevOps Deployment
+- Agent 9: Analytics & Growth
+
+**Debug Suite (Agents 10-16):**
+- Agent 10: Debug Detective (triage)
+- Agent 11: Visual Debug Specialist
+- Agent 12: Performance Profiler
+- Agent 13: Network Inspector
+- Agent 14: State Debugger
+- Agent 15: Error Tracker
+- Agent 16: Memory Leak Hunter
+
+**Review & Specialized (Agents 17-20):**
+- Agent 17: Security Auditor
+- Agent 18: Code Reviewer
+- Agent 19: Database Engineer
+- Agent 20: Design Reviewer
 
 **Plus**: A full-stack web dashboard to orchestrate everything!
 
@@ -68,41 +87,47 @@ This repository contains a complete, production-ready system for building softwa
 
 | Document | Purpose | Time |
 |----------|---------|------|
-| **[AGENT_OPTIMIZATION_SUMMARY.md](AGENT_OPTIMIZATION_SUMMARY.md)** | What was optimized & why | 15 min |
-| [AGENT_TESTING_FRAMEWORK.md](AGENT_TESTING_FRAMEWORK.md) | Testing methodology & results | 20 min |
+| **[testing/](testing/)** | Automated testing framework | 15 min |
+| [AGENT_OPTIMIZATION_SUMMARY.md](AGENT_OPTIMIZATION_SUMMARY.md) | What was optimized & why | 15 min |
+
+### 🔗 Project Integration
+
+| Document | Purpose | Time |
+|----------|---------|------|
+| **[docs/INTEGRATION_GUIDE_REIMBURSEMENT.md](docs/INTEGRATION_GUIDE_REIMBURSEMENT.md)** | Example integration with ClearConcur | 10 min |
+| [docs/CLEARCONCUR_QUICK_START.md](docs/CLEARCONCUR_QUICK_START.md) | Copy-paste prompts for ClearConcur | 5 min |
 
 ---
 
 ## Project Structure
 
 ```
-sass-agent-workflow/
+ai-agent-workflow/
 │
-├── 📘 Documentation (Start Here!)
-│   ├── README_UPDATED.md              # This file
+├── 📘 Documentation
+│   ├── README.md                      # This file
 │   ├── QUICK_START.md                 # 5-minute guide
 │   ├── CHEAT_SHEET.md                 # Quick reference
-│   ├── AGENT_OPTIMIZATION_SUMMARY.md  # What's been optimized
-│   └── AGENT_TESTING_FRAMEWORK.md     # Testing results
+│   └── AGENT_OPTIMIZATION_SUMMARY.md  # Optimization details
 │
-├── 🤖 Agents (10 Ready-to-Use Prompts)
-│   ├── agent-0-orchestrator.md        # Project director
-│   ├── agent-1-problem-framer.md      # Problem definition (5.0/5 ⭐)
-│   ├── agent-2-competitive-mapper.md  # Market analysis
-│   ├── agent-3-product-manager.md     # PRD writing (optimized!)
-│   ├── agent-4-ux-designer.md         # User flows & wireframes
-│   ├── agent-5-system-architect.md    # Tech stack (optimized!)
-│   ├── agent-6-engineer.md            # Code implementation
-│   ├── agent-7-qa-test-engineer.md    # Testing (5.0/5 ⭐)
-│   ├── agent-8-devops-deployment.md   # Deployment
-│   ├── agent-9-analytics-growth.md    # Measurement
-│   └── README.md                      # Agent usage guide
+├── 🤖 Agents (20+ Ready-to-Use Prompts)
+│   ├── agent-0 to agent-9             # Core development agents
+│   ├── agent-10 to agent-16           # Debug suite agents
+│   ├── agent-17 to agent-20           # Review & specialized agents
+│   ├── README.md                      # Agent usage guide
+│   └── DEBUG-AGENTS-README.md         # Debug agent guide
+│
+├── 🧪 Testing
+│   ├── scenarios/                     # JSON test scenarios
+│   ├── runner.js                      # Automated test runner
+│   └── README.md                      # Testing guide
+│
+├── 📁 docs/ (Integration Guides)
+│   ├── INTEGRATION_GUIDE_REIMBURSEMENT.md  # ClearConcur example
+│   ├── CLEARCONCUR_QUICK_START.md          # Copy-paste prompts
+│   └── CLEARCONCUR_CLAUDE_ADDITION.md      # CLAUDE.md additions
 │
 └── 💻 Dashboard (Full-Stack App - Optional)
-    ├── GETTING_STARTED.md             # Dashboard overview
-    ├── QUICK_START_DASHBOARD.md       # 10-min setup
-    ├── ARCHITECTURE.md                # System design
-    ├── IMPLEMENTATION_ROADMAP.md      # Build guide
     ├── backend/                       # Express + Prisma + LangGraph
     ├── frontend/                      # Next.js + TypeScript
     └── docker-compose.yml             # PostgreSQL + Redis
@@ -157,20 +182,40 @@ sass-agent-workflow/
 
 ## Agent Performance Summary
 
-| Agent | Rating | Status | Key Strength |
-|-------|--------|--------|--------------|
-| **Agent 0** | 4.5/5 ⭐ | Optimized | Clear next steps, validates constraints |
-| **Agent 1** | 5.0/5 🌟 | Perfect | Thoughtful questions, precise problem framing |
-| **Agent 2** | 4.3/5 | Optimized | Deep competitive analysis, specific wedges |
-| **Agent 3** | 4.5/5 ⭐ | **Optimized** | **Scoped PRDs (5-8 MUST features)** |
-| **Agent 4** | 4.4/5 | Optimized | Detailed UX flows, practical wireframes |
-| **Agent 5** | 4.5/5 ⭐ | **Optimized** | **Boring tech, monolith-first** |
-| **Agent 6** | 4.5/5 ⭐ | Optimized | Thin slices, error handling, tests |
-| **Agent 7** | 5.0/5 🌟 | Perfect | Comprehensive testing strategy |
-| **Agent 8** | 4.4/5 | Optimized | Simple deployment, practical runbooks |
-| **Agent 9** | 4.5/5 ⭐ | Optimized | Focused events, complete instrumentation |
+### Core Development Agents (0-9)
 
-**Overall**: **4.5/5** ⭐⭐⭐⭐½ (Production Ready!)
+| Agent | Score | Key Strength |
+|-------|-------|--------------|
+| **Agent 0** (Orchestrator) | 91% | Failure recovery, scope detection |
+| **Agent 1** (Problem Framer) | 92% | Vague input handling, solution detection |
+| **Agent 3** (Product Manager) | 91% | Over-engineering prevention |
+| **Agent 5** (Architect) | 90% | Monolith-first, boring tech |
+| **Agent 6** (Engineer) | 91% | Security refusal, conflict detection |
+| **Agent 7** (QA) | 92% | Comprehensive test strategies |
+| **Agent 19** (Database) | 91% | Destructive operation safeguards |
+
+### Debug Suite (10-16)
+
+| Agent | Purpose |
+|-------|---------|
+| **Agent 10** | Debug triage and routing |
+| **Agent 11** | Visual/CSS debugging |
+| **Agent 12** | Performance profiling |
+| **Agent 13** | Network/API debugging |
+| **Agent 14** | State management debugging |
+| **Agent 15** | Error tracking |
+| **Agent 16** | Memory leak detection |
+
+### Review Agents (17-20)
+
+| Agent | Purpose |
+|-------|---------|
+| **Agent 17** | Security auditing |
+| **Agent 18** | Code review |
+| **Agent 19** | Database migrations & optimization |
+| **Agent 20** | Design system review |
+
+**Overall**: **91%+** pass rate on automated testing
 
 ---
 
@@ -281,8 +326,9 @@ What should I do first?
 
 Agent 0 will tell you to run Agent 1 (Problem Framer) next.
 
-### 4. Continue Through All Agents
+### 4. Continue Through Agents as Needed
 
+**Core Development Flow:**
 - Agent 1 → Problem Brief
 - Agent 2 → Competitive Analysis
 - Agent 3 → PRD
@@ -292,6 +338,15 @@ Agent 0 will tell you to run Agent 1 (Problem Framer) next.
 - Agent 7 → Tests
 - Agent 8 → Deployment
 - Agent 9 → Analytics
+
+**When Debugging:**
+- Agent 10 → Triage → Route to Agents 11-16
+
+**For Reviews:**
+- Agent 17 → Security Audit
+- Agent 18 → Code Review
+- Agent 19 → Database Changes
+- Agent 20 → Design Review
 
 ### 5. Save Artifacts
 

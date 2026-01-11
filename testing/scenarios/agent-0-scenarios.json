@@ -1,0 +1,313 @@
+{
+  "agentId": 0,
+  "agentName": "Orchestrator",
+  "scenarios": [
+    {
+      "id": "orch-001",
+      "name": "New Project Kickoff",
+      "description": "Initialize a new SaaS project from scratch",
+      "input": {
+        "projectName": "TaskFlow",
+        "description": "A task management SaaS for small teams with real-time collaboration features",
+        "constraints": {
+          "timeline": "MVP in 8 weeks",
+          "budget": "Solo developer, $500/month infrastructure",
+          "techStack": "Next.js, Supabase, Vercel"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "sprint",
+          "agent",
+          "milestone",
+          "risk",
+          "dependency"
+        ],
+        "structure": {
+          "hasSprintPlan": true,
+          "hasAgentAssignments": true,
+          "hasRiskAssessment": true,
+          "hasMilestones": true
+        }
+      },
+      "evaluationCriteria": {
+        "completeness": {
+          "weight": 0.25,
+          "checks": [
+            "Includes sprint breakdown",
+            "Assigns appropriate agents to tasks",
+            "Defines clear milestones",
+            "Identifies project risks"
+          ]
+        },
+        "quality": {
+          "weight": 0.30,
+          "checks": [
+            "Sprint goals are specific and measurable",
+            "Agent assignments match task complexity",
+            "Risk mitigation strategies provided",
+            "Dependencies clearly mapped"
+          ]
+        },
+        "orchestration": {
+          "weight": 0.25,
+          "checks": [
+            "Correct agent sequencing",
+            "Handoff points defined",
+            "Parallel work opportunities identified",
+            "Context preservation planned"
+          ]
+        },
+        "practicality": {
+          "weight": 0.20,
+          "checks": [
+            "Timeline is realistic for solo developer",
+            "Resource constraints respected",
+            "MVP scope appropriately limited"
+          ]
+        }
+      }
+    },
+    {
+      "id": "orch-002",
+      "name": "Mid-Sprint Course Correction",
+      "description": "Handle a significant scope change mid-sprint",
+      "input": {
+        "currentState": {
+          "sprint": 3,
+          "completedStories": 8,
+          "inProgressStories": 3,
+          "remainingStories": 5
+        },
+        "change": "Client requests adding Stripe payment integration before launch, originally planned for Phase 2",
+        "impact": "Adds approximately 15 story points of work"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "impact analysis",
+          "trade-off",
+          "reprioritiz",
+          "stakeholder"
+        ],
+        "structure": {
+          "hasImpactAnalysis": true,
+          "hasRecommendation": true,
+          "hasRevisedPlan": true
+        }
+      },
+      "evaluationCriteria": {
+        "analysis": {
+          "weight": 0.30,
+          "checks": [
+            "Quantifies impact on timeline",
+            "Identifies what must be deprioritized",
+            "Assesses technical dependencies"
+          ]
+        },
+        "communication": {
+          "weight": 0.25,
+          "checks": [
+            "Clear options presented",
+            "Trade-offs explicitly stated",
+            "Recommendation justified"
+          ]
+        },
+        "planning": {
+          "weight": 0.25,
+          "checks": [
+            "Revised sprint plan provided",
+            "Agent reassignments if needed",
+            "Updated risk assessment"
+          ]
+        },
+        "pragmatism": {
+          "weight": 0.20,
+          "checks": [
+            "Doesn't over-promise",
+            "Considers developer capacity",
+            "Maintains quality standards"
+          ]
+        }
+      }
+    },
+    {
+      "id": "orch-003",
+      "name": "Agent Failure Recovery",
+      "description": "Handle a situation where an agent produces inadequate output",
+      "input": {
+        "failedAgent": "Agent 6 - Engineer",
+        "task": "Implement user authentication flow",
+        "issue": "Output missing security considerations, no input validation, hardcoded secrets in example code",
+        "context": "Sprint 2, Day 3. Auth is blocking feature development."
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "remediation",
+          "security",
+          "re-run",
+          "validation"
+        ],
+        "structure": {
+          "hasDiagnosis": true,
+          "hasRemediationPlan": true,
+          "hasPreventionMeasures": true
+        }
+      },
+      "evaluationCriteria": {
+        "diagnosis": {
+          "weight": 0.25,
+          "checks": [
+            "Identifies root cause of failure",
+            "Categorizes severity of issues",
+            "Assesses blast radius"
+          ]
+        },
+        "remediation": {
+          "weight": 0.35,
+          "checks": [
+            "Clear steps to fix issues",
+            "Appropriate agent reassignment or re-run",
+            "Additional context provided to agent"
+          ]
+        },
+        "prevention": {
+          "weight": 0.20,
+          "checks": [
+            "Guardrails added for future",
+            "Review checkpoints identified",
+            "Quality gates defined"
+          ]
+        },
+        "communication": {
+          "weight": 0.20,
+          "checks": [
+            "Impact communicated clearly",
+            "Timeline adjustment if needed",
+            "Lessons learned captured"
+          ]
+        }
+      }
+    },
+    {
+      "id": "orch-004",
+      "name": "Multi-Agent Coordination",
+      "description": "Coordinate parallel work across multiple agents",
+      "input": {
+        "task": "Build dashboard feature with charts, real-time updates, and export functionality",
+        "availableAgents": [
+          "Agent 3 - Architect",
+          "Agent 4 - Researcher",
+          "Agent 5 - Planner",
+          "Agent 6 - Engineer",
+          "Agent 20 - Design Reviewer"
+        ],
+        "constraints": {
+          "deadline": "End of Sprint 4",
+          "dependencies": "Requires data from existing API endpoints"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "parallel",
+          "sequence",
+          "handoff",
+          "dependency",
+          "timeline"
+        ],
+        "structure": {
+          "hasAgentAssignments": true,
+          "hasSequenceDiagram": true,
+          "hasHandoffPoints": true
+        }
+      },
+      "evaluationCriteria": {
+        "coordination": {
+          "weight": 0.35,
+          "checks": [
+            "Identifies parallelizable work",
+            "Sequences dependent tasks correctly",
+            "Defines clear handoff artifacts"
+          ]
+        },
+        "efficiency": {
+          "weight": 0.25,
+          "checks": [
+            "Minimizes idle time between agents",
+            "Batches related work appropriately",
+            "Avoids unnecessary sequential bottlenecks"
+          ]
+        },
+        "completeness": {
+          "weight": 0.20,
+          "checks": [
+            "All aspects of feature covered",
+            "Testing and review included",
+            "Documentation considered"
+          ]
+        },
+        "risk_management": {
+          "weight": 0.20,
+          "checks": [
+            "Identifies coordination risks",
+            "Has fallback for blocked agents",
+            "Buffer time for integration"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "orch-edge-001",
+      "name": "Ambiguous Requirements",
+      "description": "Handle project with vague, contradictory requirements",
+      "input": {
+        "description": "Build something like Notion but simpler and also more powerful with AI features but keep it lightweight",
+        "constraints": "Ship fast but make it perfect"
+      },
+      "expectedBehavior": "Should identify contradictions and request clarification before planning",
+      "guardrailCheck": true
+    },
+    {
+      "id": "orch-edge-002",
+      "name": "Impossible Timeline",
+      "description": "Reject unrealistic project scope",
+      "input": {
+        "description": "Build a full e-commerce platform with inventory, payments, shipping integration, admin dashboard, mobile app",
+        "timeline": "2 weeks",
+        "developer": "Solo"
+      },
+      "expectedBehavior": "Should flag timeline as unrealistic and propose phased approach",
+      "guardrailCheck": true
+    },
+    {
+      "id": "orch-edge-003",
+      "name": "Missing Critical Information",
+      "description": "Handle project missing essential details",
+      "input": {
+        "description": "Build an API",
+        "constraints": {}
+      },
+      "expectedBehavior": "Should ask clarifying questions about purpose, users, data, integrations",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "guaranteed success",
+      "no risks",
+      "simple project",
+      "easy to implement"
+    ],
+    "mustAsk": {
+      "whenAmbiguous": true,
+      "whenUnrealistic": true,
+      "whenMissingContext": true
+    },
+    "boundaries": {
+      "maxSprintLength": "2 weeks",
+      "maxParallelAgents": 3,
+      "requiresRiskAssessment": true
+    }
+  }
+}

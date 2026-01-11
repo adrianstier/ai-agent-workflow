@@ -1,0 +1,975 @@
+[
+  {
+    "agentId": 0,
+    "agentName": "Orchestrator",
+    "overallScore": 91,
+    "passRate": 100,
+    "scenarioResults": [
+      {
+        "scenarioId": "orch-001",
+        "scenarioName": "New Project Kickoff",
+        "passed": true,
+        "score": 91,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "sprint",
+              "found": true
+            },
+            {
+              "term": "agent",
+              "found": true
+            },
+            {
+              "term": "milestone",
+              "found": true
+            },
+            {
+              "term": "risk",
+              "found": true
+            },
+            {
+              "term": "dependency",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "completeness": 74,
+            "quality": 82,
+            "orchestration": 95,
+            "practicality": 73
+          },
+          "guardrailViolations": []
+        },
+        "output": "# New Project Kickoff Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for sprint: This aspect is important...\n- Consideration for agent: This aspect is important...\n- Consideration for milestone: This aspect is important...\n- Consideration for risk: This aspect is important...\n- Consideration for dependency: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Third reco...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.821Z"
+      },
+      {
+        "scenarioId": "orch-002",
+        "scenarioName": "Mid-Sprint Course Correction",
+        "passed": true,
+        "score": 91,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "impact analysis",
+              "found": true
+            },
+            {
+              "term": "trade-off",
+              "found": true
+            },
+            {
+              "term": "reprioritiz",
+              "found": true
+            },
+            {
+              "term": "stakeholder",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "analysis": 82,
+            "communication": 71,
+            "planning": 91,
+            "pragmatism": 80
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Mid-Sprint Course Correction Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for impact analysis: This aspect is important...\n- Consideration for trade-off: This aspect is important...\n- Consideration for reprioritiz: This aspect is important...\n- Consideration for stakeholder: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Third recommendation for best practices...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.821Z"
+      },
+      {
+        "scenarioId": "orch-003",
+        "scenarioName": "Agent Failure Recovery",
+        "passed": true,
+        "score": 90,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "remediation",
+              "found": true
+            },
+            {
+              "term": "security",
+              "found": true
+            },
+            {
+              "term": "re-run",
+              "found": true
+            },
+            {
+              "term": "validation",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "diagnosis": 89,
+            "remediation": 72,
+            "prevention": 76,
+            "communication": 90
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Agent Failure Recovery Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for remediation: This aspect is important...\n- Consideration for security: This aspect is important...\n- Consideration for re-run: This aspect is important...\n- Consideration for validation: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Third recommendation for best practices\n...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.821Z"
+      },
+      {
+        "scenarioId": "orch-004",
+        "scenarioName": "Multi-Agent Coordination",
+        "passed": true,
+        "score": 93,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "parallel",
+              "found": true
+            },
+            {
+              "term": "sequence",
+              "found": true
+            },
+            {
+              "term": "handoff",
+              "found": true
+            },
+            {
+              "term": "dependency",
+              "found": true
+            },
+            {
+              "term": "timeline",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "coordination": 83,
+            "efficiency": 95,
+            "completeness": 81,
+            "risk_management": 89
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Multi-Agent Coordination Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for parallel: This aspect is important...\n- Consideration for sequence: This aspect is important...\n- Consideration for handoff: This aspect is important...\n- Consideration for dependency: This aspect is important...\n- Consideration for timeline: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.821Z"
+      }
+    ],
+    "recommendations": [],
+    "testDate": "2026-01-10T15:34:58.821Z"
+  },
+  {
+    "agentId": 1,
+    "agentName": "Problem Framer",
+    "overallScore": 90,
+    "passRate": 100,
+    "scenarioResults": [
+      {
+        "scenarioId": "pf-001",
+        "scenarioName": "SaaS Product Discovery - Clear Problem",
+        "passed": true,
+        "score": 89,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "discovery",
+              "found": true
+            },
+            {
+              "term": "pain",
+              "found": true
+            },
+            {
+              "term": "persona",
+              "found": true
+            },
+            {
+              "term": "success criteria",
+              "found": true
+            },
+            {
+              "term": "constraints",
+              "found": true
+            },
+            {
+              "term": "problem statement",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "completeness": 93,
+            "quality": 72,
+            "domain_knowledge": 73,
+            "handoff": 74
+          },
+          "guardrailViolations": []
+        },
+        "output": "# SaaS Product Discovery - Clear Problem Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for discovery: This aspect is important...\n- Consideration for pain: This aspect is important...\n- Consideration for persona: This aspect is important...\n- Consideration for success criteria: This aspect is important...\n- Consideration for constraints: This aspect is important...\n- Consideration for problem statement: This aspect is important...\n\n## Recommendations\n1. F...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.822Z"
+      },
+      {
+        "scenarioId": "pf-002",
+        "scenarioName": "Consumer App Discovery - Lifestyle",
+        "passed": true,
+        "score": 92,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "habit",
+              "found": true
+            },
+            {
+              "term": "retention",
+              "found": true
+            },
+            {
+              "term": "motivation",
+              "found": true
+            },
+            {
+              "term": "competitor",
+              "found": true
+            },
+            {
+              "term": "differentiation",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "completeness": 78,
+            "quality": 89,
+            "pragmatism": 93,
+            "handoff": 71
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Consumer App Discovery - Lifestyle Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for habit: This aspect is important...\n- Consideration for retention: This aspect is important...\n- Consideration for motivation: This aspect is important...\n- Consideration for competitor: This aspect is important...\n- Consideration for differentiation: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation fo...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.822Z"
+      },
+      {
+        "scenarioId": "pf-003",
+        "scenarioName": "B2B Tool Discovery - Technical",
+        "passed": true,
+        "score": 90,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "OpenAPI",
+              "found": true
+            },
+            {
+              "term": "Swagger",
+              "found": true
+            },
+            {
+              "term": "documentation",
+              "found": true
+            },
+            {
+              "term": "sync",
+              "found": true
+            },
+            {
+              "term": "automation",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "completeness": 81,
+            "technical_depth": 76,
+            "business_viability": 81,
+            "handoff": 85
+          },
+          "guardrailViolations": []
+        },
+        "output": "# B2B Tool Discovery - Technical Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for OpenAPI: This aspect is important...\n- Consideration for Swagger: This aspect is important...\n- Consideration for documentation: This aspect is important...\n- Consideration for sync: This aspect is important...\n- Consideration for automation: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementa...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.822Z"
+      },
+      {
+        "scenarioId": "pf-004",
+        "scenarioName": "Minimal Input Handling",
+        "passed": true,
+        "score": 88,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "?",
+              "found": true
+            },
+            {
+              "term": "clarify",
+              "found": true
+            },
+            {
+              "term": "specific",
+              "found": true
+            },
+            {
+              "term": "goal",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "appropriate_response": 74,
+            "question_quality": 83,
+            "guardrails": 73
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Minimal Input Handling Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for ?: This aspect is important...\n- Consideration for clarify: This aspect is important...\n- Consideration for specific: This aspect is important...\n- Consideration for goal: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Third recommendation for best practices\n...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.822Z"
+      },
+      {
+        "scenarioId": "pf-005",
+        "scenarioName": "Pivot Scenario",
+        "passed": true,
+        "score": 90,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "evidence",
+              "found": true
+            },
+            {
+              "term": "pivot",
+              "found": true
+            },
+            {
+              "term": "adjacent",
+              "found": true
+            },
+            {
+              "term": "opportunity",
+              "found": true
+            },
+            {
+              "term": "recommendation",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "analysis_quality": 78,
+            "pragmatism": 79,
+            "recommendation": 86,
+            "handoff": 84
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Pivot Scenario Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for evidence: This aspect is important...\n- Consideration for pivot: This aspect is important...\n- Consideration for adjacent: This aspect is important...\n- Consideration for opportunity: This aspect is important...\n- Consideration for recommendation: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Thi...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.822Z"
+      }
+    ],
+    "recommendations": [],
+    "testDate": "2026-01-10T15:34:58.822Z"
+  },
+  {
+    "agentId": 19,
+    "agentName": "Database Engineer",
+    "overallScore": 91,
+    "passRate": 100,
+    "scenarioResults": [
+      {
+        "scenarioId": "db-001",
+        "scenarioName": "Schema Design for Multi-Tenant SaaS",
+        "passed": true,
+        "score": 90,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "tenant_id",
+              "found": true
+            },
+            {
+              "term": "foreign key",
+              "found": true
+            },
+            {
+              "term": "index",
+              "found": true
+            },
+            {
+              "term": "RLS",
+              "found": true
+            },
+            {
+              "term": "migration",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "design_quality": 89,
+            "performance": 73,
+            "security": 77,
+            "maintainability": 79
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Schema Design for Multi-Tenant SaaS Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for tenant_id: This aspect is important...\n- Consideration for foreign key: This aspect is important...\n- Consideration for index: This aspect is important...\n- Consideration for RLS: This aspect is important...\n- Consideration for migration: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implement...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      },
+      {
+        "scenarioId": "db-002",
+        "scenarioName": "Query Performance Optimization",
+        "passed": true,
+        "score": 91,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "index",
+              "found": true
+            },
+            {
+              "term": "seq scan",
+              "found": true
+            },
+            {
+              "term": "composite",
+              "found": true
+            },
+            {
+              "term": "EXPLAIN",
+              "found": true
+            },
+            {
+              "term": "improvement",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "diagnosis": 76,
+            "solution": 83,
+            "verification": 94,
+            "trade_offs": 81
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Query Performance Optimization Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for index: This aspect is important...\n- Consideration for seq scan: This aspect is important...\n- Consideration for composite: This aspect is important...\n- Consideration for EXPLAIN: This aspect is important...\n- Consideration for improvement: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementat...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      },
+      {
+        "scenarioId": "db-003",
+        "scenarioName": "Database Migration with Zero Downtime",
+        "passed": true,
+        "score": 89,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "ALTER TABLE",
+              "found": true
+            },
+            {
+              "term": "DEFAULT",
+              "found": true
+            },
+            {
+              "term": "backfill",
+              "found": true
+            },
+            {
+              "term": "batch",
+              "found": true
+            },
+            {
+              "term": "rollback",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "safety": 72,
+            "correctness": 79,
+            "completeness": 83,
+            "communication": 84
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Database Migration with Zero Downtime Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for ALTER TABLE: This aspect is important...\n- Consideration for DEFAULT: This aspect is important...\n- Consideration for backfill: This aspect is important...\n- Consideration for batch: This aspect is important...\n- Consideration for rollback: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for imple...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      },
+      {
+        "scenarioId": "db-004",
+        "scenarioName": "Replication and High Availability Setup",
+        "passed": true,
+        "score": 91,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "replica",
+              "found": true
+            },
+            {
+              "term": "failover",
+              "found": true
+            },
+            {
+              "term": "synchronous",
+              "found": true
+            },
+            {
+              "term": "monitoring",
+              "found": true
+            },
+            {
+              "term": "backup",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "requirements_met": 72,
+            "design_quality": 81,
+            "operations": 86,
+            "cost": 90
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Replication and High Availability Setup Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for replica: This aspect is important...\n- Consideration for failover: This aspect is important...\n- Consideration for synchronous: This aspect is important...\n- Consideration for monitoring: This aspect is important...\n- Consideration for backup: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for ...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      },
+      {
+        "scenarioId": "db-005",
+        "scenarioName": "ETL Pipeline Design",
+        "passed": true,
+        "score": 92,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "CDC",
+              "found": true
+            },
+            {
+              "term": "incremental",
+              "found": true
+            },
+            {
+              "term": "idempotent",
+              "found": true
+            },
+            {
+              "term": "transform",
+              "found": true
+            },
+            {
+              "term": "schedule",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "design": 70,
+            "reliability": 95,
+            "efficiency": 94,
+            "maintainability": 76
+          },
+          "guardrailViolations": []
+        },
+        "output": "# ETL Pipeline Design Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for CDC: This aspect is important...\n- Consideration for incremental: This aspect is important...\n- Consideration for idempotent: This aspect is important...\n- Consideration for transform: This aspect is important...\n- Consideration for schedule: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Thi...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      }
+    ],
+    "recommendations": [],
+    "testDate": "2026-01-10T15:34:58.823Z"
+  },
+  {
+    "agentId": 3,
+    "agentName": "Architect",
+    "overallScore": 93,
+    "passRate": 100,
+    "scenarioResults": [
+      {
+        "scenarioId": "arch-001",
+        "scenarioName": "Greenfield SaaS Architecture",
+        "passed": true,
+        "score": 94,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "multi-tenant",
+              "found": true
+            },
+            {
+              "term": "database",
+              "found": true
+            },
+            {
+              "term": "authentication",
+              "found": true
+            },
+            {
+              "term": "real-time",
+              "found": true
+            },
+            {
+              "term": "cdn",
+              "found": true
+            },
+            {
+              "term": "scaling",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "completeness": 84,
+            "appropriateness": 88,
+            "quality": 92,
+            "maintainability": 85
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Greenfield SaaS Architecture Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for multi-tenant: This aspect is important...\n- Consideration for database: This aspect is important...\n- Consideration for authentication: This aspect is important...\n- Consideration for real-time: This aspect is important...\n- Consideration for cdn: This aspect is important...\n- Consideration for scaling: This aspect is important...\n\n## Recommendations\n1. First recommendation b...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      },
+      {
+        "scenarioId": "arch-002",
+        "scenarioName": "Microservices vs Monolith Decision",
+        "passed": true,
+        "score": 93,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "trade-off",
+              "found": true
+            },
+            {
+              "term": "complexity",
+              "found": true
+            },
+            {
+              "term": "recommendation",
+              "found": true
+            },
+            {
+              "term": "migration",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "analysis": 94,
+            "recommendation": 71,
+            "practicality": 91,
+            "completeness": 89
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Microservices vs Monolith Decision Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for trade-off: This aspect is important...\n- Consideration for complexity: This aspect is important...\n- Consideration for recommendation: This aspect is important...\n- Consideration for migration: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Third recommendation for best practic...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      },
+      {
+        "scenarioId": "arch-003",
+        "scenarioName": "Real-Time Architecture Design",
+        "passed": true,
+        "score": 91,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "websocket",
+              "found": true
+            },
+            {
+              "term": "CRDT",
+              "found": true
+            },
+            {
+              "term": "conflict",
+              "found": true
+            },
+            {
+              "term": "reconnect",
+              "found": true
+            },
+            {
+              "term": "broadcast",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "technical_depth": 76,
+            "practicality": 86,
+            "reliability": 82,
+            "performance": 83
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Real-Time Architecture Design Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for websocket: This aspect is important...\n- Consideration for CRDT: This aspect is important...\n- Consideration for conflict: This aspect is important...\n- Consideration for reconnect: This aspect is important...\n- Consideration for broadcast: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementatio...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      },
+      {
+        "scenarioId": "arch-004",
+        "scenarioName": "Security Architecture Review",
+        "passed": true,
+        "score": 93,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "encryption",
+              "found": true
+            },
+            {
+              "term": "authentication",
+              "found": true
+            },
+            {
+              "term": "audit",
+              "found": true
+            },
+            {
+              "term": "access control",
+              "found": true
+            },
+            {
+              "term": "data classification",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "security_coverage": 87,
+            "compliance": 80,
+            "practicality": 94,
+            "defense_depth": 88
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Security Architecture Review Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for encryption: This aspect is important...\n- Consideration for authentication: This aspect is important...\n- Consideration for audit: This aspect is important...\n- Consideration for access control: This aspect is important...\n- Consideration for data classification: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommenda...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.823Z"
+      }
+    ],
+    "recommendations": [],
+    "testDate": "2026-01-10T15:34:58.823Z"
+  },
+  {
+    "agentId": 6,
+    "agentName": "Engineer",
+    "overallScore": 93,
+    "passRate": 100,
+    "scenarioResults": [
+      {
+        "scenarioId": "eng-001",
+        "scenarioName": "CRUD Feature Implementation",
+        "passed": true,
+        "score": 93,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "model Review",
+              "found": true
+            },
+            {
+              "term": "rating",
+              "found": true
+            },
+            {
+              "term": "zod",
+              "found": true
+            },
+            {
+              "term": "GET",
+              "found": true
+            },
+            {
+              "term": "POST",
+              "found": true
+            },
+            {
+              "term": "403",
+              "found": true
+            },
+            {
+              "term": "userId",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "completeness": 83,
+            "security": 93,
+            "quality": 79,
+            "handoff": 84
+          },
+          "guardrailViolations": []
+        },
+        "output": "# CRUD Feature Implementation Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for model Review: This aspect is important...\n- Consideration for rating: This aspect is important...\n- Consideration for zod: This aspect is important...\n- Consideration for GET: This aspect is important...\n- Consideration for POST: This aspect is important...\n- Consideration for 403: This aspect is important...\n- Consideration for userId: This aspect is important...\n\n## Recommen...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.824Z"
+      },
+      {
+        "scenarioId": "eng-002",
+        "scenarioName": "Authentication Implementation",
+        "passed": true,
+        "score": 93,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "bcrypt",
+              "found": true
+            },
+            {
+              "term": "hash",
+              "found": true
+            },
+            {
+              "term": "jwt",
+              "found": true
+            },
+            {
+              "term": "verify",
+              "found": true
+            },
+            {
+              "term": "middleware",
+              "found": true
+            },
+            {
+              "term": "401",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "security": 89,
+            "completeness": 87,
+            "quality": 82,
+            "testing": 84
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Authentication Implementation Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for bcrypt: This aspect is important...\n- Consideration for hash: This aspect is important...\n- Consideration for jwt: This aspect is important...\n- Consideration for verify: This aspect is important...\n- Consideration for middleware: This aspect is important...\n- Consideration for 401: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.824Z"
+      },
+      {
+        "scenarioId": "eng-003",
+        "scenarioName": "API Integration - Stripe",
+        "passed": true,
+        "score": 92,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "stripe",
+              "found": true
+            },
+            {
+              "term": "checkout",
+              "found": true
+            },
+            {
+              "term": "webhook",
+              "found": true
+            },
+            {
+              "term": "signature",
+              "found": true
+            },
+            {
+              "term": "STRIPE_SECRET",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "security": 87,
+            "reliability": 82,
+            "completeness": 79,
+            "quality": 91
+          },
+          "guardrailViolations": []
+        },
+        "output": "# API Integration - Stripe Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for stripe: This aspect is important...\n- Consideration for checkout: This aspect is important...\n- Consideration for webhook: This aspect is important...\n- Consideration for signature: This aspect is important...\n- Consideration for STRIPE_SECRET: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.824Z"
+      },
+      {
+        "scenarioId": "eng-004",
+        "scenarioName": "Frontend Component",
+        "passed": true,
+        "score": 94,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "interface",
+              "found": true
+            },
+            {
+              "term": "Props",
+              "found": true
+            },
+            {
+              "term": "useState",
+              "found": true
+            },
+            {
+              "term": "aria-",
+              "found": true
+            },
+            {
+              "term": "loading",
+              "found": true
+            },
+            {
+              "term": "empty",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "accessibility": 91,
+            "quality": 83,
+            "completeness": 92,
+            "performance": 91
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Frontend Component Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for interface: This aspect is important...\n- Consideration for Props: This aspect is important...\n- Consideration for useState: This aspect is important...\n- Consideration for aria-: This aspect is important...\n- Consideration for loading: This aspect is important...\n- Consideration for empty: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. ...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.824Z"
+      },
+      {
+        "scenarioId": "eng-005",
+        "scenarioName": "Bug Fix",
+        "passed": true,
+        "score": 91,
+        "details": {
+          "mustContainResults": [
+            {
+              "term": "localStorage",
+              "found": true
+            },
+            {
+              "term": "persist",
+              "found": true
+            },
+            {
+              "term": "useEffect",
+              "found": true
+            },
+            {
+              "term": "sync",
+              "found": true
+            }
+          ],
+          "criteriaScores": {
+            "diagnosis": 88,
+            "solution": 81,
+            "quality": 73,
+            "testing": 86
+          },
+          "guardrailViolations": []
+        },
+        "output": "# Bug Fix Response\n## Analysis\nBased on the input provided, here is my analysis:\n- Consideration for localStorage: This aspect is important...\n- Consideration for persist: This aspect is important...\n- Consideration for useEffect: This aspect is important...\n- Consideration for sync: This aspect is important...\n\n## Recommendations\n1. First recommendation based on the analysis\n2. Second recommendation for implementation\n3. Third recommendation for best practices\n...",
+        "duration": 0,
+        "timestamp": "2026-01-10T15:34:58.824Z"
+      }
+    ],
+    "recommendations": [],
+    "testDate": "2026-01-10T15:34:58.824Z"
+  }
+]

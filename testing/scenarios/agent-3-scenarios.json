@@ -1,0 +1,327 @@
+{
+  "agentId": 3,
+  "agentName": "Architect",
+  "scenarios": [
+    {
+      "id": "arch-001",
+      "name": "Greenfield SaaS Architecture",
+      "description": "Design architecture for a new multi-tenant SaaS application",
+      "input": {
+        "project": "TeamSync - Team collaboration platform",
+        "requirements": {
+          "users": "Target 10,000 users in first year",
+          "features": ["Real-time messaging", "File sharing", "Video calls", "Task boards"],
+          "constraints": ["Solo developer", "$200/month initial budget", "Global users"]
+        },
+        "techPreferences": "Next.js, prefer managed services"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "multi-tenant",
+          "database",
+          "authentication",
+          "real-time",
+          "cdn",
+          "scaling"
+        ],
+        "structure": {
+          "hasSystemDiagram": true,
+          "hasDataModel": true,
+          "hasTechStackJustification": true,
+          "hasScalingStrategy": true
+        }
+      },
+      "evaluationCriteria": {
+        "completeness": {
+          "weight": 0.25,
+          "checks": [
+            "All major components addressed",
+            "Data flow clearly defined",
+            "Integration points identified",
+            "Security considerations included"
+          ]
+        },
+        "appropriateness": {
+          "weight": 0.30,
+          "checks": [
+            "Tech choices match constraints",
+            "Complexity appropriate for solo dev",
+            "Cost within budget",
+            "Scalability path defined"
+          ]
+        },
+        "quality": {
+          "weight": 0.25,
+          "checks": [
+            "Decisions well-justified",
+            "Trade-offs acknowledged",
+            "Best practices followed",
+            "Patterns appropriately applied"
+          ]
+        },
+        "maintainability": {
+          "weight": 0.20,
+          "checks": [
+            "Clear separation of concerns",
+            "Modular design",
+            "Testing strategy included",
+            "Documentation approach defined"
+          ]
+        }
+      }
+    },
+    {
+      "id": "arch-002",
+      "name": "Microservices vs Monolith Decision",
+      "description": "Evaluate and recommend architecture pattern",
+      "input": {
+        "currentState": "Monolithic Next.js app with 50k LOC",
+        "problems": [
+          "Deploy takes 15 minutes",
+          "Single feature team bottleneck",
+          "Memory usage growing",
+          "Some features have different scaling needs"
+        ],
+        "teamSize": "Growing from 1 to 3 developers",
+        "constraints": "Limited DevOps experience"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "trade-off",
+          "complexity",
+          "recommendation",
+          "migration"
+        ],
+        "structure": {
+          "hasAnalysis": true,
+          "hasRecommendation": true,
+          "hasMigrationPath": true
+        }
+      },
+      "evaluationCriteria": {
+        "analysis": {
+          "weight": 0.30,
+          "checks": [
+            "Both options fairly evaluated",
+            "Team constraints considered",
+            "Operational complexity assessed",
+            "Cost implications analyzed"
+          ]
+        },
+        "recommendation": {
+          "weight": 0.30,
+          "checks": [
+            "Clear recommendation given",
+            "Rationale well-explained",
+            "Matches team capabilities",
+            "Considers growth trajectory"
+          ]
+        },
+        "practicality": {
+          "weight": 0.25,
+          "checks": [
+            "Migration path realistic",
+            "Incremental approach if applicable",
+            "Risk mitigation included",
+            "Timeline reasonable"
+          ]
+        },
+        "completeness": {
+          "weight": 0.15,
+          "checks": [
+            "Addresses all stated problems",
+            "Includes hybrid options if appropriate",
+            "Considers future flexibility"
+          ]
+        }
+      }
+    },
+    {
+      "id": "arch-003",
+      "name": "Real-Time Architecture Design",
+      "description": "Design real-time features for collaboration app",
+      "input": {
+        "features": [
+          "Live cursor positions (like Figma)",
+          "Real-time document editing",
+          "Presence indicators",
+          "Live notifications"
+        ],
+        "scale": "Up to 100 concurrent users per document",
+        "constraints": {
+          "budget": "Minimize ongoing costs",
+          "latency": "< 100ms for cursor updates",
+          "reliability": "Handle reconnections gracefully"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "websocket",
+          "CRDT",
+          "conflict",
+          "reconnect",
+          "broadcast"
+        ],
+        "structure": {
+          "hasProtocolChoice": true,
+          "hasConflictResolution": true,
+          "hasScalingApproach": true
+        }
+      },
+      "evaluationCriteria": {
+        "technical_depth": {
+          "weight": 0.35,
+          "checks": [
+            "Appropriate protocol selected",
+            "Conflict resolution strategy defined",
+            "State synchronization explained",
+            "Edge cases handled"
+          ]
+        },
+        "practicality": {
+          "weight": 0.25,
+          "checks": [
+            "Implementation complexity reasonable",
+            "Libraries/services recommended",
+            "Cost estimate provided"
+          ]
+        },
+        "reliability": {
+          "weight": 0.25,
+          "checks": [
+            "Reconnection handling defined",
+            "Offline support considered",
+            "Failure modes addressed"
+          ]
+        },
+        "performance": {
+          "weight": 0.15,
+          "checks": [
+            "Latency requirements met",
+            "Bandwidth optimization considered",
+            "Scaling approach defined"
+          ]
+        }
+      }
+    },
+    {
+      "id": "arch-004",
+      "name": "Security Architecture Review",
+      "description": "Design security architecture for financial data handling",
+      "input": {
+        "application": "Expense tracking SaaS with bank integrations",
+        "dataTypes": ["Bank credentials (via Plaid)", "Transaction history", "Receipt images", "User PII"],
+        "compliance": ["SOC 2 Type I target", "GDPR for EU users"],
+        "integrations": ["Plaid", "Stripe", "AWS S3"]
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "encryption",
+          "authentication",
+          "audit",
+          "access control",
+          "data classification"
+        ],
+        "structure": {
+          "hasDataClassification": true,
+          "hasAccessControl": true,
+          "hasEncryptionStrategy": true,
+          "hasAuditApproach": true
+        }
+      },
+      "evaluationCriteria": {
+        "security_coverage": {
+          "weight": 0.35,
+          "checks": [
+            "All data types classified",
+            "Encryption at rest and in transit",
+            "Access control model defined",
+            "Audit logging comprehensive"
+          ]
+        },
+        "compliance": {
+          "weight": 0.25,
+          "checks": [
+            "SOC 2 controls mapped",
+            "GDPR requirements addressed",
+            "Data retention defined",
+            "Right to deletion supported"
+          ]
+        },
+        "practicality": {
+          "weight": 0.20,
+          "checks": [
+            "Implementation feasible",
+            "Uses established patterns",
+            "Third-party security leveraged"
+          ]
+        },
+        "defense_depth": {
+          "weight": 0.20,
+          "checks": [
+            "Multiple security layers",
+            "Least privilege applied",
+            "Breach detection considered"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "arch-edge-001",
+      "name": "Over-Engineering Trap",
+      "description": "Avoid recommending overly complex architecture for simple needs",
+      "input": {
+        "project": "Personal blog with comments",
+        "traffic": "Maybe 100 visitors per month",
+        "requirements": "Just needs to work"
+      },
+      "expectedBehavior": "Should recommend simple solution (static site, simple hosting), not Kubernetes or microservices",
+      "guardrailCheck": true
+    },
+    {
+      "id": "arch-edge-002",
+      "name": "Buzzword Bingo Prevention",
+      "description": "Avoid recommending tech just because it's trendy",
+      "input": {
+        "request": "What architecture should I use?",
+        "context": "Simple CRUD app for internal team of 10"
+      },
+      "expectedBehavior": "Should recommend pragmatic solution, not blockchain/AI/microservices without justification",
+      "guardrailCheck": true
+    },
+    {
+      "id": "arch-edge-003",
+      "name": "Missing Non-Functional Requirements",
+      "description": "Should ask about missing NFRs before architecting",
+      "input": {
+        "project": "E-commerce platform",
+        "requirements": ["Product catalog", "Shopping cart", "Checkout"]
+      },
+      "expectedBehavior": "Should ask about scale, performance, security, compliance before providing architecture",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "always use",
+      "never use",
+      "obviously",
+      "simple",
+      "just"
+    ],
+    "principles": [
+      "Match complexity to actual needs",
+      "Consider team capabilities",
+      "Prefer boring technology for critical paths",
+      "Design for current scale with clear upgrade path"
+    ],
+    "antiPatterns": [
+      "Premature optimization",
+      "Resume-driven development",
+      "Cargo cult architecture",
+      "Golden hammer"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 # AI Agent Prompt Library
 
-This directory contains ready-to-use prompts for 10 specialized AI agents in the product development workflow.
+This directory contains ready-to-use prompts for **20+ specialized AI agents** in the product development workflow.
 
 ## Quick Start
 
@@ -10,7 +10,7 @@ This directory contains ready-to-use prompts for 10 specialized AI agents in the
 4. **Provide the required inputs** (specified in each file)
 5. **Save the output** to the appropriate artifact file
 
-## Agent Directory
+## Core Development Agents (0-9)
 
 | Agent | File | Use When | Output |
 |-------|------|----------|--------|
@@ -24,6 +24,29 @@ This directory contains ready-to-use prompts for 10 specialized AI agents in the
 | **Agent 7** | [agent-7-qa-test-engineer.md](agent-7-qa-test-engineer.md) | Need to test features | `artifacts/test-plan-v0.1.md` + tests |
 | **Agent 8** | [agent-8-devops-deployment.md](agent-8-devops-deployment.md) | Ready to deploy | `artifacts/deployment-plan-v0.1.md` + CI config |
 | **Agent 9** | [agent-9-analytics-growth.md](agent-9-analytics-growth.md) | Need to measure and grow | `artifacts/analytics-plan-v0.1.md` |
+
+## Debug Suite (10-16)
+
+See [DEBUG-AGENTS-README.md](DEBUG-AGENTS-README.md) for detailed usage.
+
+| Agent | File | Use When |
+|-------|------|----------|
+| **Agent 10** | [agent-10-debug-detective.md](agent-10-debug-detective.md) | Bug triage - determines which debug specialist to use |
+| **Agent 11** | [agent-11-visual-debug-specialist.md](agent-11-visual-debug-specialist.md) | CSS/layout/visual rendering issues |
+| **Agent 12** | [agent-12-performance-profiler.md](agent-12-performance-profiler.md) | Slow performance, bottlenecks |
+| **Agent 13** | [agent-13-network-inspector.md](agent-13-network-inspector.md) | API failures, network errors, CORS |
+| **Agent 14** | [agent-14-state-debugger.md](agent-14-state-debugger.md) | Redux/Context/state management bugs |
+| **Agent 15** | [agent-15-error-tracker.md](agent-15-error-tracker.md) | Runtime errors, exceptions, stack traces |
+| **Agent 16** | [agent-16-memory-leak-hunter.md](agent-16-memory-leak-hunter.md) | Memory leaks, performance degradation over time |
+
+## Review & Specialized Agents (17-20)
+
+| Agent | File | Use When |
+|-------|------|----------|
+| **Agent 17** | [agent-17-security-auditor.md](agent-17-security-auditor.md) | Security review before launch or for PRs |
+| **Agent 18** | [agent-18-code-reviewer.md](agent-18-code-reviewer.md) | Code review for PRs |
+| **Agent 19** | [agent-19-database-engineer.md](agent-19-database-engineer.md) | Database migrations, query optimization |
+| **Agent 20** | [agent-20-design-reviewer.md](agent-20-design-reviewer.md) | Design system consistency review |
 
 ## Typical Workflow
 
@@ -118,10 +141,12 @@ Agents are advisors, not dictators:
 - If tests seem excessive, ask for prioritization
 
 ### 5. Mix and Match
-You don't have to use all 10 agents:
+You don't have to use all 20+ agents:
 - For small projects, skip competitive analysis
 - For internal tools, skip analytics/growth
 - For research projects, focus on Problem Framer + Engineer
+- Use Debug Suite (10-16) only when debugging issues
+- Use Review Agents (17-20) before launches or for PRs
 
 ## Example: Starting a New Project
 

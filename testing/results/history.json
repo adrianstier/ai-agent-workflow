@@ -1,0 +1,74 @@
+{
+  "entries": [
+    {
+      "agentId": 0,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 91,
+      "passRate": 100
+    },
+    {
+      "agentId": 1,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 90,
+      "passRate": 100
+    },
+    {
+      "agentId": 19,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 91,
+      "passRate": 100
+    },
+    {
+      "agentId": 3,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 93,
+      "passRate": 100
+    },
+    {
+      "agentId": 6,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 93,
+      "passRate": 100
+    },
+    {
+      "agentId": 0,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 92,
+      "passRate": 100
+    },
+    {
+      "agentId": 1,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 91,
+      "passRate": 100
+    },
+    {
+      "agentId": 19,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 91,
+      "passRate": 100
+    },
+    {
+      "agentId": 3,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 91,
+      "passRate": 100
+    },
+    {
+      "agentId": 6,
+      "date": "2026-01-10",
+      "version": "current",
+      "overallScore": 91,
+      "passRate": 100
+    }
+  ]
+}

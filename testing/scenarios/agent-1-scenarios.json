@@ -1,0 +1,343 @@
+{
+  "agentId": 1,
+  "agentName": "Problem Framer",
+  "scenarios": [
+    {
+      "id": "pf-001",
+      "name": "SaaS Product Discovery - Clear Problem",
+      "description": "Test problem framing with a well-defined SaaS product idea",
+      "input": {
+        "problem": "I want to build a tool that helps small business owners track their inventory across multiple sales channels (Shopify, Amazon, Etsy). I run a small e-commerce business myself and I'm constantly overselling because my inventory isn't synced.",
+        "context": {
+          "timeline": "6 weeks",
+          "budget": "$50/month max for infrastructure",
+          "developer": "Solo developer who can code"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "discovery",
+          "pain",
+          "persona",
+          "success criteria",
+          "constraints",
+          "problem statement"
+        ],
+        "structure": {
+          "hasDiscoveryQuestions": true,
+          "hasFramings": true,
+          "hasProblemBrief": true
+        }
+      },
+      "evaluationCriteria": {
+        "completeness": {
+          "weight": 0.25,
+          "checks": [
+            "Includes discovery questions",
+            "Provides multiple framings (narrow/balanced/broad)",
+            "Contains problem brief with persona",
+            "Defines success criteria"
+          ]
+        },
+        "quality": {
+          "weight": 0.35,
+          "checks": [
+            "Questions are insightful and specific",
+            "Framings offer genuinely different scopes",
+            "Problem statement is clear and measurable",
+            "Constraints are realistic"
+          ]
+        },
+        "domain_knowledge": {
+          "weight": 0.20,
+          "checks": [
+            "Understands multi-channel e-commerce challenges",
+            "Mentions relevant competitors or alternatives",
+            "Considers technical feasibility for solo dev"
+          ]
+        },
+        "handoff": {
+          "weight": 0.20,
+          "checks": [
+            "Clear recommendation provided",
+            "Next steps identified",
+            "Context preserved for next agent"
+          ]
+        }
+      }
+    },
+    {
+      "id": "pf-002",
+      "name": "Consumer App Discovery - Lifestyle",
+      "description": "Test problem framing for a B2C consumer application",
+      "input": {
+        "problem": "I have an idea for a habit tracking app. I've tried lots of habit trackers but they all feel the same - streaks, reminders, that's it. I think there's an opportunity for something more social or game-like.",
+        "context": {
+          "skills": "Designer who can also code",
+          "timeline": "4 weeks",
+          "budget": "Minimal costs"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "habit",
+          "retention",
+          "motivation",
+          "competitor",
+          "differentiation"
+        ],
+        "structure": {
+          "hasCompetitiveAnalysis": true,
+          "hasUserResearch": true
+        }
+      },
+      "evaluationCriteria": {
+        "completeness": {
+          "weight": 0.25,
+          "checks": [
+            "Acknowledges crowded market",
+            "Explores differentiation angles",
+            "Identifies target user segment"
+          ]
+        },
+        "quality": {
+          "weight": 0.35,
+          "checks": [
+            "Mentions specific competitors (Habitica, Streaks)",
+            "Questions dig into user motivation",
+            "Considers retention challenges"
+          ]
+        },
+        "pragmatism": {
+          "weight": 0.20,
+          "checks": [
+            "Realistic about competition",
+            "Suggests focused MVP approach",
+            "Timeline-appropriate scope"
+          ]
+        },
+        "handoff": {
+          "weight": 0.20,
+          "checks": [
+            "Clear problem framing provided",
+            "Unique angle identified or flagged as risk"
+          ]
+        }
+      }
+    },
+    {
+      "id": "pf-003",
+      "name": "B2B Tool Discovery - Technical",
+      "description": "Test problem framing for a developer-focused B2B tool",
+      "input": {
+        "problem": "I want to build a tool that helps developers document their APIs automatically. I work at a startup where we spend way too much time keeping API docs in sync with code. I've seen tools like Swagger but they're clunky.",
+        "context": {
+          "timeline": "8 weeks",
+          "funding": "Company would pay for it if it works",
+          "domain": "Developer tools"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "OpenAPI",
+          "Swagger",
+          "documentation",
+          "sync",
+          "automation"
+        ],
+        "structure": {
+          "hasTechnicalContext": true,
+          "hasCompetitorAnalysis": true
+        }
+      },
+      "evaluationCriteria": {
+        "completeness": {
+          "weight": 0.25,
+          "checks": [
+            "Explores existing solutions",
+            "Identifies pain points with current tools",
+            "Considers integration requirements"
+          ]
+        },
+        "technical_depth": {
+          "weight": 0.35,
+          "checks": [
+            "Understands API documentation landscape",
+            "Mentions relevant standards (OpenAPI)",
+            "Considers language/framework support"
+          ]
+        },
+        "business_viability": {
+          "weight": 0.20,
+          "checks": [
+            "Explores willingness to pay",
+            "Considers enterprise vs individual use",
+            "Identifies buying persona"
+          ]
+        },
+        "handoff": {
+          "weight": 0.20,
+          "checks": [
+            "Technical constraints documented",
+            "Integration requirements identified"
+          ]
+        }
+      }
+    },
+    {
+      "id": "pf-004",
+      "name": "Minimal Input Handling",
+      "description": "Test how agent handles very minimal, vague input",
+      "input": {
+        "problem": "Help me build something with AI.",
+        "context": {}
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "?",
+          "clarify",
+          "specific",
+          "goal"
+        ],
+        "structure": {
+          "hasClarifyingQuestions": true
+        }
+      },
+      "evaluationCriteria": {
+        "appropriate_response": {
+          "weight": 0.50,
+          "checks": [
+            "Does NOT proceed with assumptions",
+            "Asks clarifying questions",
+            "Questions are open-ended and exploratory"
+          ]
+        },
+        "question_quality": {
+          "weight": 0.30,
+          "checks": [
+            "Asks about target users",
+            "Explores problem space",
+            "Inquires about constraints"
+          ]
+        },
+        "guardrails": {
+          "weight": 0.20,
+          "checks": [
+            "Does not make up requirements",
+            "Does not provide solution prematurely"
+          ]
+        }
+      }
+    },
+    {
+      "id": "pf-005",
+      "name": "Pivot Scenario",
+      "description": "Test problem reframing after initial market feedback",
+      "input": {
+        "problem": "We built an app for restaurants to manage reservations but nobody's using it. We've talked to 20 restaurants and they all say the same thing - they already have OpenTable or Resy, or they just use a paper book.",
+        "context": {
+          "team": "2 developers",
+          "runway": "3 months",
+          "question": "Should we pivot or keep going?"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "evidence",
+          "pivot",
+          "adjacent",
+          "opportunity",
+          "recommendation"
+        ],
+        "structure": {
+          "hasAnalysis": true,
+          "hasRecommendation": true
+        }
+      },
+      "evaluationCriteria": {
+        "analysis_quality": {
+          "weight": 0.35,
+          "checks": [
+            "Acknowledges market feedback",
+            "Explores adjacent opportunities",
+            "Considers competitive dynamics"
+          ]
+        },
+        "pragmatism": {
+          "weight": 0.30,
+          "checks": [
+            "Considers runway constraints",
+            "Realistic about market entry",
+            "Provides actionable options"
+          ]
+        },
+        "recommendation": {
+          "weight": 0.20,
+          "checks": [
+            "Makes clear recommendation",
+            "Justifies with evidence",
+            "Considers team strengths"
+          ]
+        },
+        "handoff": {
+          "weight": 0.15,
+          "checks": [
+            "Clear next steps provided",
+            "Decision criteria outlined"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "pf-edge-001",
+      "name": "Vague Target User",
+      "description": "Handle extremely vague user description",
+      "input": {
+        "problem": "I want to build a tool for businesses to manage their stuff better."
+      },
+      "expectedBehavior": "Should ask clarifying questions about specific user type and what 'stuff' means",
+      "guardrailCheck": true
+    },
+    {
+      "id": "pf-edge-002",
+      "name": "Solution Disguised as Problem",
+      "description": "Recognize when user presents solution instead of problem",
+      "input": {
+        "problem": "I need to build a React dashboard with real-time charts for inventory."
+      },
+      "expectedBehavior": "Should dig for underlying problem, not accept solution as given",
+      "guardrailCheck": true
+    },
+    {
+      "id": "pf-edge-003",
+      "name": "Unrealistic Timeline",
+      "description": "Flag clearly unrealistic project scope",
+      "input": {
+        "problem": "I want to build a full ERP system in 2 weeks as a solo developer."
+      },
+      "expectedBehavior": "Should flag timeline concerns and recommend scope reduction",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "easy to build",
+      "simple project",
+      "guaranteed success",
+      "no competition"
+    ],
+    "mustAsk": {
+      "whenVague": true,
+      "whenSolutionGiven": true,
+      "whenUnrealistic": true
+    },
+    "principles": [
+      "Never accept solutions as problems",
+      "Always explore target user deeply",
+      "Flag unrealistic constraints",
+      "Acknowledge competitive landscape"
+    ]
+  }
+}
