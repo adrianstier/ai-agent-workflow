@@ -1,0 +1,41 @@
+{
+  "name": "ai-agent-workflow",
+  "version": "1.2.0",
+  "description": "20+ specialized AI agents for product development with Claude Code orchestrator-driven mode",
+  "main": "index.js",
+  "bin": {
+    "agent-init": "./scripts/init-project.sh",
+    "agent-add": "./scripts/add-to-project.sh"
+  },
+  "scripts": {
+    "postinstall": "echo '\\n✓ AI Agent Workflow installed!\\n  Run: npx agent-init my-project\\n'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/ai-agent-workflow.git"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "claude",
+    "claude-code",
+    "product-development",
+    "workflow",
+    "orchestrator",
+    "llm"
+  ],
+  "author": "Adrian C. Stier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/ai-agent-workflow/issues"
+  },
+  "homepage": "https://github.com/yourusername/ai-agent-workflow#readme",
+  "files": [
+    "agents/",
+    "templates/",
+    "scripts/",
+    "docs/CLAUDE_CODE_GUIDE.md",
+    "INSTALL.md",
+    "README.md"
+  ]
+}

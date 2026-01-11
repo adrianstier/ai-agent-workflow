@@ -975,43 +975,41 @@
               </svg>
             </div>
             <h3>Welcome to AgentFlow</h3>
-            <p>21 specialized AI agents to help you build software products. Click any node to explore, or try these quick actions:</p>
+            <p>21 specialized AI agents to build software products. Use <strong>Orchestrator-Driven Mode</strong> with Claude Code for the best experience!</p>
             <div class="quick-actions">
-              <button class="quick-action" onclick="window.selectAgent(0)" tabindex="0">
-                <div class="quick-action-icon blue">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="5 3 19 12 5 21 5 3"/>
+              <button class="quick-action" onclick="document.querySelector('[data-tab=start]').click()" tabindex="0" style="border: 2px solid var(--accent);">
+                <div class="quick-action-icon" style="background: linear-gradient(135deg, var(--core-light), var(--accent)); background-size: 200%;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                   </svg>
                 </div>
                 <div class="quick-action-text">
-                  <strong>Start with Orchestrator</strong>
-                  <span>Agent 0 guides your next step</span>
+                  <strong>Install & Get Started</strong>
+                  <span>One command to set up everything</span>
+                </div>
+              </button>
+              <button class="quick-action" onclick="window.selectAgent(0)" tabindex="0">
+                <div class="quick-action-icon blue">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83"/>
+                  </svg>
+                </div>
+                <div class="quick-action-text">
+                  <strong>Meet the Orchestrator</strong>
+                  <span>Agent 0 drives your project</span>
                 </div>
               </button>
               <button class="quick-action" onclick="document.getElementById('animateBtn').click()" tabindex="0">
                 <div class="quick-action-icon orange">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                    <polyline points="22 4 12 14.01 9 11.01"/>
+                    <polygon points="5 3 19 12 5 21 5 3"/>
                   </svg>
                 </div>
                 <div class="quick-action-text">
                   <strong>Watch the Workflow</strong>
-                  <span>See how agents work together</span>
-                </div>
-              </button>
-              <button class="quick-action" onclick="document.querySelector('[data-tab=start]').click()" tabindex="0">
-                <div class="quick-action-icon green">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                  </svg>
-                </div>
-                <div class="quick-action-text">
-                  <strong>Get Started Guide</strong>
-                  <span>Copy-paste prompts to begin</span>
+                  <span>See how agents collaborate</span>
                 </div>
               </button>
             </div>
@@ -1045,56 +1043,86 @@
 
         <!-- Get Started Panel -->
         <div class="panel" id="start-panel" role="tabpanel">
+          <div class="step" style="background: linear-gradient(135deg, var(--core-light), var(--review-light));">
+            <div class="step-header">
+              <span class="step-num" style="background: var(--accent);">★</span>
+              <h3>Recommended: Claude Code + Orchestrator Mode</h3>
+            </div>
+            <p>Agent 0 drives everything automatically - you just answer key questions!</p>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+# Install globally (one-time)
+curl -fsSL https://raw.githubusercontent.com/yourusername/ai-agent-workflow/main/scripts/install.sh | bash
+
+# Create a new project
+agent-init my-project
+cd my-project && claude</div>
+          </div>
+
           <div class="step">
             <div class="step-header">
               <span class="step-num">1</span>
-              <h3>Copy the Orchestrator Prompt</h3>
+              <h3>Or: Add to Existing Project</h3>
             </div>
-            <p>Start with Agent 0 to get guidance on your next steps.</p>
+            <p>Already have a project? Add orchestrator-driven mode:</p>
             <div class="code-block">
               <button class="copy-btn" onclick="copyText(this)">Copy</button>
-cat agents/agent-0-orchestrator.md</div>
+# From your project directory
+agent-add
+
+# Or manually:
+mkdir -p artifacts
+ln -s ~/.ai-agents/agents ./agents
+# Then create CLAUDE.md (see docs)</div>
           </div>
 
           <div class="step">
             <div class="step-header">
               <span class="step-num">2</span>
-              <h3>Describe Your Project</h3>
+              <h3>Start Building</h3>
             </div>
-            <p>Paste into Claude and add your context:</p>
+            <p>Tell the orchestrator what you want to build:</p>
             <div class="code-block">
               <button class="copy-btn" onclick="copyText(this)">Copy</button>
 I want to build [YOUR IDEA].
 
 Target users: [WHO]
 Problem: [WHAT]
+Timeline: [X weeks]
+Budget: [$X/month]
 
-Constraints:
-- Timeline: [X weeks]
-- Budget: [$X/month]
-- Tech: [preferences]
-
-What should I do first?</div>
+Let's start from the beginning.</div>
           </div>
 
           <div class="step">
             <div class="step-header">
               <span class="step-num">3</span>
-              <h3>Follow the Flow</h3>
+              <h3>Flow Control Commands</h3>
             </div>
-            <p>Agent 0 will guide you through the development process:</p>
+            <p>Control the orchestrator as you work:</p>
             <div class="code-block">
               <button class="copy-btn" onclick="copyText(this)">Copy</button>
-0 → Orchestrator (start here)
-1 → Problem Brief
-2 → Competitive Analysis
-3 → PRD (requirements)
-4 → UX Flows
-5 → Architecture
-6 → Code
-7 → Tests
-8 → Deployment
-9 → Analytics</div>
+"Speed up"    → Fewer questions
+"Slow down"   → More thorough
+"Skip [agent]"→ Skip a step
+"Go back"     → Revisit phase
+"Pause"       → Get status
+"Continue"    → Resume work</div>
+          </div>
+
+          <div class="step" style="background: var(--bg-surface); border: 1px solid var(--border);">
+            <div class="step-header">
+              <span class="step-num" style="background: var(--text-muted);">?</span>
+              <h3>Alternative: Manual Copy-Paste</h3>
+            </div>
+            <p>For Claude web, ChatGPT, or other LLMs:</p>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+# Open and copy agent prompts manually
+cat agents/agent-0-orchestrator.md
+
+# Paste into your AI tool
+# Follow agent recommendations</div>
           </div>
         </div>
       </div>
@@ -1104,7 +1132,7 @@ What should I do first?</div>
   <script>
     // Agent data with full names
     const agents = [
-      { id: 0, name: "Orchestrator", category: "core", description: "Project director that assesses your current state and recommends the next best action. Start here when beginning a new project or feeling stuck.", useCases: ["Starting a new project", "Feeling stuck or unsure", "Need status assessment"], output: "Status summary + next actions" },
+      { id: 0, name: "Orchestrator", category: "core", description: "The central hub that drives your entire project. In Orchestrator-Driven Mode, Agent 0 automatically selects agents, executes tasks, and only asks you key questions. Start every session here!", useCases: ["Starting any project", "Orchestrator-Driven Mode", "Automatic agent selection", "Project status & next steps"], output: "Drives workflow + artifacts" },
       { id: 1, name: "Problem Framer", category: "core", description: "Clarifies vague ideas into concrete problem statements. Identifies target users, their jobs-to-be-done, and success criteria.", useCases: ["Have a vague idea", "Need to define users", "Clarifying the problem"], output: "artifacts/problem-brief-v0.1.md" },
       { id: 2, name: "Competitive Mapper", category: "core", description: "Analyzes the competitive landscape to find your strategic wedge. Maps direct and indirect competitors.", useCases: ["Understanding competition", "Finding differentiation", "Market positioning"], output: "artifacts/competitive-analysis-v0.1.md" },
       { id: 3, name: "Product Manager", category: "core", description: "Writes focused PRDs with strict scope control. Limits to 5-8 MUST features with clear acceptance criteria.", useCases: ["Scoping v0.1 features", "Writing requirements", "Feature prioritization"], output: "artifacts/prd-v0.1.md" },
@@ -1494,43 +1522,41 @@ What should I do first?</div>
             </svg>
           </div>
           <h3>Welcome to AgentFlow</h3>
-          <p>21 specialized AI agents to help you build software products. Click any node to explore, or try these quick actions:</p>
+          <p>21 specialized AI agents to build software products. Use <strong>Orchestrator-Driven Mode</strong> with Claude Code for the best experience!</p>
           <div class="quick-actions">
-            <button class="quick-action" onclick="window.selectAgent(0)" tabindex="0">
-              <div class="quick-action-icon blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="5 3 19 12 5 21 5 3"/>
+            <button class="quick-action" onclick="document.querySelector('[data-tab=start]').click()" tabindex="0" style="border: 2px solid var(--accent);">
+              <div class="quick-action-icon" style="background: linear-gradient(135deg, var(--core-light), var(--accent)); background-size: 200%;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                 </svg>
               </div>
               <div class="quick-action-text">
-                <strong>Start with Orchestrator</strong>
-                <span>Agent 0 guides your next step</span>
+                <strong>Install & Get Started</strong>
+                <span>One command to set up everything</span>
+              </div>
+            </button>
+            <button class="quick-action" onclick="window.selectAgent(0)" tabindex="0">
+              <div class="quick-action-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83"/>
+                </svg>
+              </div>
+              <div class="quick-action-text">
+                <strong>Meet the Orchestrator</strong>
+                <span>Agent 0 drives your project</span>
               </div>
             </button>
             <button class="quick-action" onclick="document.getElementById('animateBtn').click()" tabindex="0">
               <div class="quick-action-icon orange">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                  <polyline points="22 4 12 14.01 9 11.01"/>
+                  <polygon points="5 3 19 12 5 21 5 3"/>
                 </svg>
               </div>
               <div class="quick-action-text">
                 <strong>Watch the Workflow</strong>
-                <span>See how agents work together</span>
-              </div>
-            </button>
-            <button class="quick-action" onclick="document.querySelector('[data-tab=start]').click()" tabindex="0">
-              <div class="quick-action-icon green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
-              </div>
-              <div class="quick-action-text">
-                <strong>Get Started Guide</strong>
-                <span>Copy-paste prompts to begin</span>
+                <span>See how agents collaborate</span>
               </div>
             </button>
           </div>

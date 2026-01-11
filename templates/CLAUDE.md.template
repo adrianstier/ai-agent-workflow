@@ -1,0 +1,111 @@
+# Project: [YOUR_PROJECT_NAME]
+
+## Orchestrator-Driven Mode
+
+This project uses the AI Agent Workflow system in **Orchestrator-Driven Mode**. Agent 0 (Orchestrator) drives the entire development process, selecting the right agent for each task and only asking key questions when decisions are needed.
+
+### How This Works
+
+1. **Start each session** by telling Claude about your project and what you want to work on
+2. **Agent 0 automatically** assesses project state, identifies the next task, and selects the right agent
+3. **You only get asked** when there are key decisions, ambiguous requirements, or tradeoffs to consider
+4. **Artifacts are saved** to `artifacts/` as each phase completes
+5. **The orchestrator returns** after each task to plan the next step
+
+### When to Interrupt Me (Human Input Needed)
+
+- Key product decisions (scope, features, priorities)
+- Technical choices with significant tradeoffs
+- Ambiguous requirements needing clarification
+- Before any destructive operations
+- Go/No-Go decisions at validation gates
+
+### When NOT to Interrupt Me
+
+- Routine implementation details
+- Standard best practices
+- File organization decisions
+- Formatting and style choices
+
+## Project Context
+
+### Overview
+- **Name**: [YOUR_PROJECT_NAME]
+- **One-liner**: [Brief description]
+- **Target Users**: [Who is this for?]
+
+### Constraints
+- **Timeline**: [X weeks to v0.1]
+- **Budget**: [$X/month max]
+- **Tech Preferences**: [Languages, frameworks, etc.]
+- **Hard Requirements**: [Non-negotiable constraints]
+
+## Agent Reference
+
+The orchestrator has access to 20+ specialized agents:
+
+**Core Development (0-9)**: Orchestrator, Problem Framer, Competitive Mapper, Product Manager, UX Designer, System Architect, Engineer, QA Test Engineer, DevOps, Analytics
+
+**Debug Suite (10-16)**: Debug Detective, Visual Debug, Performance Profiler, Network Inspector, State Debugger, Error Tracker, Memory Leak Hunter
+
+**Review (17-20)**: Security Auditor, Code Reviewer, Database Engineer, Design Reviewer
+
+Agent prompts are located in: `[PATH_TO_AGENTS]/agents/`
+
+## Current State
+
+### Phase
+- [ ] Discovery (Agents 1-2)
+- [ ] Definition (Agents 3-5)
+- [ ] Implementation (Agents 6-7)
+- [ ] Launch (Agents 8-9)
+- [ ] Iteration
+
+### Completed Artifacts
+<!-- Update as artifacts are completed -->
+- [ ] problem-brief-v0.1.md
+- [ ] competitive-analysis-v0.1.md
+- [ ] prd-v0.1.md
+- [ ] ux-flows-v0.1.md
+- [ ] architecture-v0.1.md
+- [ ] test-plan-v0.1.md
+- [ ] deployment-plan-v0.1.md
+- [ ] analytics-plan-v0.1.md
+
+### Current Focus
+[What you're currently working on]
+
+### Decisions Made
+<!-- Record key decisions to maintain context -->
+- [Decision 1]
+- [Decision 2]
+
+## Session Start
+
+When I start a session, Claude should:
+
+1. Read this file and understand the project context
+2. Check artifact status in `artifacts/`
+3. Assess which validation gate we're at
+4. Recommend the next action using Agent 0's decision framework
+5. Execute the appropriate agent's methodology
+6. Save outputs to the correct artifact file
+7. Return to orchestration for the next task
+
+## Flow Control
+
+I can adjust the workflow at any time:
+
+- **"Speed up"** - Make assumptions, ask fewer questions, move faster
+- **"Slow down"** - Be more thorough, validate assumptions, explain more
+- **"Skip [agent]"** - Skip an agent (with risk acknowledgment)
+- **"Go back to [phase]"** - Revisit an earlier phase
+- **"Just do [X]"** - Execute a specific task without orchestration
+- **"Pause"** - Stop and summarize current state
+
+## Quality Standards
+
+- PRD must have 5-8 MUST features maximum (no scope creep)
+- Architecture must use "boring" proven technology
+- All MUST features need testable acceptance criteria
+- Validation gates must pass before phase transitions

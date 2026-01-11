@@ -4,6 +4,29 @@ This directory contains ready-to-use prompts for **20+ specialized AI agents** i
 
 ## Quick Start
 
+### Option A: Claude Code + Orchestrator-Driven Mode (Recommended)
+
+The easiest way to use these agents is with **Claude Code** in **Orchestrator-Driven Mode**:
+
+1. **Set up your project** with our CLAUDE.md template
+2. **Start Claude Code** in your project directory
+3. **Tell the Orchestrator** what you want to build
+4. **Agent 0 drives everything** - you only answer key questions
+
+**Full guide**: [docs/CLAUDE_CODE_GUIDE.md](../docs/CLAUDE_CODE_GUIDE.md)
+
+**Quick setup**:
+```bash
+mkdir my-project && cd my-project
+mkdir -p artifacts state
+cp /path/to/ai-agent-workflow/templates/CLAUDE.md.template ./CLAUDE.md
+ln -s /path/to/ai-agent-workflow/agents ./agents
+# Edit CLAUDE.md with your project details
+claude
+```
+
+### Option B: Manual Copy-Paste
+
 1. **Choose your agent** based on your current task
 2. **Open the agent file** and copy the system prompt
 3. **Paste into Claude/ChatGPT** (or your AI tool)

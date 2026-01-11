@@ -64,6 +64,23 @@ This repository contains a complete, production-ready system for building softwa
 
 ---
 
+## Installation
+
+**One-liner (recommended):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/yourusername/ai-agent-workflow/main/scripts/install.sh | bash
+```
+
+**Then create a project:**
+```bash
+agent-init my-project
+cd my-project && claude
+```
+
+**Other methods:** See [INSTALL.md](INSTALL.md) for git submodule, npm, and more options.
+
+---
+
 ## Quick Links
 
 ### 🎨 Interactive Visualization
@@ -74,7 +91,9 @@ This repository contains a complete, production-ready system for building softwa
 
 | Document | Purpose | Time |
 |----------|---------|------|
-| **[QUICK_START.md](QUICK_START.md)** | Get started in 5 minutes | 5 min |
+| **[INSTALL.md](INSTALL.md)** | Installation options | 5 min |
+| **[docs/CLAUDE_CODE_GUIDE.md](docs/CLAUDE_CODE_GUIDE.md)** | Use with Claude Code (CLI) | 10 min |
+| [QUICK_START.md](QUICK_START.md) | Manual agent usage | 5 min |
 | [CHEAT_SHEET.md](CHEAT_SHEET.md) | One-page quick reference | 2 min |
 | [agents/README.md](agents/README.md) | How to use each agent | 15 min |
 
@@ -121,12 +140,21 @@ ai-agent-workflow/
 │   ├── README.md                      # Agent usage guide
 │   └── DEBUG-AGENTS-README.md         # Debug agent guide
 │
+├── 🚀 Claude Code Integration
+│   ├── templates/CLAUDE.md.template   # Project template for Claude Code
+│   ├── scripts/init-project.sh        # Initialize new projects
+│   ├── scripts/add-to-project.sh      # Add to existing projects
+│   ├── scripts/install.sh             # One-liner installer
+│   ├── docs/CLAUDE_CODE_GUIDE.md      # Full Claude Code guide
+│   └── INSTALL.md                     # All installation options
+│
 ├── 🧪 Testing
 │   ├── scenarios/                     # JSON test scenarios
 │   ├── runner.js                      # Automated test runner
 │   └── README.md                      # Testing guide
 │
 ├── 📁 docs/ (Integration Guides)
+│   ├── CLAUDE_CODE_GUIDE.md           # Claude Code setup guide
 │   ├── INTEGRATION_GUIDE_REIMBURSEMENT.md  # ClearConcur example
 │   ├── CLEARCONCUR_QUICK_START.md          # Copy-paste prompts
 │   └── CLEARCONCUR_CLAUDE_ADDITION.md      # CLAUDE.md additions
@@ -139,9 +167,38 @@ ai-agent-workflow/
 
 ---
 
-## Two Paths to Choose From
+## Three Paths to Choose From
 
-### Path 1: Use the Agents Manually (Quickest)
+### Path 1: Claude Code + Orchestrator-Driven Mode (Recommended)
+
+**Time**: 5 minutes to set up, then seamless workflow
+
+**How it works**:
+1. Create a project folder with `CLAUDE.md` from our template
+2. Start Claude Code in your project directory
+3. Tell the Orchestrator what you want to build
+4. **Agent 0 drives everything** - selecting agents, executing tasks, and only asking you key questions
+5. Artifacts are saved automatically
+
+**Best for**:
+- **Maximum efficiency** - minimal context-switching
+- Developers using Claude Code (CLI)
+- Solo builders who want AI to drive the process
+- Projects where you want to focus on decisions, not prompts
+
+**Features**:
+- Autonomous agent selection and execution
+- Only interrupts for key decisions
+- Automatic artifact management
+- Flow control ("speed up", "slow down", "skip", "go back")
+
+**Cost**: ~$3-7 in API calls for complete workflow
+
+**Start**: [docs/CLAUDE_CODE_GUIDE.md](docs/CLAUDE_CODE_GUIDE.md)
+
+---
+
+### Path 2: Use the Agents Manually (Copy-Paste)
 
 **Time**: 5 minutes to start, 3-4 hours for full v0.1 workflow
 
@@ -149,19 +206,20 @@ ai-agent-workflow/
 1. Open [agents/agent-0-orchestrator.md](agents/agent-0-orchestrator.md)
 2. Copy the prompt to Claude/ChatGPT
 3. Follow the agent's recommendations
-4. Work through all 10 agents sequentially
-5. Save artifacts as you go
+4. Work through all 20+ agents as needed
+5. Save artifacts manually as you go
 
 **Best for**:
-- Solo builders who want to start immediately
-- Testing the workflow
+- Using Claude web UI, ChatGPT, or other LLMs
+- Testing the workflow before committing
 - Projects without coding needs (just planning)
+- Maximum control over each step
 
 **Cost**: ~$3-4 in API calls for complete workflow
 
 ---
 
-### Path 2: Build the Dashboard (Full-Stack)
+### Path 3: Build the Dashboard (Full-Stack)
 
 **Time**: 4-5 weeks to full implementation
 
