@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Workflow System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --bg-deep: #0a0a0f;
+      --bg-surface: #12121a;
+      --bg-elevated: #1a1a25;
+
+      --core-primary: #00d4ff;
+      --core-secondary: #0099cc;
+      --core-glow: rgba(0, 212, 255, 0.4);
+
+      --debug-primary: #ff6b35;
+      --debug-secondary: #cc4400;
+      --debug-glow: rgba(255, 107, 53, 0.4);
+
+      --review-primary: #00ff88;
+      --review-secondary: #00cc66;
+      --review-glow: rgba(0, 255, 136, 0.4);
+
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b0;
+      --text-muted: #606070;
+
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-glow: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background grid */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 212, 255, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255, 107, 53, 0.1), transparent),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(0, 255, 136, 0.1), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Layout */
+    .app-container {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      grid-column: 1 / -1;
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(20px);
+      background: rgba(10, 10, 15, 0.8);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--core-primary), var(--review-primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 0 30px var(--core-glow);
+    }
+
+    .logo-text h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--text-primary), var(--core-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-text span {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 32px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(180deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Main visualization area */
+    .main-content {
+      position: relative;
+      overflow: hidden;
+    }
+
+    #visualization {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--core-primary);
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: var(--core-primary);
+      color: var(--core-primary);
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    /* Agent Detail Panel */
+    .agent-detail {
+      display: none;
+    }
+
+    .agent-detail.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .agent-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .agent-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .agent-number.core {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
+      border: 1px solid var(--core-primary);
+      color: var(--core-primary);
+      box-shadow: 0 0 30px var(--core-glow), inset 0 0 20px rgba(0, 212, 255, 0.1);
+    }
+
+    .agent-number.debug {
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.05));
+      border: 1px solid var(--debug-primary);
+      color: var(--debug-primary);
+      box-shadow: 0 0 30px var(--debug-glow), inset 0 0 20px rgba(255, 107, 53, 0.1);
+    }
+
+    .agent-number.review {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.05));
+      border: 1px solid var(--review-primary);
+      color: var(--review-primary);
+      box-shadow: 0 0 30px var(--review-glow), inset 0 0 20px rgba(0, 255, 136, 0.1);
+    }
+
+    .agent-info h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .agent-category {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .agent-category.core { color: var(--core-primary); }
+    .agent-category.debug { color: var(--debug-primary); }
+    .agent-category.review { color: var(--review-primary); }
+
+    .detail-section {
+      margin-bottom: 24px;
+    }
+
+    .detail-section h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-section h3::before {
+      content: '';
+      width: 12px;
+      height: 2px;
+      background: currentColor;
+    }
+
+    .detail-section p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .use-cases {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .use-case {
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      border-left: 3px solid var(--core-primary);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .use-case.debug { border-left-color: var(--debug-primary); }
+    .use-case.review { border-left-color: var(--review-primary); }
+
+    .output-badge {
+      display: inline-block;
+      padding: 8px 14px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--core-primary);
+    }
+
+    /* Legend Panel */
+    .legend-panel {
+      display: none;
+    }
+
+    .legend-panel.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .legend-group {
+      margin-bottom: 32px;
+    }
+
+    .legend-group h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.core {
+      background: var(--core-primary);
+      box-shadow: 0 0 12px var(--core-glow);
+    }
+
+    .legend-dot.debug {
+      background: var(--debug-primary);
+      box-shadow: 0 0 12px var(--debug-glow);
+    }
+
+    .legend-dot.review {
+      background: var(--review-primary);
+      box-shadow: 0 0 12px var(--review-glow);
+    }
+
+    .legend-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .legend-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+    }
+
+    .legend-item-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .legend-item-num.core {
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--core-primary);
+    }
+
+    .legend-item-num.debug {
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--debug-primary);
+    }
+
+    .legend-item-num.review {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--review-primary);
+    }
+
+    .legend-item-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Get Started Panel */
+    .start-panel {
+      display: none;
+    }
+
+    .start-panel.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .start-step {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .start-step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--core-primary), var(--review-primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .start-step h3 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .start-step p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .code-block {
+      position: relative;
+      background: var(--bg-deep);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 6px 12px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid var(--core-primary);
+      border-radius: 4px;
+      color: var(--core-primary);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--core-primary);
+      color: var(--bg-deep);
+    }
+
+    /* Workflow Controls */
+    .workflow-controls {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      display: flex;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    .control-btn {
+      padding: 12px 24px;
+      background: rgba(18, 18, 26, 0.9);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-btn:hover {
+      border-color: var(--core-primary);
+      color: var(--core-primary);
+      box-shadow: 0 0 20px var(--core-glow);
+    }
+
+    .control-btn.active {
+      background: rgba(0, 212, 255, 0.15);
+      border-color: var(--core-primary);
+      color: var(--core-primary);
+    }
+
+    .control-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Placeholder state */
+    .placeholder-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .placeholder-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      border: 1px dashed var(--border-glow);
+    }
+
+    .placeholder-icon svg {
+      width: 32px;
+      height: 32px;
+      color: var(--text-muted);
+    }
+
+    .placeholder-state h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .placeholder-state p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* SVG Styles */
+    .node-group {
+      cursor: pointer;
+    }
+
+    .node-glow {
+      filter: blur(15px);
+      opacity: 0.5;
+    }
+
+    .node-ring {
+      fill: none;
+      stroke-width: 2;
+      opacity: 0.3;
+    }
+
+    .node-core {
+      stroke-width: 2;
+    }
+
+    .node-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      fill: var(--text-primary);
+      text-anchor: middle;
+    }
+
+    .node-sublabel {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 10px;
+      fill: var(--text-muted);
+      text-anchor: middle;
+    }
+
+    .link {
+      fill: none;
+      stroke-width: 2;
+      opacity: 0.3;
+    }
+
+    .link-flow {
+      fill: none;
+      stroke-width: 3;
+      stroke-dasharray: 8, 4;
+      animation: flowDash 1s linear infinite;
+    }
+
+    @keyframes flowDash {
+      to { stroke-dashoffset: -12; }
+    }
+
+    .link-particle {
+      fill: var(--core-primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .app-container {
+        grid-template-columns: 1fr 320px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+      }
+
+      .sidebar {
+        border-left: none;
+        border-top: 1px solid var(--border-subtle);
+        max-height: 50vh;
+      }
+
+      .header-stats {
+        display: none;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--text-muted);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-gradient"></div>
+
+  <div class="app-container">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">AI</div>
+        <div class="logo-text">
+          <h1>AGENT WORKFLOW</h1>
+          <span>Interactive System Map</span>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat">
+          <div class="stat-value">20+</div>
+          <div class="stat-label">Agents</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">91%</div>
+          <div class="stat-label">Test Score</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Categories</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <svg id="visualization"></svg>
+
+      <div class="workflow-controls">
+        <button class="control-btn" id="playWorkflow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Animate Workflow
+        </button>
+        <button class="control-btn" id="resetView">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          Reset View
+        </button>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-tabs">
+          <button class="tab-btn active" data-tab="detail">Agent Details</button>
+          <button class="tab-btn" data-tab="legend">All Agents</button>
+          <button class="tab-btn" data-tab="start">Get Started</button>
+        </div>
+      </div>
+
+      <div class="sidebar-content">
+        <!-- Agent Detail Panel -->
+        <div class="agent-detail active" id="detail-panel">
+          <div class="placeholder-state">
+            <div class="placeholder-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4M12 8h.01"></path>
+              </svg>
+            </div>
+            <h3>Select an Agent</h3>
+            <p>Click on any node in the visualization to see details about that agent.</p>
+          </div>
+        </div>
+
+        <!-- Legend Panel -->
+        <div class="legend-panel" id="legend-panel">
+          <div class="legend-group">
+            <h3><span class="legend-dot core"></span> Core Development</h3>
+            <div class="legend-items" id="core-legend"></div>
+          </div>
+          <div class="legend-group">
+            <h3><span class="legend-dot debug"></span> Debug Suite</h3>
+            <div class="legend-items" id="debug-legend"></div>
+          </div>
+          <div class="legend-group">
+            <h3><span class="legend-dot review"></span> Review & Specialized</h3>
+            <div class="legend-items" id="review-legend"></div>
+          </div>
+        </div>
+
+        <!-- Get Started Panel -->
+        <div class="start-panel" id="start-panel">
+          <div class="start-step">
+            <div class="start-step-header">
+              <span class="step-number">1</span>
+              <h3>Choose Your Starting Point</h3>
+            </div>
+            <p>Copy Agent 0's system prompt to begin any project.</p>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              cat agents/agent-0-orchestrator.md
+            </div>
+          </div>
+
+          <div class="start-step">
+            <div class="start-step-header">
+              <span class="step-number">2</span>
+              <h3>Provide Your Context</h3>
+            </div>
+            <p>Paste into Claude/ChatGPT and add your project details:</p>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+I want to build [YOUR IDEA].
+
+Target users: [WHO]
+Main problem: [WHAT]
+
+Constraints:
+- Timeline: [X weeks]
+- Budget: [$X/month]
+- Tech: [preferences]
+
+What should I do first?
+            </div>
+          </div>
+
+          <div class="start-step">
+            <div class="start-step-header">
+              <span class="step-number">3</span>
+              <h3>Follow the Flow</h3>
+            </div>
+            <p>Agent 0 will guide you through the workflow. Typical path:</p>
+            <div class="code-block">
+Agent 1 → Problem Brief
+Agent 2 → Competitive Analysis
+Agent 3 → PRD
+Agent 4 → UX Flows
+Agent 5 → Architecture
+Agent 6 → Code
+Agent 7 → Tests
+Agent 8 → Deployment
+Agent 9 → Analytics
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Agent Data
+    const agents = [
+      // Core Development (0-9)
+      { id: 0, name: "Orchestrator", category: "core", description: "Project director that assesses state and recommends next actions. Start here when feeling stuck or beginning a new project.", useCases: ["Starting a new project", "Feeling stuck or unsure what's next", "Need project status assessment"], output: "Status summary + next actions" },
+      { id: 1, name: "Problem Framer", category: "core", description: "Defines the problem space through thoughtful questions. Helps clarify vague ideas into concrete problem statements with user personas and jobs-to-be-done.", useCases: ["Have a vague product idea", "Need to define target users", "Want to clarify the problem"], output: "artifacts/problem-brief-v0.1.md" },
+      { id: 2, name: "Competitive Mapper", category: "core", description: "Analyzes the competitive landscape to find your strategic wedge. Identifies direct and indirect competitors, their strengths, and market gaps.", useCases: ["Need to understand competition", "Looking for market differentiation", "Validating product positioning"], output: "artifacts/competitive-analysis-v0.1.md" },
+      { id: 3, name: "Product Manager", category: "core", description: "Writes focused PRDs with strict scope control. Limits features to 5-8 MUST items with clear acceptance criteria and anti-over-engineering guardrails.", useCases: ["Need to scope v0.1 features", "Writing product requirements", "Prioritizing feature backlog"], output: "artifacts/prd-v0.1.md" },
+      { id: 4, name: "UX Designer", category: "core", description: "Designs user flows, wireframes, and interaction patterns. Creates practical designs that balance user needs with implementation feasibility.", useCases: ["Designing user journeys", "Creating wireframes", "Planning UI interactions"], output: "artifacts/ux-flows-v0.1.md" },
+      { id: 5, name: "System Architect", category: "core", description: "Chooses tech stack with boring-tech-first philosophy. Recommends monoliths over microservices, managed services over self-hosted, simplicity over complexity.", useCases: ["Choosing technology stack", "Designing system architecture", "Making infrastructure decisions"], output: "artifacts/architecture-v0.1.md" },
+      { id: 6, name: "Engineer", category: "core", description: "Implements features with thin-slice methodology. Includes security awareness, error handling, and conflict detection protocols.", useCases: ["Writing production code", "Implementing features", "Code with security awareness"], output: "Code in src/ directory" },
+      { id: 7, name: "QA Test Engineer", category: "core", description: "Creates comprehensive testing strategies covering unit, integration, and E2E tests. Prioritizes test coverage for critical paths.", useCases: ["Writing test plans", "Implementing test suites", "Quality assurance review"], output: "artifacts/test-plan-v0.1.md" },
+      { id: 8, name: "DevOps Deployment", category: "core", description: "Sets up deployment pipelines with one-command-deploy philosophy. Focuses on simple, reliable infrastructure.", useCases: ["Setting up CI/CD", "Configuring infrastructure", "Deployment automation"], output: "artifacts/deployment-plan-v0.1.md" },
+      { id: 9, name: "Analytics & Growth", category: "core", description: "Instruments analytics with focused event tracking. Identifies the 5-10 critical metrics that actually matter.", useCases: ["Setting up analytics", "Defining success metrics", "Growth instrumentation"], output: "artifacts/analytics-plan-v0.1.md" },
+
+      // Debug Suite (10-16)
+      { id: 10, name: "Debug Detective", category: "debug", description: "Triage specialist that analyzes bug reports and routes to the appropriate debug specialist. Start here for any debugging task.", useCases: ["Bug triage", "Determining debug approach", "Routing to specialists"], output: "Debug routing recommendation" },
+      { id: 11, name: "Visual Debug Specialist", category: "debug", description: "Specializes in CSS, layout, and visual rendering issues. Diagnoses responsive design bugs, z-index conflicts, and styling problems.", useCases: ["CSS/layout issues", "Visual rendering bugs", "Responsive design problems"], output: "Visual bug diagnosis + fixes" },
+      { id: 12, name: "Performance Profiler", category: "debug", description: "Identifies performance bottlenecks through profiling. Analyzes render times, bundle sizes, and runtime performance.", useCases: ["Slow page loads", "Performance bottlenecks", "Bundle optimization"], output: "Performance analysis + optimizations" },
+      { id: 13, name: "Network Inspector", category: "debug", description: "Debugs API failures, network errors, and CORS issues. Analyzes request/response cycles and connection problems.", useCases: ["API failures", "Network errors", "CORS issues"], output: "Network diagnosis + solutions" },
+      { id: 14, name: "State Debugger", category: "debug", description: "Diagnoses Redux, Context, and state management bugs. Traces state flow and identifies synchronization issues.", useCases: ["State management bugs", "Data flow issues", "Sync problems"], output: "State flow analysis + fixes" },
+      { id: 15, name: "Error Tracker", category: "debug", description: "Analyzes runtime errors, exceptions, and stack traces. Identifies root causes and suggests defensive fixes.", useCases: ["Runtime errors", "Exception handling", "Stack trace analysis"], output: "Error analysis + preventive fixes" },
+      { id: 16, name: "Memory Leak Hunter", category: "debug", description: "Detects memory leaks and performance degradation over time. Identifies cleanup issues and resource management problems.", useCases: ["Memory leaks", "Resource cleanup issues", "Long-running performance"], output: "Memory analysis + cleanup fixes" },
+
+      // Review & Specialized (17-20)
+      { id: 17, name: "Security Auditor", category: "review", description: "Conducts security reviews focusing on OWASP Top 10, authorization bypasses, and data exposure. Essential before any launch.", useCases: ["Pre-launch security review", "PR security checks", "Vulnerability assessment"], output: "Security findings + remediations" },
+      { id: 18, name: "Code Reviewer", category: "review", description: "Reviews code for quality, maintainability, and best practices. Focuses on actionable feedback rather than style nitpicks.", useCases: ["Pull request reviews", "Code quality assessment", "Best practices check"], output: "Review comments + suggestions" },
+      { id: 19, name: "Database Engineer", category: "review", description: "Handles migrations, query optimization, and schema design. Includes destructive operation safeguards and premature optimization prevention.", useCases: ["Database migrations", "Query optimization", "Schema design"], output: "Migration files + optimization recommendations" },
+      { id: 20, name: "Design Reviewer", category: "review", description: "Reviews design system consistency, accessibility, and UX patterns. Ensures coherent visual language across the product.", useCases: ["Design system audit", "Accessibility review", "UX consistency check"], output: "Design review + recommendations" }
+    ];
+
+    // Workflow connections
+    const connections = [
+      // Core flow
+      { source: 0, target: 1 },
+      { source: 1, target: 2 },
+      { source: 2, target: 3 },
+      { source: 3, target: 4 },
+      { source: 4, target: 5 },
+      { source: 5, target: 6 },
+      { source: 6, target: 7 },
+      { source: 7, target: 8 },
+      { source: 8, target: 9 },
+      { source: 9, target: 0 }, // Loop back
+
+      // Debug routing from Detective
+      { source: 10, target: 11 },
+      { source: 10, target: 12 },
+      { source: 10, target: 13 },
+      { source: 10, target: 14 },
+      { source: 10, target: 15 },
+      { source: 10, target: 16 },
+
+      // Debug to Engineer for fixes
+      { source: 11, target: 6 },
+      { source: 12, target: 6 },
+      { source: 13, target: 6 },
+      { source: 14, target: 6 },
+      { source: 15, target: 6 },
+      { source: 16, target: 6 },
+
+      // Review connections
+      { source: 6, target: 17 },
+      { source: 6, target: 18 },
+      { source: 6, target: 19 },
+      { source: 4, target: 20 }
+    ];
+
+    // Color schemes
+    const colors = {
+      core: { primary: '#00d4ff', secondary: '#0099cc', glow: 'rgba(0, 212, 255, 0.4)' },
+      debug: { primary: '#ff6b35', secondary: '#cc4400', glow: 'rgba(255, 107, 53, 0.4)' },
+      review: { primary: '#00ff88', secondary: '#00cc66', glow: 'rgba(0, 255, 136, 0.4)' }
+    };
+
+    // Set up SVG
+    const svg = d3.select('#visualization');
+    const container = svg.node().parentElement;
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+
+    svg.attr('width', width).attr('height', height);
+
+    // Create layers
+    const defs = svg.append('defs');
+    const linksLayer = svg.append('g').attr('class', 'links-layer');
+    const nodesLayer = svg.append('g').attr('class', 'nodes-layer');
+
+    // Add glow filters
+    ['core', 'debug', 'review'].forEach(category => {
+      const filter = defs.append('filter')
+        .attr('id', `glow-${category}`)
+        .attr('x', '-50%').attr('y', '-50%')
+        .attr('width', '200%').attr('height', '200%');
+
+      filter.append('feGaussianBlur')
+        .attr('stdDeviation', '8')
+        .attr('result', 'coloredBlur');
+
+      const feMerge = filter.append('feMerge');
+      feMerge.append('feMergeNode').attr('in', 'coloredBlur');
+      feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+    });
+
+    // Calculate node positions
+    function calculatePositions() {
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      // Core agents in a circle
+      const coreRadius = Math.min(width, height) * 0.32;
+      agents.filter(a => a.category === 'core').forEach((agent, i) => {
+        const angle = (i / 10) * 2 * Math.PI - Math.PI / 2;
+        agent.x = centerX + Math.cos(angle) * coreRadius;
+        agent.y = centerY + Math.sin(angle) * coreRadius;
+      });
+
+      // Debug agents in a cluster on the left
+      const debugCenterX = width * 0.18;
+      const debugCenterY = height * 0.5;
+      const debugRadius = Math.min(width, height) * 0.12;
+
+      // Detective in center
+      agents[10].x = debugCenterX;
+      agents[10].y = debugCenterY;
+
+      // Other debug agents around it
+      for (let i = 11; i <= 16; i++) {
+        const angle = ((i - 11) / 6) * 2 * Math.PI - Math.PI / 2;
+        agents[i].x = debugCenterX + Math.cos(angle) * debugRadius;
+        agents[i].y = debugCenterY + Math.sin(angle) * debugRadius;
+      }
+
+      // Review agents on the right
+      const reviewCenterX = width * 0.82;
+      const reviewCenterY = height * 0.5;
+      const reviewRadius = Math.min(width, height) * 0.1;
+
+      for (let i = 17; i <= 20; i++) {
+        const angle = ((i - 17) / 4) * 2 * Math.PI - Math.PI / 2;
+        agents[i].x = reviewCenterX + Math.cos(angle) * reviewRadius;
+        agents[i].y = reviewCenterY + Math.sin(angle) * reviewRadius;
+      }
+    }
+
+    calculatePositions();
+
+    // Draw connections
+    function drawLinks() {
+      const linkData = connections.map(c => ({
+        ...c,
+        sourceAgent: agents[c.source],
+        targetAgent: agents[c.target]
+      }));
+
+      linksLayer.selectAll('.link').remove();
+
+      linksLayer.selectAll('.link')
+        .data(linkData)
+        .enter()
+        .append('path')
+        .attr('class', 'link')
+        .attr('d', d => {
+          const dx = d.targetAgent.x - d.sourceAgent.x;
+          const dy = d.targetAgent.y - d.sourceAgent.y;
+          const dr = Math.sqrt(dx * dx + dy * dy) * 0.8;
+          return `M${d.sourceAgent.x},${d.sourceAgent.y}Q${(d.sourceAgent.x + d.targetAgent.x) / 2},${(d.sourceAgent.y + d.targetAgent.y) / 2 - 20},${d.targetAgent.x},${d.targetAgent.y}`;
+        })
+        .attr('stroke', d => colors[d.sourceAgent.category].secondary)
+        .attr('stroke-opacity', 0.2);
+    }
+
+    // Draw nodes
+    function drawNodes() {
+      nodesLayer.selectAll('.node-group').remove();
+
+      const nodeGroups = nodesLayer.selectAll('.node-group')
+        .data(agents)
+        .enter()
+        .append('g')
+        .attr('class', 'node-group')
+        .attr('transform', d => `translate(${d.x}, ${d.y})`)
+        .on('click', (event, d) => showAgentDetail(d))
+        .on('mouseenter', function(event, d) {
+          d3.select(this).select('.node-core')
+            .transition()
+            .duration(200)
+            .attr('r', 28);
+          d3.select(this).select('.node-glow')
+            .transition()
+            .duration(200)
+            .attr('r', 40)
+            .attr('opacity', 0.8);
+        })
+        .on('mouseleave', function(event, d) {
+          d3.select(this).select('.node-core')
+            .transition()
+            .duration(200)
+            .attr('r', 24);
+          d3.select(this).select('.node-glow')
+            .transition()
+            .duration(200)
+            .attr('r', 30)
+            .attr('opacity', 0.5);
+        });
+
+      // Glow effect
+      nodeGroups.append('circle')
+        .attr('class', 'node-glow')
+        .attr('r', 30)
+        .attr('fill', d => colors[d.category].primary)
+        .attr('filter', d => `url(#glow-${d.category})`);
+
+      // Outer ring
+      nodeGroups.append('circle')
+        .attr('class', 'node-ring')
+        .attr('r', 32)
+        .attr('stroke', d => colors[d.category].primary);
+
+      // Main node
+      nodeGroups.append('circle')
+        .attr('class', 'node-core')
+        .attr('r', 24)
+        .attr('fill', 'rgba(18, 18, 26, 0.9)')
+        .attr('stroke', d => colors[d.category].primary);
+
+      // Number label
+      nodeGroups.append('text')
+        .attr('class', 'node-label')
+        .attr('y', 4)
+        .text(d => d.id);
+
+      // Name label below
+      nodeGroups.append('text')
+        .attr('class', 'node-sublabel')
+        .attr('y', 48)
+        .text(d => d.name.length > 12 ? d.name.substring(0, 10) + '...' : d.name);
+    }
+
+    drawLinks();
+    drawNodes();
+
+    // Show agent details in sidebar
+    function showAgentDetail(agent) {
+      const panel = document.getElementById('detail-panel');
+      const categoryClass = agent.category;
+
+      panel.innerHTML = `
+        <div class="agent-header">
+          <div class="agent-number ${categoryClass}">${agent.id}</div>
+          <div class="agent-info">
+            <h2>${agent.name}</h2>
+            <div class="agent-category ${categoryClass}">${agent.category} Agent</div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Description</h3>
+          <p>${agent.description}</p>
+        </div>
+
+        <div class="detail-section">
+          <h3>When to Use</h3>
+          <div class="use-cases">
+            ${agent.useCases.map(uc => `<div class="use-case ${categoryClass}">${uc}</div>`).join('')}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Output</h3>
+          <span class="output-badge">${agent.output}</span>
+        </div>
+      `;
+
+      // Activate detail tab
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector('[data-tab="detail"]').classList.add('active');
+
+      document.querySelectorAll('.agent-detail, .legend-panel, .start-panel').forEach(p => p.classList.remove('active'));
+      panel.classList.add('active');
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.agent-detail, .legend-panel, .start-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById(`${tab}-panel`).classList.add('active');
+      });
+    });
+
+    // Populate legend
+    function populateLegend() {
+      const categories = {
+        core: { container: document.getElementById('core-legend'), agents: agents.filter(a => a.category === 'core') },
+        debug: { container: document.getElementById('debug-legend'), agents: agents.filter(a => a.category === 'debug') },
+        review: { container: document.getElementById('review-legend'), agents: agents.filter(a => a.category === 'review') }
+      };
+
+      Object.entries(categories).forEach(([cat, data]) => {
+        data.container.innerHTML = data.agents.map(agent => `
+          <div class="legend-item" onclick="selectAgent(${agent.id})">
+            <span class="legend-item-num ${cat}">${agent.id}</span>
+            <span class="legend-item-name">${agent.name}</span>
+          </div>
+        `).join('');
+      });
+    }
+
+    populateLegend();
+
+    window.selectAgent = function(id) {
+      showAgentDetail(agents[id]);
+    };
+
+    // Animate workflow
+    let animationRunning = false;
+
+    document.getElementById('playWorkflow').addEventListener('click', function() {
+      if (animationRunning) return;
+      animationRunning = true;
+      this.classList.add('active');
+
+      const workflowPath = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      let step = 0;
+
+      function animateStep() {
+        if (step >= workflowPath.length) {
+          animationRunning = false;
+          document.getElementById('playWorkflow').classList.remove('active');
+          return;
+        }
+
+        const agentId = workflowPath[step];
+        const agent = agents[agentId];
+
+        // Highlight node
+        nodesLayer.selectAll('.node-group')
+          .filter(d => d.id === agentId)
+          .select('.node-core')
+          .transition()
+          .duration(300)
+          .attr('r', 32)
+          .attr('fill', colors[agent.category].primary)
+          .transition()
+          .duration(500)
+          .attr('r', 24)
+          .attr('fill', 'rgba(18, 18, 26, 0.9)');
+
+        // Draw flow line to next
+        if (step < workflowPath.length - 1) {
+          const nextAgent = agents[workflowPath[step + 1]];
+
+          const flowLine = linksLayer.append('path')
+            .attr('class', 'link-flow')
+            .attr('d', `M${agent.x},${agent.y}L${nextAgent.x},${nextAgent.y}`)
+            .attr('stroke', colors.core.primary)
+            .attr('stroke-opacity', 0);
+
+          flowLine.transition()
+            .duration(400)
+            .attr('stroke-opacity', 0.8)
+            .transition()
+            .delay(600)
+            .duration(400)
+            .attr('stroke-opacity', 0)
+            .remove();
+        }
+
+        showAgentDetail(agent);
+        step++;
+        setTimeout(animateStep, 1000);
+      }
+
+      animateStep();
+    });
+
+    // Reset view
+    document.getElementById('resetView').addEventListener('click', function() {
+      calculatePositions();
+      drawLinks();
+      drawNodes();
+    });
+
+    // Copy code function
+    window.copyCode = function(btn) {
+      const code = btn.parentElement.textContent.replace('Copy', '').trim();
+      navigator.clipboard.writeText(code);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    };
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+      width = container.clientWidth;
+      height = container.clientHeight;
+      svg.attr('width', width).attr('height', height);
+      calculatePositions();
+      drawLinks();
+      drawNodes();
+    });
+  </script>
+</body>
+</html>
