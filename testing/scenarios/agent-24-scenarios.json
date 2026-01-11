@@ -1,0 +1,428 @@
+{
+  "agentId": 24,
+  "agentName": "Model Architect",
+  "scenarios": [
+    {
+      "id": "ma-001",
+      "name": "Binary Classification Model Selection",
+      "description": "Test model selection for imbalanced binary classification",
+      "input": {
+        "task": "Design model architecture for fraud detection",
+        "problem": {
+          "type": "binary_classification",
+          "target": "is_fraud",
+          "classRatio": "1:100 (1% fraud)",
+          "features": 50,
+          "rows": 1000000
+        },
+        "requirements": {
+          "latency": "<100ms",
+          "interpretability": "High (regulatory requirement)",
+          "falseNegativeCost": "Very high"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "XGBoost",
+          "class_weight",
+          "SMOTE",
+          "threshold",
+          "recall",
+          "precision-recall"
+        ],
+        "structure": {
+          "hasModelComparison": true,
+          "hasImbalanceStrategy": true,
+          "hasHyperparameterSpace": true,
+          "hasEvaluationMetrics": true
+        }
+      },
+      "evaluationCriteria": {
+        "modelSelection": {
+          "weight": 0.30,
+          "checks": [
+            "Gradient boosting recommended for tabular",
+            "Logistic regression as baseline",
+            "Neural network considered for scale",
+            "Ensemble options discussed"
+          ]
+        },
+        "imbalanceHandling": {
+          "weight": 0.30,
+          "checks": [
+            "Class weighting suggested",
+            "SMOTE/ADASYN mentioned",
+            "Threshold optimization discussed",
+            "Precision-recall focus over accuracy"
+          ]
+        },
+        "latencyConstraints": {
+          "weight": 0.20,
+          "checks": [
+            "Model complexity vs latency tradeoff",
+            "Inference optimization suggestions",
+            "Batch vs real-time considerations"
+          ]
+        },
+        "interpretability": {
+          "weight": 0.20,
+          "checks": [
+            "SHAP/LIME mentioned for interpretability",
+            "Feature importance requirements",
+            "Regulatory compliance addressed"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ma-002",
+      "name": "Regression Model Architecture",
+      "description": "Test architecture design for regression problem",
+      "input": {
+        "task": "Design model for house price prediction",
+        "problem": {
+          "type": "regression",
+          "target": "price",
+          "targetDistribution": "Log-normal",
+          "features": 30,
+          "rows": 50000
+        },
+        "requirements": {
+          "accuracy": "MAPE < 10%",
+          "outlierRobust": true,
+          "updateFrequency": "Weekly retraining"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "log transform",
+          "XGBoost",
+          "Ridge",
+          "MAE",
+          "quantile",
+          "cross-validation"
+        ],
+        "structure": {
+          "hasBaselineModel": true,
+          "hasAdvancedModel": true,
+          "hasTargetTransformation": true,
+          "hasRobustnessStrategy": true
+        }
+      },
+      "evaluationCriteria": {
+        "modelArchitecture": {
+          "weight": 0.30,
+          "checks": [
+            "Linear baseline (Ridge/Lasso)",
+            "Tree-based models (XGBoost/LightGBM)",
+            "Stacking ensemble considered",
+            "Target log transformation"
+          ]
+        },
+        "robustness": {
+          "weight": 0.25,
+          "checks": [
+            "MAE/Huber loss for outlier robustness",
+            "Quantile regression for uncertainty",
+            "Cross-validation strategy"
+          ]
+        },
+        "hyperparameters": {
+          "weight": 0.25,
+          "checks": [
+            "Search space defined",
+            "Bayesian optimization mentioned",
+            "Early stopping strategy"
+          ]
+        },
+        "evaluation": {
+          "weight": 0.20,
+          "checks": [
+            "MAPE as primary metric",
+            "Residual analysis planned",
+            "Hold-out validation strategy"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ma-003",
+      "name": "Time Series Forecasting Architecture",
+      "description": "Test architecture for temporal prediction",
+      "input": {
+        "task": "Design forecasting model for daily sales",
+        "problem": {
+          "type": "time_series_forecasting",
+          "horizon": "30 days ahead",
+          "frequency": "daily",
+          "history": "3 years",
+          "multivariate": true,
+          "externalFeatures": ["holidays", "promotions", "weather"]
+        },
+        "requirements": {
+          "multiStep": true,
+          "uncertainty": "Prediction intervals needed",
+          "updateable": "Daily incremental updates"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "ARIMA",
+          "Prophet",
+          "LSTM",
+          "sliding window",
+          "backtesting",
+          "prediction interval"
+        ],
+        "structure": {
+          "hasStatisticalModels": true,
+          "hasMLModels": true,
+          "hasValidationStrategy": true,
+          "hasUncertaintyQuantification": true
+        }
+      },
+      "evaluationCriteria": {
+        "modelOptions": {
+          "weight": 0.30,
+          "checks": [
+            "Statistical baselines (ARIMA, ETS)",
+            "Prophet for seasonality",
+            "ML models (XGBoost, LSTM)",
+            "Ensemble recommendation"
+          ]
+        },
+        "temporalValidation": {
+          "weight": 0.25,
+          "checks": [
+            "Walk-forward validation",
+            "No data leakage in features",
+            "Expanding/sliding window CV"
+          ]
+        },
+        "multiStepStrategy": {
+          "weight": 0.25,
+          "checks": [
+            "Recursive vs direct multi-step",
+            "Horizon-specific models considered",
+            "Error accumulation addressed"
+          ]
+        },
+        "uncertainty": {
+          "weight": 0.20,
+          "checks": [
+            "Prediction intervals method",
+            "Conformal prediction mentioned",
+            "Probabilistic forecasting"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ma-004",
+      "name": "Multi-Class Classification",
+      "description": "Test architecture for multi-class problem",
+      "input": {
+        "task": "Design model for customer segment prediction",
+        "problem": {
+          "type": "multi_class_classification",
+          "classes": 8,
+          "classDistribution": "Imbalanced (20%, 15%, 15%, 12%, 12%, 10%, 10%, 6%)",
+          "features": 100,
+          "rows": 200000
+        },
+        "requirements": {
+          "topK": "Top-3 accuracy important",
+          "calibration": "Well-calibrated probabilities needed",
+          "confusion": "Minimize specific class confusions"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "softmax",
+          "OvA",
+          "calibration",
+          "multi-class",
+          "focal loss",
+          "macro"
+        ],
+        "structure": {
+          "hasMultiClassStrategy": true,
+          "hasCalibrationPlan": true,
+          "hasMetricsSelection": true
+        }
+      },
+      "evaluationCriteria": {
+        "multiClassHandling": {
+          "weight": 0.30,
+          "checks": [
+            "Native multi-class vs OvA",
+            "Class weighting for imbalance",
+            "Focal loss for hard classes",
+            "Hierarchical classification if applicable"
+          ]
+        },
+        "calibration": {
+          "weight": 0.25,
+          "checks": [
+            "Temperature scaling mentioned",
+            "Platt scaling or isotonic",
+            "Calibration curves planned"
+          ]
+        },
+        "metrics": {
+          "weight": 0.25,
+          "checks": [
+            "Macro F1 for imbalance",
+            "Top-3 accuracy metric",
+            "Per-class metrics",
+            "Confusion matrix analysis"
+          ]
+        },
+        "architecture": {
+          "weight": 0.20,
+          "checks": [
+            "XGBoost/LightGBM for tabular",
+            "Neural network option",
+            "Ensemble for diversity"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ma-005",
+      "name": "Deep Learning Architecture",
+      "description": "Test neural network architecture design",
+      "input": {
+        "task": "Design CNN for image classification",
+        "problem": {
+          "type": "image_classification",
+          "classes": 10,
+          "imageSize": "224x224",
+          "trainingSamples": 50000,
+          "testSamples": 10000
+        },
+        "requirements": {
+          "transferLearning": "Limited data, use pretrained",
+          "mobileDeployment": "Model must run on mobile",
+          "accuracy": "Target 95%+ accuracy"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "ResNet",
+          "MobileNet",
+          "pretrained",
+          "fine-tune",
+          "augmentation",
+          "dropout"
+        ],
+        "structure": {
+          "hasArchitectureChoice": true,
+          "hasTransferLearningPlan": true,
+          "hasRegularization": true,
+          "hasMobileOptimization": true
+        }
+      },
+      "evaluationCriteria": {
+        "architectureSelection": {
+          "weight": 0.30,
+          "checks": [
+            "MobileNet/EfficientNet for mobile",
+            "Transfer learning from ImageNet",
+            "Architecture comparison provided"
+          ]
+        },
+        "transferLearning": {
+          "weight": 0.25,
+          "checks": [
+            "Feature extraction vs fine-tuning",
+            "Layer freezing strategy",
+            "Learning rate scheduling"
+          ]
+        },
+        "regularization": {
+          "weight": 0.25,
+          "checks": [
+            "Data augmentation strategy",
+            "Dropout/BatchNorm",
+            "Early stopping"
+          ]
+        },
+        "mobileOptimization": {
+          "weight": 0.20,
+          "checks": [
+            "Model size constraints",
+            "Quantization mentioned",
+            "Inference latency considered"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "ma-edge-001",
+      "name": "Insufficient Data",
+      "description": "Handle small dataset constraints",
+      "input": {
+        "task": "Design model for 500 samples with 100 features"
+      },
+      "expectedBehavior": "Should warn about overfitting, suggest simple models, cross-validation, regularization",
+      "guardrailCheck": true
+    },
+    {
+      "id": "ma-edge-002",
+      "name": "Conflicting Requirements",
+      "description": "Handle impossible constraints",
+      "input": {
+        "task": "Build model that is highly accurate, fully interpretable, runs in 1ms, and uses deep learning"
+      },
+      "expectedBehavior": "Should flag tradeoffs and ask for priority ranking",
+      "guardrailCheck": true
+    },
+    {
+      "id": "ma-edge-003",
+      "name": "No Feature Engineering",
+      "description": "Handle raw data without preprocessing",
+      "input": {
+        "task": "Design model architecture",
+        "data": "Raw CSV with no preprocessing done"
+      },
+      "expectedBehavior": "Should request feature engineering report first or flag dependency",
+      "guardrailCheck": true
+    },
+    {
+      "id": "ma-edge-004",
+      "name": "Unrealistic Accuracy Target",
+      "description": "Handle impossible accuracy requirements",
+      "input": {
+        "task": "Build model with 99.99% accuracy on noisy real-world data"
+      },
+      "expectedBehavior": "Should set realistic expectations based on problem complexity",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "this will definitely work",
+      "100% accuracy",
+      "no need for validation"
+    ],
+    "mustAlwaysDo": [
+      "Consider baseline models first",
+      "Define evaluation metrics",
+      "Plan validation strategy",
+      "Address data constraints"
+    ],
+    "principles": [
+      "Start simple, add complexity only if needed",
+      "Match model to data size",
+      "Consider deployment constraints early",
+      "Plan for interpretability requirements"
+    ]
+  },
+  "codeTemplates": {
+    "python": ["sklearn", "xgboost", "lightgbm", "pytorch", "tensorflow"],
+    "r": ["parsnip", "tidymodels", "workflowsets", "stacks", "xgboost"]
+  }
+}

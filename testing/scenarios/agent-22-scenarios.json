@@ -1,0 +1,411 @@
+{
+  "agentId": 22,
+  "agentName": "Data Explorer",
+  "scenarios": [
+    {
+      "id": "de-001",
+      "name": "Basic EDA - Classification Dataset",
+      "description": "Test comprehensive EDA for a binary classification problem",
+      "input": {
+        "task": "Explore this customer churn dataset",
+        "dataset": {
+          "name": "customer_churn.csv",
+          "rows": 10000,
+          "columns": ["customer_id", "tenure", "monthly_charges", "total_charges", "contract", "payment_method", "internet_service", "churn"],
+          "target": "churn",
+          "targetDistribution": {"Yes": 2650, "No": 7350}
+        },
+        "goal": "Prepare for churn prediction modeling"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "class imbalance",
+          "correlation",
+          "missing",
+          "distribution",
+          "tenure",
+          "monthly_charges"
+        ],
+        "structure": {
+          "hasShapeInfo": true,
+          "hasMissingAnalysis": true,
+          "hasDistributions": true,
+          "hasCorrelations": true,
+          "hasTargetAnalysis": true,
+          "hasRecommendations": true
+        }
+      },
+      "evaluationCriteria": {
+        "completeness": {
+          "weight": 0.25,
+          "checks": [
+            "All columns analyzed",
+            "Data types identified",
+            "Missing values quantified",
+            "Target distribution reported"
+          ]
+        },
+        "quality": {
+          "weight": 0.30,
+          "checks": [
+            "Class imbalance flagged (26.5% vs 73.5%)",
+            "Correlation analysis includes target",
+            "Outliers identified",
+            "Visualizations described or produced"
+          ]
+        },
+        "insights": {
+          "weight": 0.25,
+          "checks": [
+            "Key predictive features identified",
+            "Data quality issues flagged",
+            "Actionable insights provided",
+            "Feature engineering suggestions"
+          ]
+        },
+        "handoff": {
+          "weight": 0.20,
+          "checks": [
+            "Clear summary for next agent",
+            "Artifact path specified",
+            "Key findings highlighted"
+          ]
+        }
+      }
+    },
+    {
+      "id": "de-002",
+      "name": "Regression Dataset with Missing Data",
+      "description": "Test handling of datasets with significant missing values",
+      "input": {
+        "task": "Analyze this housing price dataset",
+        "dataset": {
+          "name": "housing.csv",
+          "rows": 5000,
+          "columns": ["price", "sqft", "bedrooms", "bathrooms", "lot_size", "year_built", "garage", "pool", "neighborhood"],
+          "target": "price",
+          "missingRates": {"lot_size": 0.15, "garage": 0.08, "pool": 0.25, "year_built": 0.05}
+        },
+        "concerns": "Lots of missing data in some columns"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "missing",
+          "imputation",
+          "MCAR",
+          "MAR",
+          "correlation",
+          "skew"
+        ],
+        "structure": {
+          "hasMissingPatterns": true,
+          "hasMissingTypes": true,
+          "hasImputationStrategy": true,
+          "hasOutlierDetection": true
+        }
+      },
+      "evaluationCriteria": {
+        "missingAnalysis": {
+          "weight": 0.35,
+          "checks": [
+            "Missing rates calculated correctly",
+            "Missing patterns analyzed (MCAR/MAR/MNAR)",
+            "Imputation strategies suggested",
+            "Warns about 25% missing in pool"
+          ]
+        },
+        "dataQuality": {
+          "weight": 0.25,
+          "checks": [
+            "Price distribution analyzed (likely skewed)",
+            "Outliers in price/sqft identified",
+            "Categorical cardinality checked"
+          ]
+        },
+        "completeness": {
+          "weight": 0.20,
+          "checks": [
+            "All features analyzed",
+            "Target distribution shown",
+            "Correlations computed"
+          ]
+        },
+        "handoff": {
+          "weight": 0.20,
+          "checks": [
+            "Clear data quality summary",
+            "Preprocessing recommendations",
+            "Risk factors documented"
+          ]
+        }
+      }
+    },
+    {
+      "id": "de-003",
+      "name": "Time Series Dataset",
+      "description": "Test EDA for temporal data",
+      "input": {
+        "task": "Explore this sales forecasting dataset",
+        "dataset": {
+          "name": "daily_sales.csv",
+          "rows": 730,
+          "columns": ["date", "sales", "store_id", "day_of_week", "holiday", "promo", "temperature", "competitor_open"],
+          "timeRange": "2022-01-01 to 2023-12-31"
+        },
+        "goal": "Prepare for sales forecasting model"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "trend",
+          "seasonality",
+          "autocorrelation",
+          "stationarity",
+          "lag",
+          "decomposition"
+        ],
+        "structure": {
+          "hasTrendAnalysis": true,
+          "hasSeasonalityCheck": true,
+          "hasAutocorrelation": true,
+          "hasStationarityTest": true
+        }
+      },
+      "evaluationCriteria": {
+        "temporalAnalysis": {
+          "weight": 0.40,
+          "checks": [
+            "Trend identified and described",
+            "Seasonality patterns found (weekly, yearly)",
+            "Autocorrelation analyzed (ACF/PACF)",
+            "Stationarity tested (ADF/KPSS)"
+          ]
+        },
+        "featureAnalysis": {
+          "weight": 0.25,
+          "checks": [
+            "Holiday effect analyzed",
+            "Promo effect quantified",
+            "External factors (temperature, competitor) correlated"
+          ]
+        },
+        "completeness": {
+          "weight": 0.20,
+          "checks": [
+            "Full time range covered",
+            "Missing dates identified",
+            "Store-level patterns if relevant"
+          ]
+        },
+        "handoff": {
+          "weight": 0.15,
+          "checks": [
+            "Time series characteristics documented",
+            "Model type recommendations",
+            "Feature engineering suggestions for temporal"
+          ]
+        }
+      }
+    },
+    {
+      "id": "de-004",
+      "name": "Multi-Class Classification",
+      "description": "Test EDA for multi-class problem with high cardinality",
+      "input": {
+        "task": "Analyze customer segmentation dataset",
+        "dataset": {
+          "name": "customers.csv",
+          "rows": 50000,
+          "columns": ["customer_id", "age", "income", "spend_score", "recency", "frequency", "monetary", "segment"],
+          "target": "segment",
+          "classes": ["Premium", "Standard", "Budget", "Dormant", "At-Risk"],
+          "classDistribution": {"Premium": 5000, "Standard": 20000, "Budget": 15000, "Dormant": 5000, "At-Risk": 5000}
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "class distribution",
+          "segment",
+          "RFM",
+          "multicollinearity",
+          "feature importance"
+        ],
+        "structure": {
+          "hasMultiClassAnalysis": true,
+          "hasFeatureTargetRelationship": true,
+          "hasSegmentProfiles": true
+        }
+      },
+      "evaluationCriteria": {
+        "classAnalysis": {
+          "weight": 0.30,
+          "checks": [
+            "All 5 classes analyzed",
+            "Class imbalance noted",
+            "Class-wise feature distributions"
+          ]
+        },
+        "featureAnalysis": {
+          "weight": 0.30,
+          "checks": [
+            "RFM features analyzed together",
+            "Multicollinearity checked",
+            "Feature-target relationships explored"
+          ]
+        },
+        "profiling": {
+          "weight": 0.25,
+          "checks": [
+            "Segment profiles described",
+            "Key differentiating features identified",
+            "Business interpretation provided"
+          ]
+        },
+        "handoff": {
+          "weight": 0.15,
+          "checks": [
+            "Clear segment descriptions",
+            "Modeling recommendations"
+          ]
+        }
+      }
+    },
+    {
+      "id": "de-005",
+      "name": "Text Data EDA",
+      "description": "Test EDA for NLP dataset",
+      "input": {
+        "task": "Explore this product review dataset",
+        "dataset": {
+          "name": "reviews.csv",
+          "rows": 25000,
+          "columns": ["review_id", "product_id", "review_text", "rating", "helpful_votes", "verified_purchase", "date"],
+          "target": "rating",
+          "textColumn": "review_text"
+        },
+        "goal": "Sentiment analysis and review classification"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "text length",
+          "vocabulary",
+          "word frequency",
+          "sentiment",
+          "n-gram"
+        ],
+        "structure": {
+          "hasTextStatistics": true,
+          "hasWordAnalysis": true,
+          "hasRatingCorrelation": true
+        }
+      },
+      "evaluationCriteria": {
+        "textAnalysis": {
+          "weight": 0.35,
+          "checks": [
+            "Text length distribution analyzed",
+            "Vocabulary size computed",
+            "Word frequency analysis (top words)",
+            "N-gram analysis suggested"
+          ]
+        },
+        "targetRelationship": {
+          "weight": 0.25,
+          "checks": [
+            "Rating distribution shown",
+            "Text length vs rating correlation",
+            "Key words per rating level"
+          ]
+        },
+        "dataQuality": {
+          "weight": 0.20,
+          "checks": [
+            "Duplicate reviews checked",
+            "Empty/short reviews flagged",
+            "Language consistency"
+          ]
+        },
+        "handoff": {
+          "weight": 0.20,
+          "checks": [
+            "Preprocessing recommendations",
+            "Vectorization strategy suggestions",
+            "Class balance for modeling"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "de-edge-001",
+      "name": "No Dataset Provided",
+      "description": "Handle request without actual data",
+      "input": {
+        "task": "Analyze my dataset"
+      },
+      "expectedBehavior": "Should request dataset path or sample data before proceeding",
+      "guardrailCheck": true
+    },
+    {
+      "id": "de-edge-002",
+      "name": "Extremely Imbalanced Data",
+      "description": "Handle severely imbalanced classification",
+      "input": {
+        "dataset": {
+          "target": "fraud",
+          "distribution": {"fraud": 50, "legitimate": 9950}
+        }
+      },
+      "expectedBehavior": "Should prominently flag 0.5% minority class and recommend strategies",
+      "guardrailCheck": true
+    },
+    {
+      "id": "de-edge-003",
+      "name": "High Cardinality Categorical",
+      "description": "Handle categorical with many unique values",
+      "input": {
+        "dataset": {
+          "columns": ["user_id (50000 unique)", "product_id (10000 unique)", "category"]
+        }
+      },
+      "expectedBehavior": "Should warn about high cardinality and suggest encoding strategies",
+      "guardrailCheck": true
+    },
+    {
+      "id": "de-edge-004",
+      "name": "Data Leakage Risk",
+      "description": "Detect potential target leakage",
+      "input": {
+        "dataset": {
+          "columns": ["customer_id", "churn_date", "last_contact_before_churn", "churn"],
+          "target": "churn"
+        }
+      },
+      "expectedBehavior": "Should flag potential leakage in 'churn_date' and 'last_contact_before_churn'",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "I cannot analyze",
+      "skip the EDA",
+      "trust the data"
+    ],
+    "mustAlwaysDo": [
+      "Check for missing values",
+      "Analyze target distribution",
+      "Look for data quality issues",
+      "Provide actionable insights"
+    ],
+    "principles": [
+      "Never skip data quality checks",
+      "Always flag class imbalance",
+      "Identify potential leakage",
+      "Suggest appropriate visualizations"
+    ]
+  },
+  "codeTemplates": {
+    "python": ["pandas", "numpy", "matplotlib", "seaborn", "scipy"],
+    "r": ["tidyverse", "skimr", "DataExplorer", "corrr", "naniar"]
+  }
+}

@@ -1,0 +1,429 @@
+{
+  "agentId": 27,
+  "agentName": "MLOps Engineer",
+  "scenarios": [
+    {
+      "id": "mlops-001",
+      "name": "Model Deployment - REST API",
+      "description": "Test model serving API implementation",
+      "input": {
+        "task": "Deploy churn prediction model as REST API",
+        "model": {
+          "type": "XGBoost",
+          "inputFeatures": 50,
+          "outputType": "probability"
+        },
+        "requirements": {
+          "latency": "<100ms p99",
+          "throughput": "1000 requests/sec",
+          "availability": "99.9%"
+        },
+        "infrastructure": "Kubernetes"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "FastAPI",
+          "endpoint",
+          "health",
+          "predict",
+          "Dockerfile",
+          "kubernetes"
+        ],
+        "structure": {
+          "hasAPICode": true,
+          "hasDockerfile": true,
+          "hasKubernetesManifests": true,
+          "hasHealthCheck": true,
+          "hasLoadBalancing": true
+        }
+      },
+      "evaluationCriteria": {
+        "apiImplementation": {
+          "weight": 0.30,
+          "checks": [
+            "FastAPI or Flask implementation",
+            "/predict endpoint with proper schema",
+            "/health endpoint for liveness",
+            "Request/response validation"
+          ]
+        },
+        "containerization": {
+          "weight": 0.25,
+          "checks": [
+            "Multi-stage Dockerfile",
+            "Non-root user",
+            "Minimal base image",
+            "Dependencies pinned"
+          ]
+        },
+        "kubernetes": {
+          "weight": 0.25,
+          "checks": [
+            "Deployment with replicas",
+            "Service for load balancing",
+            "Resource limits defined",
+            "Liveness/readiness probes"
+          ]
+        },
+        "scalability": {
+          "weight": 0.20,
+          "checks": [
+            "HPA for autoscaling",
+            "Resource requests/limits",
+            "Connection pooling"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mlops-002",
+      "name": "CI/CD Pipeline for ML",
+      "description": "Test ML pipeline automation",
+      "input": {
+        "task": "Create CI/CD pipeline for model training and deployment",
+        "requirements": {
+          "triggers": ["code push", "scheduled daily", "manual"],
+          "stages": ["test", "train", "validate", "deploy"],
+          "platform": "GitHub Actions"
+        },
+        "validationGates": {
+          "minAUC": 0.85,
+          "maxLatency": "50ms",
+          "testCoverage": "80%"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "workflow",
+          "jobs",
+          "steps",
+          "validation",
+          "deploy",
+          "rollback"
+        ],
+        "structure": {
+          "hasWorkflowFile": true,
+          "hasTestStage": true,
+          "hasTrainStage": true,
+          "hasValidationGate": true,
+          "hasDeployStage": true
+        }
+      },
+      "evaluationCriteria": {
+        "pipelineStructure": {
+          "weight": 0.30,
+          "checks": [
+            "GitHub Actions workflow syntax",
+            "Sequential stages with dependencies",
+            "Proper triggers configured",
+            "Artifact passing between jobs"
+          ]
+        },
+        "validationGates": {
+          "weight": 0.30,
+          "checks": [
+            "Model performance validation",
+            "Latency check before deploy",
+            "Test coverage requirements",
+            "Fail-fast on gate failure"
+          ]
+        },
+        "deploymentStrategy": {
+          "weight": 0.25,
+          "checks": [
+            "Canary or blue-green deployment",
+            "Rollback capability",
+            "Environment promotion"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.15,
+          "checks": [
+            "Reusable workflows/actions",
+            "Secrets management",
+            "Caching for efficiency"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mlops-003",
+      "name": "Model Monitoring Setup",
+      "description": "Test production monitoring implementation",
+      "input": {
+        "task": "Set up comprehensive model monitoring",
+        "model": "Customer segmentation classifier",
+        "monitoringRequirements": {
+          "dataQuality": "Input feature drift detection",
+          "modelPerformance": "Prediction distribution monitoring",
+          "infrastructure": "Latency, errors, throughput"
+        },
+        "alerting": {
+          "driftThreshold": "PSI > 0.2",
+          "latencyThreshold": "p99 > 200ms",
+          "errorRateThreshold": "> 1%"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "drift",
+          "PSI",
+          "KS test",
+          "prometheus",
+          "grafana",
+          "alert"
+        ],
+        "structure": {
+          "hasDriftDetection": true,
+          "hasPerformanceMonitoring": true,
+          "hasAlertingRules": true,
+          "hasDashboard": true
+        }
+      },
+      "evaluationCriteria": {
+        "driftDetection": {
+          "weight": 0.30,
+          "checks": [
+            "PSI calculation for features",
+            "KS test for numerical features",
+            "Chi-square for categorical",
+            "Reference data baseline"
+          ]
+        },
+        "metricsCollection": {
+          "weight": 0.25,
+          "checks": [
+            "Prometheus metrics exposed",
+            "Prediction latency histogram",
+            "Request count by status",
+            "Feature value distributions"
+          ]
+        },
+        "alerting": {
+          "weight": 0.25,
+          "checks": [
+            "Alert rules for drift",
+            "Latency threshold alerts",
+            "Error rate alerts",
+            "PagerDuty/Slack integration"
+          ]
+        },
+        "dashboard": {
+          "weight": 0.20,
+          "checks": [
+            "Grafana dashboard config",
+            "Key metrics visualization",
+            "Historical trends"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mlops-004",
+      "name": "A/B Testing Infrastructure",
+      "description": "Test A/B testing setup for models",
+      "input": {
+        "task": "Implement A/B testing for new model version",
+        "context": {
+          "currentModel": "v1.0 (baseline)",
+          "newModel": "v2.0 (challenger)",
+          "metric": "conversion_rate",
+          "trafficSplit": "90% control, 10% treatment"
+        },
+        "requirements": {
+          "deterministicRouting": "Same user always sees same model",
+          "statisticalSignificance": "p < 0.05",
+          "minimumSampleSize": "10000 per variant"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "hash",
+          "traffic split",
+          "variant",
+          "p-value",
+          "sample size",
+          "significance"
+        ],
+        "structure": {
+          "hasTrafficSplitter": true,
+          "hasExperimentTracking": true,
+          "hasStatisticalAnalysis": true,
+          "hasResultsVisualization": true
+        }
+      },
+      "evaluationCriteria": {
+        "trafficRouting": {
+          "weight": 0.30,
+          "checks": [
+            "Deterministic user routing (hash-based)",
+            "Configurable traffic split",
+            "Consistent assignment across sessions"
+          ]
+        },
+        "experimentTracking": {
+          "weight": 0.25,
+          "checks": [
+            "Exposure logging",
+            "Outcome tracking",
+            "Variant assignment recorded"
+          ]
+        },
+        "statisticalAnalysis": {
+          "weight": 0.30,
+          "checks": [
+            "Sample size calculation",
+            "P-value computation",
+            "Effect size estimation",
+            "Confidence intervals"
+          ]
+        },
+        "operationalization": {
+          "weight": 0.15,
+          "checks": [
+            "Experiment start/stop controls",
+            "Winner promotion workflow",
+            "Results dashboard"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mlops-005",
+      "name": "Retraining Pipeline",
+      "description": "Test automated retraining setup",
+      "input": {
+        "task": "Implement automated model retraining pipeline",
+        "triggers": {
+          "scheduled": "Weekly",
+          "driftTriggered": "When PSI > 0.2",
+          "performanceTriggered": "When AUC drops > 5%"
+        },
+        "requirements": {
+          "dataValidation": "Check new data quality",
+          "modelValidation": "Must beat current production model",
+          "deployment": "Auto-deploy if validation passes"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "airflow",
+          "schedule",
+          "trigger",
+          "validation",
+          "compare",
+          "deploy"
+        ],
+        "structure": {
+          "hasTriggerMechanism": true,
+          "hasDataPipeline": true,
+          "hasTrainingStep": true,
+          "hasValidationGate": true,
+          "hasDeploymentStep": true
+        }
+      },
+      "evaluationCriteria": {
+        "triggerLogic": {
+          "weight": 0.25,
+          "checks": [
+            "Scheduled trigger setup",
+            "Drift-based trigger",
+            "Performance-based trigger",
+            "Manual override option"
+          ]
+        },
+        "pipeline": {
+          "weight": 0.30,
+          "checks": [
+            "Data extraction and validation",
+            "Feature engineering step",
+            "Model training with versioning",
+            "Artifact storage"
+          ]
+        },
+        "validation": {
+          "weight": 0.25,
+          "checks": [
+            "Champion-challenger comparison",
+            "Minimum performance threshold",
+            "A/B test period option"
+          ]
+        },
+        "deployment": {
+          "weight": 0.20,
+          "checks": [
+            "Automatic deployment on validation pass",
+            "Canary deployment option",
+            "Rollback mechanism"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "mlops-edge-001",
+      "name": "No Evaluation Report",
+      "description": "Handle deployment request without evaluation",
+      "input": {
+        "task": "Deploy this model to production"
+      },
+      "expectedBehavior": "Should request evaluation report from Agent 26 before deployment",
+      "guardrailCheck": true
+    },
+    {
+      "id": "mlops-edge-002",
+      "name": "Friday Deployment",
+      "description": "Handle risky deployment timing",
+      "input": {
+        "task": "Deploy new model this Friday at 5pm"
+      },
+      "expectedBehavior": "Should warn against Friday deployments, suggest Monday or early week",
+      "guardrailCheck": true
+    },
+    {
+      "id": "mlops-edge-003",
+      "name": "No Rollback Plan",
+      "description": "Handle deployment without rollback strategy",
+      "input": {
+        "task": "Replace current model with new version"
+      },
+      "expectedBehavior": "Should require rollback plan and previous model preservation",
+      "guardrailCheck": true
+    },
+    {
+      "id": "mlops-edge-004",
+      "name": "No Monitoring",
+      "description": "Handle deployment without monitoring",
+      "input": {
+        "task": "Deploy model, we'll add monitoring later"
+      },
+      "expectedBehavior": "Should refuse deployment without monitoring, explain risks",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "deploy without validation",
+      "skip monitoring",
+      "no rollback needed",
+      "deploy on Friday"
+    ],
+    "mustAlwaysDo": [
+      "Include health checks",
+      "Set up monitoring before deployment",
+      "Plan rollback strategy",
+      "Validate model before production"
+    ],
+    "principles": [
+      "Deployment is the beginning, not the end",
+      "Monitor before you need to",
+      "Automate everything",
+      "Simple serving beats clever"
+    ]
+  },
+  "codeTemplates": {
+    "python": ["fastapi", "flask", "mlflow", "seldon", "kserve", "prometheus_client"],
+    "r": ["plumber", "vetiver", "pins", "targets", "shiny"]
+  }
+}

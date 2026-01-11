@@ -56,7 +56,13 @@ testing/
 │   ├── agent-1-scenarios.json  # Problem Framer scenarios
 │   ├── agent-3-scenarios.json  # Architect scenarios
 │   ├── agent-6-scenarios.json  # Engineer scenarios
-│   └── agent-19-scenarios.json # Database Engineer scenarios
+│   ├── agent-19-scenarios.json # Database Engineer scenarios
+│   ├── agent-22-scenarios.json # Data Explorer scenarios
+│   ├── agent-23-scenarios.json # Feature Engineer scenarios
+│   ├── agent-24-scenarios.json # Model Architect scenarios
+│   ├── agent-25-scenarios.json # ML Engineer scenarios
+│   ├── agent-26-scenarios.json # Model Evaluator scenarios
+│   └── agent-27-scenarios.json # MLOps Engineer scenarios
 ├── fixtures/
 │   ├── inputs/                 # Sample inputs for each agent
 │   ├── expected-outputs/       # Golden files for comparison
@@ -341,6 +347,95 @@ async function evaluateWithLLM(
 - Review the agent's guardrails section
 - Add explicit negative examples
 - Strengthen boundary instructions
+
+## Data Science Agent Test Coverage
+
+The testing framework now includes comprehensive tests for the Data Science agent suite (Agents 22-27):
+
+### Agent 22: Data Explorer
+| Scenario | Description | Key Checks |
+|----------|-------------|------------|
+| de-001 | Binary classification EDA | Class imbalance, correlations, distributions |
+| de-002 | Missing data handling | MCAR/MAR analysis, imputation strategies |
+| de-003 | Time series EDA | Trend, seasonality, stationarity tests |
+| de-004 | Multi-class classification | Segment profiling, feature-target relationships |
+| de-005 | Text data EDA | Vocabulary analysis, word frequencies |
+
+### Agent 23: Feature Engineer
+| Scenario | Description | Key Checks |
+|----------|-------------|------------|
+| fe-001 | Numeric transformations | Log transform, interactions, binning |
+| fe-002 | Categorical encoding | Target encoding, one-hot, high cardinality |
+| fe-003 | Time-based features | Lag features, rolling stats, cyclical encoding |
+| fe-004 | Text feature extraction | TF-IDF, embeddings, n-grams |
+| fe-005 | Feature selection | Filter/wrapper/embedded methods |
+
+### Agent 24: Model Architect
+| Scenario | Description | Key Checks |
+|----------|-------------|------------|
+| ma-001 | Binary classification | Imbalance handling, threshold optimization |
+| ma-002 | Regression architecture | Target transformation, robustness |
+| ma-003 | Time series forecasting | Multi-step prediction, uncertainty |
+| ma-004 | Multi-class classification | Calibration, focal loss |
+| ma-005 | Deep learning | Transfer learning, mobile optimization |
+
+### Agent 25: ML Engineer
+| Scenario | Description | Key Checks |
+|----------|-------------|------------|
+| mle-001 | XGBoost training | Cross-validation, early stopping |
+| mle-002 | Deep learning training | Training loop, checkpointing |
+| mle-003 | Distributed training | DDP, mixed precision, gradient accumulation |
+| mle-004 | Hyperparameter optimization | Optuna, pruning, search space |
+| mle-005 | Ensemble training | Stacking, out-of-fold predictions |
+
+### Agent 26: Model Evaluator
+| Scenario | Description | Key Checks |
+|----------|-------------|------------|
+| me-001 | Binary classification evaluation | PR-AUC, threshold optimization |
+| me-002 | Regression evaluation | Residual analysis, error segmentation |
+| me-003 | Fairness evaluation | Demographic parity, equalized odds |
+| me-004 | Interpretability | SHAP, feature importance, explanations |
+| me-005 | Cross-validation analysis | Stability, confidence intervals |
+
+### Agent 27: MLOps Engineer
+| Scenario | Description | Key Checks |
+|----------|-------------|------------|
+| mlops-001 | Model deployment | REST API, Docker, Kubernetes |
+| mlops-002 | CI/CD pipeline | Validation gates, deployment strategy |
+| mlops-003 | Model monitoring | Drift detection, alerting, dashboards |
+| mlops-004 | A/B testing | Traffic splitting, statistical analysis |
+| mlops-005 | Retraining pipeline | Triggers, validation, auto-deployment |
+
+### Running Data Science Agent Tests
+
+```bash
+# Test all data science agents
+npx ts-node run-tests.ts --agent 22
+npx ts-node run-tests.ts --agent 23
+npx ts-node run-tests.ts --agent 24
+npx ts-node run-tests.ts --agent 25
+npx ts-node run-tests.ts --agent 26
+npx ts-node run-tests.ts --agent 27
+
+# Test specific scenario
+npx ts-node run-tests.ts --agent 22 --scenario de-001
+
+# Run all tests
+npx ts-node run-tests.ts --all
+```
+
+### Data Science-Specific Evaluation Criteria
+
+The DS agents have specialized evaluation dimensions:
+
+| Agent | Key Evaluation Dimension | Weight |
+|-------|-------------------------|--------|
+| 22 | Insight quality, leakage detection | 25% |
+| 23 | Leakage prevention, pipeline compatibility | 30% |
+| 24 | Model selection justification, constraints | 30% |
+| 25 | Training efficiency, reproducibility | 30% |
+| 26 | Metric appropriateness, fairness | 35% |
+| 27 | Monitoring completeness, rollback planning | 30% |
 
 ## Contributing
 

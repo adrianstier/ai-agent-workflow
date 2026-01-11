@@ -1,0 +1,404 @@
+{
+  "agentId": 23,
+  "agentName": "Feature Engineer",
+  "scenarios": [
+    {
+      "id": "fe-001",
+      "name": "Numeric Feature Engineering",
+      "description": "Test numeric transformations and interactions",
+      "input": {
+        "task": "Engineer features for house price prediction",
+        "currentFeatures": {
+          "numeric": ["sqft", "bedrooms", "bathrooms", "lot_size", "year_built", "garage_sqft"],
+          "target": "price"
+        },
+        "edaFindings": {
+          "priceSkewed": true,
+          "outliers": ["lot_size", "price"],
+          "correlations": {"sqft": 0.7, "bathrooms": 0.5, "bedrooms": 0.4}
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "log transform",
+          "interaction",
+          "ratio",
+          "bins",
+          "polynomial",
+          "sqft_per_bedroom"
+        ],
+        "structure": {
+          "hasTransformations": true,
+          "hasInteractions": true,
+          "hasRatios": true,
+          "hasBinning": true
+        }
+      },
+      "evaluationCriteria": {
+        "creativity": {
+          "weight": 0.25,
+          "checks": [
+            "Novel feature combinations created",
+            "Domain-relevant interactions (sqft/bedrooms)",
+            "Price per sqft suggested"
+          ]
+        },
+        "completeness": {
+          "weight": 0.25,
+          "checks": [
+            "All numeric features transformed",
+            "Log transform for skewed price",
+            "Age feature from year_built"
+          ]
+        },
+        "leakagePrevention": {
+          "weight": 0.25,
+          "checks": [
+            "No future information used",
+            "Cross-validation strategy mentioned",
+            "Target encoding with proper CV"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.25,
+          "checks": [
+            "Reusable pipeline code",
+            "Python AND/OR R templates provided",
+            "sklearn/tidymodels compatible"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fe-002",
+      "name": "Categorical Encoding",
+      "description": "Test handling of various categorical types",
+      "input": {
+        "task": "Encode categorical features for customer churn model",
+        "features": {
+          "binary": ["gender", "senior_citizen", "partner"],
+          "nominal": ["payment_method", "internet_service"],
+          "ordinal": ["contract (Month-to-month < One year < Two year)"],
+          "highCardinality": ["zip_code (1000 unique)"]
+        },
+        "target": "churn"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "one-hot",
+          "target encoding",
+          "ordinal",
+          "label encoding",
+          "frequency encoding"
+        ],
+        "structure": {
+          "hasBinaryEncoding": true,
+          "hasNominalEncoding": true,
+          "hasOrdinalEncoding": true,
+          "hasHighCardinalityStrategy": true
+        }
+      },
+      "evaluationCriteria": {
+        "encodingChoice": {
+          "weight": 0.30,
+          "checks": [
+            "Appropriate encoding for each type",
+            "Binary gets label encoding",
+            "Nominal gets one-hot or target encoding",
+            "Ordinal preserves order"
+          ]
+        },
+        "highCardinality": {
+          "weight": 0.30,
+          "checks": [
+            "zip_code handled with target encoding or embedding",
+            "Warns about one-hot explosion",
+            "Frequency encoding as alternative"
+          ]
+        },
+        "leakagePrevention": {
+          "weight": 0.25,
+          "checks": [
+            "Target encoding uses CV",
+            "Fit on train, transform test",
+            "Unknown category handling"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.15,
+          "checks": [
+            "Pipeline-compatible code",
+            "Category_encoders or recipes used"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fe-003",
+      "name": "Time-Based Features",
+      "description": "Test temporal feature engineering",
+      "input": {
+        "task": "Create features for sales forecasting",
+        "data": {
+          "dateColumn": "date",
+          "targetColumn": "sales",
+          "granularity": "daily",
+          "history": "3 years"
+        },
+        "edaFindings": {
+          "weeklySeasonality": true,
+          "yearlySeasonality": true,
+          "trend": "slight upward",
+          "holidays_effect": true
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "lag",
+          "rolling",
+          "cyclical",
+          "sin",
+          "cos",
+          "holiday"
+        ],
+        "structure": {
+          "hasLagFeatures": true,
+          "hasRollingFeatures": true,
+          "hasCyclicalEncoding": true,
+          "hasHolidayFeatures": true
+        }
+      },
+      "evaluationCriteria": {
+        "temporalFeatures": {
+          "weight": 0.35,
+          "checks": [
+            "Appropriate lag features (1, 7, 30, 365)",
+            "Rolling statistics (mean, std, min, max)",
+            "Day of week/month cyclical encoding",
+            "Year-over-year comparisons"
+          ]
+        },
+        "seasonality": {
+          "weight": 0.25,
+          "checks": [
+            "Weekly seasonality captured (sin/cos)",
+            "Yearly seasonality captured",
+            "Holiday flags added"
+          ]
+        },
+        "leakagePrevention": {
+          "weight": 0.25,
+          "checks": [
+            "No future data in lag features",
+            "Rolling windows backward-looking only",
+            "Time-based train/test split mentioned"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.15,
+          "checks": [
+            "Vectorized operations used",
+            "Efficient rolling calculations"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fe-004",
+      "name": "Text Feature Engineering",
+      "description": "Test text feature extraction",
+      "input": {
+        "task": "Create features from product reviews for sentiment classification",
+        "data": {
+          "textColumn": "review_text",
+          "target": "sentiment",
+          "avgLength": 150,
+          "vocabulary": 50000
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "TF-IDF",
+          "word count",
+          "sentiment score",
+          "n-gram",
+          "embedding"
+        ],
+        "structure": {
+          "hasBasicStats": true,
+          "hasTFIDF": true,
+          "hasEmbeddings": true,
+          "hasNGrams": true
+        }
+      },
+      "evaluationCriteria": {
+        "textFeatures": {
+          "weight": 0.30,
+          "checks": [
+            "Basic stats (length, word count, unique words)",
+            "TF-IDF vectorization",
+            "N-gram features (1-2 or 1-3)",
+            "Pre-trained embeddings option"
+          ]
+        },
+        "preprocessing": {
+          "weight": 0.25,
+          "checks": [
+            "Text cleaning pipeline",
+            "Stopword handling",
+            "Lemmatization/stemming option"
+          ]
+        },
+        "advancedOptions": {
+          "weight": 0.25,
+          "checks": [
+            "Sentiment lexicon features",
+            "Part-of-speech features",
+            "BERT/transformer option mentioned"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.20,
+          "checks": [
+            "sklearn Pipeline compatible",
+            "Memory-efficient for large vocab"
+          ]
+        }
+      }
+    },
+    {
+      "id": "fe-005",
+      "name": "Feature Selection",
+      "description": "Test feature selection after engineering",
+      "input": {
+        "task": "Select best features from 200 engineered features",
+        "context": {
+          "totalFeatures": 200,
+          "target": "churn",
+          "trainingRows": 50000,
+          "correlatedGroups": "Many features highly correlated"
+        },
+        "constraints": {
+          "modelType": "XGBoost",
+          "maxFeatures": 50,
+          "interpretabilityRequired": true
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "correlation filter",
+          "variance",
+          "mutual information",
+          "importance",
+          "RFE"
+        ],
+        "structure": {
+          "hasFilterMethods": true,
+          "hasWrapperMethods": true,
+          "hasEmbeddedMethods": true,
+          "hasSelectionPipeline": true
+        }
+      },
+      "evaluationCriteria": {
+        "methodology": {
+          "weight": 0.30,
+          "checks": [
+            "Filter methods for initial reduction",
+            "Wrapper methods (RFE) considered",
+            "Embedded methods (tree importance)",
+            "Multi-stage selection approach"
+          ]
+        },
+        "correlationHandling": {
+          "weight": 0.25,
+          "checks": [
+            "Correlation threshold defined",
+            "VIF for multicollinearity",
+            "Selection among correlated groups"
+          ]
+        },
+        "validation": {
+          "weight": 0.25,
+          "checks": [
+            "Cross-validation in selection",
+            "Stability of selected features",
+            "Performance comparison"
+          ]
+        },
+        "interpretability": {
+          "weight": 0.20,
+          "checks": [
+            "Selected features interpretable",
+            "Feature importance ranking",
+            "Business relevance considered"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "fe-edge-001",
+      "name": "No EDA Report",
+      "description": "Handle request without prior EDA",
+      "input": {
+        "task": "Create features for this dataset"
+      },
+      "expectedBehavior": "Should request EDA findings or basic data description before engineering",
+      "guardrailCheck": true
+    },
+    {
+      "id": "fe-edge-002",
+      "name": "Target Leakage Risk",
+      "description": "Detect and prevent target leakage",
+      "input": {
+        "task": "Create features including 'days_until_churn' for predicting churn"
+      },
+      "expectedBehavior": "Should refuse to use 'days_until_churn' as it leaks the target",
+      "guardrailCheck": true
+    },
+    {
+      "id": "fe-edge-003",
+      "name": "Memory Constraints",
+      "description": "Handle large one-hot encoding request",
+      "input": {
+        "task": "One-hot encode product_id with 100,000 unique values"
+      },
+      "expectedBehavior": "Should warn about memory issues and suggest alternatives (target encoding, embeddings)",
+      "guardrailCheck": true
+    },
+    {
+      "id": "fe-edge-004",
+      "name": "Missing Target",
+      "description": "Handle unsupervised feature engineering",
+      "input": {
+        "task": "Engineer features for clustering (no target)"
+      },
+      "expectedBehavior": "Should adapt strategy for unsupervised learning (no target encoding, focus on transformations)",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "fit_transform on full data",
+      "use future data",
+      "skip validation"
+    ],
+    "mustAlwaysDo": [
+      "Prevent target leakage",
+      "Use cross-validation for target encoding",
+      "Fit on train only",
+      "Handle unknown categories"
+    ],
+    "principles": [
+      "Leakage prevention is paramount",
+      "Pipeline-compatible transformations",
+      "Document all transformations",
+      "Consider model requirements"
+    ]
+  },
+  "codeTemplates": {
+    "python": ["sklearn", "category_encoders", "feature_engine", "pandas"],
+    "r": ["recipes", "tidymodels", "embed", "textrecipes"]
+  }
+}

@@ -1,0 +1,437 @@
+{
+  "agentId": 25,
+  "agentName": "ML Engineer",
+  "scenarios": [
+    {
+      "id": "mle-001",
+      "name": "XGBoost Training Pipeline",
+      "description": "Test implementation of gradient boosting training",
+      "input": {
+        "task": "Implement XGBoost training for churn prediction",
+        "architecture": {
+          "model": "XGBoost",
+          "hyperparameters": {
+            "max_depth": [3, 6, 9],
+            "learning_rate": [0.01, 0.1],
+            "n_estimators": [100, 500, 1000]
+          }
+        },
+        "data": {
+          "trainRows": 80000,
+          "testRows": 20000,
+          "features": 50
+        },
+        "requirements": {
+          "earlyStoppingPatience": 50,
+          "crossValidation": "5-fold stratified"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "xgboost",
+          "DMatrix",
+          "early_stopping",
+          "eval_set",
+          "StratifiedKFold",
+          "fit"
+        ],
+        "structure": {
+          "hasDataPreparation": true,
+          "hasHyperparameterTuning": true,
+          "hasEarlyStopping": true,
+          "hasCrossValidation": true,
+          "hasModelSaving": true
+        }
+      },
+      "evaluationCriteria": {
+        "implementation": {
+          "weight": 0.30,
+          "checks": [
+            "DMatrix or DataFrame properly created",
+            "Eval set configured for early stopping",
+            "Class weights handled for imbalance",
+            "Random state set for reproducibility"
+          ]
+        },
+        "tuning": {
+          "weight": 0.30,
+          "checks": [
+            "GridSearchCV or Bayesian optimization",
+            "Stratified cross-validation",
+            "Early stopping prevents overfitting",
+            "Best parameters extracted"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.25,
+          "checks": [
+            "Reusable training function",
+            "Python AND/OR R implementation",
+            "Logging included",
+            "Memory efficient"
+          ]
+        },
+        "artifacts": {
+          "weight": 0.15,
+          "checks": [
+            "Model saved properly (pickle/joblib/native)",
+            "Training metrics logged",
+            "Hyperparameters recorded"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mle-002",
+      "name": "Deep Learning Training",
+      "description": "Test neural network training implementation",
+      "input": {
+        "task": "Implement PyTorch training loop for image classification",
+        "architecture": {
+          "model": "ResNet18 transfer learning",
+          "pretrained": true,
+          "numClasses": 10
+        },
+        "data": {
+          "trainSamples": 40000,
+          "valSamples": 10000,
+          "imageSize": "224x224"
+        },
+        "requirements": {
+          "epochs": 50,
+          "batchSize": 32,
+          "optimizer": "AdamW",
+          "scheduler": "CosineAnnealing"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "torch",
+          "DataLoader",
+          "optimizer",
+          "scheduler",
+          "backward",
+          "checkpoint"
+        ],
+        "structure": {
+          "hasDataLoaders": true,
+          "hasTrainingLoop": true,
+          "hasValidation": true,
+          "hasCheckpointing": true,
+          "hasAugmentation": true
+        }
+      },
+      "evaluationCriteria": {
+        "trainingLoop": {
+          "weight": 0.30,
+          "checks": [
+            "Proper forward/backward pass",
+            "Gradient zeroing before backward",
+            "Mixed precision training option",
+            "Gradient clipping if needed"
+          ]
+        },
+        "dataHandling": {
+          "weight": 0.25,
+          "checks": [
+            "DataLoader with proper batch size",
+            "Data augmentation pipeline",
+            "Pin memory for GPU",
+            "Proper device handling"
+          ]
+        },
+        "optimization": {
+          "weight": 0.25,
+          "checks": [
+            "AdamW optimizer configured",
+            "Learning rate scheduler",
+            "Weight decay for regularization",
+            "Warm-up if applicable"
+          ]
+        },
+        "checkpointing": {
+          "weight": 0.20,
+          "checks": [
+            "Best model saved on val improvement",
+            "Training state resumable",
+            "Metrics logged each epoch"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mle-003",
+      "name": "Distributed Training",
+      "description": "Test multi-GPU/distributed training setup",
+      "input": {
+        "task": "Scale training to multiple GPUs",
+        "context": {
+          "gpus": 4,
+          "framework": "PyTorch",
+          "model": "Large transformer",
+          "dataSize": "1TB"
+        },
+        "requirements": {
+          "strategy": "Data parallel",
+          "mixedPrecision": true,
+          "gradient_accumulation": 4
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "DistributedDataParallel",
+          "DataLoader",
+          "gradient_accumulation",
+          "amp",
+          "sync_batchnorm"
+        ],
+        "structure": {
+          "hasDistributedSetup": true,
+          "hasMixedPrecision": true,
+          "hasGradientAccumulation": true,
+          "hasDataSharding": true
+        }
+      },
+      "evaluationCriteria": {
+        "distributedSetup": {
+          "weight": 0.35,
+          "checks": [
+            "DDP properly initialized",
+            "Process group setup",
+            "DistributedSampler for data",
+            "All-reduce for gradients"
+          ]
+        },
+        "efficiency": {
+          "weight": 0.30,
+          "checks": [
+            "Mixed precision with autocast",
+            "GradScaler for FP16",
+            "Gradient accumulation implemented",
+            "Memory optimization"
+          ]
+        },
+        "robustness": {
+          "weight": 0.20,
+          "checks": [
+            "Fault tolerance/checkpointing",
+            "Proper cleanup on exit",
+            "Synchronized batch norm"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.15,
+          "checks": [
+            "Works with single GPU fallback",
+            "Configurable world size",
+            "Clear documentation"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mle-004",
+      "name": "Hyperparameter Optimization",
+      "description": "Test automated hyperparameter tuning",
+      "input": {
+        "task": "Implement Optuna-based hyperparameter optimization",
+        "model": "LightGBM",
+        "searchSpace": {
+          "num_leaves": [20, 150],
+          "learning_rate": [0.01, 0.3],
+          "feature_fraction": [0.5, 1.0],
+          "bagging_fraction": [0.5, 1.0],
+          "min_data_in_leaf": [10, 100]
+        },
+        "budget": {
+          "trials": 100,
+          "timeout": "2 hours"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "optuna",
+          "study",
+          "trial.suggest",
+          "pruning",
+          "best_params"
+        ],
+        "structure": {
+          "hasStudySetup": true,
+          "hasObjectiveFunction": true,
+          "hasPruning": true,
+          "hasBestParamsExtraction": true
+        }
+      },
+      "evaluationCriteria": {
+        "optunaSetup": {
+          "weight": 0.30,
+          "checks": [
+            "Study created with proper sampler",
+            "Objective function defined",
+            "Search space properly specified",
+            "Pruner configured"
+          ]
+        },
+        "efficiency": {
+          "weight": 0.25,
+          "checks": [
+            "TPE or CMA-ES sampler",
+            "Median pruner or similar",
+            "Parallel trials if applicable",
+            "Timeout handling"
+          ]
+        },
+        "integration": {
+          "weight": 0.25,
+          "checks": [
+            "Cross-validation in objective",
+            "Proper metric optimization (maximize/minimize)",
+            "Results persistence (database)"
+          ]
+        },
+        "output": {
+          "weight": 0.20,
+          "checks": [
+            "Best parameters extracted",
+            "Trial history available",
+            "Visualization code provided"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mle-005",
+      "name": "Ensemble Training",
+      "description": "Test ensemble model training",
+      "input": {
+        "task": "Train stacking ensemble for competition",
+        "baseModels": ["XGBoost", "LightGBM", "CatBoost", "RandomForest"],
+        "metaModel": "Logistic Regression",
+        "data": {
+          "trainRows": 100000,
+          "features": 200
+        },
+        "requirements": {
+          "outOfFoldPredictions": true,
+          "blending": "Weighted average as alternative"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "stacking",
+          "out-of-fold",
+          "meta_model",
+          "cross_val_predict",
+          "blend"
+        ],
+        "structure": {
+          "hasBaseModelTraining": true,
+          "hasOOFPredictions": true,
+          "hasMetaModelTraining": true,
+          "hasBlendingAlternative": true
+        }
+      },
+      "evaluationCriteria": {
+        "stackingImplementation": {
+          "weight": 0.35,
+          "checks": [
+            "Out-of-fold predictions generated",
+            "No data leakage in stacking",
+            "Meta model trained on OOF",
+            "Test predictions from all base models"
+          ]
+        },
+        "baseModels": {
+          "weight": 0.25,
+          "checks": [
+            "Each base model properly trained",
+            "Diverse model selection",
+            "Individual model validation"
+          ]
+        },
+        "blending": {
+          "weight": 0.20,
+          "checks": [
+            "Weighted average as option",
+            "Optimal weights found via CV",
+            "Simple average baseline"
+          ]
+        },
+        "codeQuality": {
+          "weight": 0.20,
+          "checks": [
+            "Reusable stacking class/function",
+            "sklearn compatible API",
+            "Memory efficient OOF generation"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "mle-edge-001",
+      "name": "Missing Architecture",
+      "description": "Handle training request without architecture spec",
+      "input": {
+        "task": "Train a model on this data"
+      },
+      "expectedBehavior": "Should request architecture document from Agent 24 or ask for model specification",
+      "guardrailCheck": true
+    },
+    {
+      "id": "mle-edge-002",
+      "name": "GPU Out of Memory",
+      "description": "Handle OOM scenario",
+      "input": {
+        "task": "Train ResNet152 with batch_size=256 on 8GB GPU"
+      },
+      "expectedBehavior": "Should suggest gradient accumulation, mixed precision, or smaller batch size",
+      "guardrailCheck": true
+    },
+    {
+      "id": "mle-edge-003",
+      "name": "Overfitting Detection",
+      "description": "Handle clear overfitting scenario",
+      "input": {
+        "task": "Training shows 99% train accuracy but 60% validation accuracy"
+      },
+      "expectedBehavior": "Should diagnose overfitting and suggest remediation (regularization, early stopping, data augmentation)",
+      "guardrailCheck": true
+    },
+    {
+      "id": "mle-edge-004",
+      "name": "Non-Converging Training",
+      "description": "Handle training that won't converge",
+      "input": {
+        "task": "Loss is NaN after a few epochs"
+      },
+      "expectedBehavior": "Should suggest learning rate reduction, gradient clipping, data normalization checks",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "train on full data without validation",
+      "ignore early stopping",
+      "hardcode random seed"
+    ],
+    "mustAlwaysDo": [
+      "Set random seeds for reproducibility",
+      "Include validation monitoring",
+      "Save model checkpoints",
+      "Log training metrics"
+    ],
+    "principles": [
+      "Reproducibility through random seeds",
+      "Monitor for overfitting",
+      "Efficient resource utilization",
+      "Clear experiment tracking"
+    ]
+  },
+  "codeTemplates": {
+    "python": ["sklearn", "xgboost", "lightgbm", "pytorch", "tensorflow", "optuna"],
+    "r": ["tidymodels", "xgboost", "lightgbm", "ranger", "mlr3", "mlflow"]
+  }
+}

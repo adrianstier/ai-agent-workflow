@@ -1,0 +1,411 @@
+{
+  "agentId": 26,
+  "agentName": "Model Evaluator",
+  "scenarios": [
+    {
+      "id": "me-001",
+      "name": "Binary Classification Evaluation",
+      "description": "Test comprehensive evaluation of binary classifier",
+      "input": {
+        "task": "Evaluate fraud detection model",
+        "model": "XGBoost binary classifier",
+        "results": {
+          "testSetSize": 20000,
+          "positiveClass": "fraud (1%)",
+          "predictions": "y_pred and y_proba available"
+        },
+        "requirements": {
+          "businessMetric": "Minimize fraud losses while keeping false positives manageable",
+          "threshold": "Need optimal threshold, not default 0.5",
+          "regulatory": "Need explainability for rejected transactions"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "precision",
+          "recall",
+          "F1",
+          "ROC-AUC",
+          "PR-AUC",
+          "confusion matrix",
+          "threshold"
+        ],
+        "structure": {
+          "hasConfusionMatrix": true,
+          "hasROCCurve": true,
+          "hasPRCurve": true,
+          "hasThresholdAnalysis": true,
+          "hasBusinessImpact": true
+        }
+      },
+      "evaluationCriteria": {
+        "metrics": {
+          "weight": 0.30,
+          "checks": [
+            "Precision, recall, F1 computed",
+            "ROC-AUC and PR-AUC (crucial for imbalanced)",
+            "Confusion matrix with counts and rates",
+            "Focus on PR-AUC over ROC-AUC for imbalanced"
+          ]
+        },
+        "thresholdOptimization": {
+          "weight": 0.25,
+          "checks": [
+            "Threshold sweep performed",
+            "Business-optimal threshold identified",
+            "Precision-recall tradeoff visualized",
+            "Cost-sensitive threshold analysis"
+          ]
+        },
+        "businessTranslation": {
+          "weight": 0.25,
+          "checks": [
+            "Dollar impact of false positives/negatives",
+            "Operating point recommendation",
+            "Stakeholder-friendly summary"
+          ]
+        },
+        "interpretability": {
+          "weight": 0.20,
+          "checks": [
+            "SHAP values for explanations",
+            "Feature importance reported",
+            "Example predictions explained"
+          ]
+        }
+      }
+    },
+    {
+      "id": "me-002",
+      "name": "Regression Model Evaluation",
+      "description": "Test evaluation of regression model",
+      "input": {
+        "task": "Evaluate house price prediction model",
+        "model": "Gradient boosting regressor",
+        "results": {
+          "testSetSize": 10000,
+          "targetRange": "$50K - $2M",
+          "predictions": "y_pred available"
+        },
+        "requirements": {
+          "accuracy": "MAPE < 10%",
+          "outlierAnalysis": "Understand where model fails",
+          "uncertainty": "Need prediction intervals"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "RMSE",
+          "MAE",
+          "MAPE",
+          "R²",
+          "residual",
+          "quantile"
+        ],
+        "structure": {
+          "hasMainMetrics": true,
+          "hasResidualAnalysis": true,
+          "hasErrorDistribution": true,
+          "hasSegmentedAnalysis": true
+        }
+      },
+      "evaluationCriteria": {
+        "metrics": {
+          "weight": 0.25,
+          "checks": [
+            "RMSE, MAE, MAPE computed",
+            "R² and adjusted R²",
+            "Median absolute error for robustness",
+            "Metrics on log-scale if target transformed"
+          ]
+        },
+        "residualAnalysis": {
+          "weight": 0.30,
+          "checks": [
+            "Residual vs predicted plot",
+            "Residual distribution (normality check)",
+            "Heteroscedasticity detection",
+            "Outlier identification"
+          ]
+        },
+        "segmentation": {
+          "weight": 0.25,
+          "checks": [
+            "Error by price range",
+            "Error by geography/segment",
+            "Worst prediction analysis"
+          ]
+        },
+        "uncertainty": {
+          "weight": 0.20,
+          "checks": [
+            "Prediction intervals method",
+            "Calibration of intervals",
+            "Coverage analysis"
+          ]
+        }
+      }
+    },
+    {
+      "id": "me-003",
+      "name": "Fairness Evaluation",
+      "description": "Test bias and fairness assessment",
+      "input": {
+        "task": "Evaluate loan approval model for fairness",
+        "model": "Classifier for loan approval",
+        "protectedAttributes": ["gender", "race", "age_group"],
+        "requirements": {
+          "regulatory": "Must demonstrate non-discrimination",
+          "metrics": "Demographic parity and equalized odds",
+          "remediation": "Suggestions if bias found"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "demographic parity",
+          "equalized odds",
+          "disparate impact",
+          "TPR",
+          "FPR",
+          "subgroup"
+        ],
+        "structure": {
+          "hasGroupMetrics": true,
+          "hasFairnessMetrics": true,
+          "hasDisparateImpact": true,
+          "hasRemediationSuggestions": true
+        }
+      },
+      "evaluationCriteria": {
+        "fairnessMetrics": {
+          "weight": 0.35,
+          "checks": [
+            "Demographic parity calculated",
+            "Equalized odds (TPR and FPR parity)",
+            "Disparate impact ratio",
+            "Calibration across groups"
+          ]
+        },
+        "groupAnalysis": {
+          "weight": 0.25,
+          "checks": [
+            "Metrics by protected attribute",
+            "Intersectional analysis",
+            "Sample size per group reported"
+          ]
+        },
+        "interpretation": {
+          "weight": 0.20,
+          "checks": [
+            "Clear pass/fail on fairness criteria",
+            "Root cause hypotheses",
+            "Business impact of disparities"
+          ]
+        },
+        "remediation": {
+          "weight": 0.20,
+          "checks": [
+            "Bias mitigation strategies suggested",
+            "Reweighting or preprocessing options",
+            "Post-processing threshold adjustment"
+          ]
+        }
+      }
+    },
+    {
+      "id": "me-004",
+      "name": "Model Interpretability",
+      "description": "Test explainability analysis",
+      "input": {
+        "task": "Generate interpretability report for credit scoring model",
+        "model": "XGBoost classifier",
+        "requirements": {
+          "global": "Overall feature importance",
+          "local": "Individual prediction explanations",
+          "regulatory": "Must explain rejections"
+        }
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "SHAP",
+          "feature importance",
+          "waterfall",
+          "dependence",
+          "summary plot"
+        ],
+        "structure": {
+          "hasGlobalImportance": true,
+          "hasLocalExplanations": true,
+          "hasDependencePlots": true,
+          "hasExampleExplanations": true
+        }
+      },
+      "evaluationCriteria": {
+        "globalExplanations": {
+          "weight": 0.30,
+          "checks": [
+            "SHAP summary plot",
+            "Feature importance ranking",
+            "Permutation importance comparison",
+            "Top features identified"
+          ]
+        },
+        "localExplanations": {
+          "weight": 0.30,
+          "checks": [
+            "SHAP waterfall for individuals",
+            "Force plots for predictions",
+            "Counterfactual examples",
+            "Rejection reason generation"
+          ]
+        },
+        "featureEffects": {
+          "weight": 0.20,
+          "checks": [
+            "SHAP dependence plots",
+            "Partial dependence plots",
+            "Interaction effects"
+          ]
+        },
+        "documentation": {
+          "weight": 0.20,
+          "checks": [
+            "Stakeholder-friendly summary",
+            "Technical documentation",
+            "Regulatory-ready format"
+          ]
+        }
+      }
+    },
+    {
+      "id": "me-005",
+      "name": "Cross-Validation Analysis",
+      "description": "Test validation strategy evaluation",
+      "input": {
+        "task": "Analyze cross-validation results for stability",
+        "model": "Ensemble classifier",
+        "cvResults": {
+          "folds": 10,
+          "metrics": ["AUC", "F1", "Precision", "Recall"]
+        },
+        "concerns": "High variance across folds observed"
+      },
+      "expectedOutput": {
+        "mustContain": [
+          "mean",
+          "std",
+          "confidence interval",
+          "fold",
+          "stability",
+          "variance"
+        ],
+        "structure": {
+          "hasCVSummary": true,
+          "hasStabilityAnalysis": true,
+          "hasConfidenceIntervals": true,
+          "hasFoldBreakdown": true
+        }
+      },
+      "evaluationCriteria": {
+        "cvAnalysis": {
+          "weight": 0.30,
+          "checks": [
+            "Mean and std for each metric",
+            "95% confidence intervals",
+            "Fold-by-fold breakdown",
+            "Visualization of variability"
+          ]
+        },
+        "stabilityDiagnosis": {
+          "weight": 0.30,
+          "checks": [
+            "High variance folds identified",
+            "Data distribution per fold checked",
+            "Potential causes hypothesized"
+          ]
+        },
+        "recommendations": {
+          "weight": 0.25,
+          "checks": [
+            "Stratification adjustments",
+            "More folds or different CV scheme",
+            "Sample size adequacy assessment"
+          ]
+        },
+        "reportFormat": {
+          "weight": 0.15,
+          "checks": [
+            "Clear summary statistics",
+            "Visual presentation of variance",
+            "Actionable conclusions"
+          ]
+        }
+      }
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "me-edge-001",
+      "name": "No Test Set",
+      "description": "Handle evaluation without proper test set",
+      "input": {
+        "task": "Evaluate model using training data only"
+      },
+      "expectedBehavior": "Should refuse or strongly warn about evaluating on training data, suggest proper holdout",
+      "guardrailCheck": true
+    },
+    {
+      "id": "me-edge-002",
+      "name": "Perfect Metrics",
+      "description": "Handle suspiciously perfect results",
+      "input": {
+        "task": "Model shows 100% accuracy on test set"
+      },
+      "expectedBehavior": "Should flag potential data leakage, overfitting, or evaluation bug",
+      "guardrailCheck": true
+    },
+    {
+      "id": "me-edge-003",
+      "name": "Missing Protected Attributes",
+      "description": "Handle fairness request without demographic data",
+      "input": {
+        "task": "Evaluate fairness but protected attributes not available"
+      },
+      "expectedBehavior": "Should explain limitations and suggest proxy analysis or data collection",
+      "guardrailCheck": true
+    },
+    {
+      "id": "me-edge-004",
+      "name": "Wrong Metric Focus",
+      "description": "Handle focus on inappropriate metric",
+      "input": {
+        "task": "Maximize accuracy on 99:1 imbalanced dataset"
+      },
+      "expectedBehavior": "Should redirect to PR-AUC, F1, or business metrics; explain why accuracy is misleading",
+      "guardrailCheck": true
+    }
+  ],
+  "guardrails": {
+    "mustNotContain": [
+      "accuracy is the only metric",
+      "training set evaluation",
+      "skip fairness analysis"
+    ],
+    "mustAlwaysDo": [
+      "Use appropriate metrics for problem type",
+      "Evaluate on proper holdout set",
+      "Consider fairness implications",
+      "Provide business interpretation"
+    ],
+    "principles": [
+      "Multiple metrics for complete picture",
+      "Fairness is non-negotiable for sensitive applications",
+      "Interpretability enables trust",
+      "Translate metrics to business impact"
+    ]
+  },
+  "codeTemplates": {
+    "python": ["sklearn.metrics", "shap", "lime", "fairlearn", "alibi"],
+    "r": ["yardstick", "shapviz", "fairmodels", "DALEX", "probably"]
+  }
+}
