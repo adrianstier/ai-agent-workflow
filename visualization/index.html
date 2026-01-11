@@ -10,30 +10,34 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     :root {
-      --bg-base: #fafafa;
+      --bg-base: #f8fafc;
       --bg-surface: #ffffff;
-      --bg-elevated: #f5f5f5;
+      --bg-elevated: #f1f5f9;
 
-      --text-primary: #1a1a1a;
-      --text-secondary: #666666;
-      --text-muted: #999999;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
 
-      --border: #e5e5e5;
-      --border-strong: #d0d0d0;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
 
-      --core: #2563eb;
+      --core: #3b82f6;
       --core-light: #dbeafe;
       --core-dark: #1d4ed8;
+      --core-glow: rgba(59, 130, 246, 0.3);
 
-      --debug: #ea580c;
+      --debug: #f97316;
       --debug-light: #ffedd5;
       --debug-dark: #c2410c;
+      --debug-glow: rgba(249, 115, 22, 0.3);
 
-      --review: #16a34a;
+      --review: #22c55e;
       --review-light: #dcfce7;
       --review-dark: #15803d;
+      --review-glow: rgba(34, 197, 94, 0.3);
 
       --accent: #8b5cf6;
+      --highlight: #fbbf24;
 
       --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
       --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
@@ -57,7 +61,7 @@
     /* Layout */
     .app {
       display: grid;
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 1fr 420px;
       grid-template-rows: 72px 1fr;
       min-height: 100vh;
     }
@@ -140,32 +144,52 @@
       height: 100%;
     }
 
-    /* Category Labels in viz */
-    .category-label {
+    /* Category Labels in viz - now visible */
+    .category-badge {
       position: absolute;
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 6px 12px;
-      border-radius: 4px;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      border-radius: 20px;
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .category-label.core {
+    .category-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .category-badge.core {
       background: var(--core-light);
       color: var(--core-dark);
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
     }
+    .category-badge.core::before { background: var(--core); }
 
-    .category-label.debug {
+    .category-badge.debug {
       background: var(--debug-light);
       color: var(--debug-dark);
+      top: 20px;
+      left: 20px;
     }
+    .category-badge.debug::before { background: var(--debug); }
 
-    .category-label.review {
+    .category-badge.review {
       background: var(--review-light);
       color: var(--review-dark);
+      top: 20px;
+      right: 20px;
     }
+    .category-badge.review::before { background: var(--review); }
 
     /* Controls */
     .controls {
@@ -197,6 +221,11 @@
       background: var(--bg-elevated);
       border-color: var(--border-strong);
       color: var(--text-primary);
+    }
+
+    .btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--core-glow);
     }
 
     .btn.active {
@@ -242,6 +271,11 @@
       color: var(--text-secondary);
     }
 
+    .tab:focus {
+      outline: none;
+      background: var(--bg-elevated);
+    }
+
     .tab.active {
       color: var(--core);
       border-bottom-color: var(--core);
@@ -264,8 +298,118 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Onboarding welcome */
+    .welcome {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .welcome-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--core-light), var(--review-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .welcome-icon svg {
+      width: 36px;
+      height: 36px;
+      color: var(--core);
+    }
+
+    .welcome h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quick-action {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .quick-action:hover {
+      background: var(--bg-surface);
+      border-color: var(--core);
+      box-shadow: var(--shadow-md);
+    }
+
+    .quick-action:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--core-glow);
+    }
+
+    .quick-action-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .quick-action-icon.blue {
+      background: var(--core-light);
+      color: var(--core);
+    }
+
+    .quick-action-icon.orange {
+      background: var(--debug-light);
+      color: var(--debug);
+    }
+
+    .quick-action-icon.green {
+      background: var(--review-light);
+      color: var(--review);
+    }
+
+    .quick-action-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .quick-action-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .quick-action-text span {
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
     /* Agent detail panel */
@@ -312,7 +456,9 @@
     }
 
     .agent-tag {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       padding: 4px 10px;
       border-radius: 4px;
       font-size: 11px;
@@ -321,20 +467,30 @@
       letter-spacing: 0.5px;
     }
 
+    .agent-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
     .agent-tag.core {
       background: var(--core-light);
       color: var(--core-dark);
     }
+    .agent-tag.core::before { background: var(--core); }
 
     .agent-tag.debug {
       background: var(--debug-light);
       color: var(--debug-dark);
     }
+    .agent-tag.debug::before { background: var(--debug); }
 
     .agent-tag.review {
       background: var(--review-light);
       color: var(--review-dark);
     }
+    .agent-tag.review::before { background: var(--review); }
 
     .section {
       margin-bottom: 24px;
@@ -383,43 +539,47 @@
       color: var(--text-secondary);
     }
 
-    /* Placeholder state */
-    .placeholder {
+    /* Navigation hint */
+    .nav-hint {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 300px;
-      text-align: center;
-      color: var(--text-muted);
+      gap: 8px;
     }
 
-    .placeholder-icon {
-      width: 64px;
-      height: 64px;
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px;
       background: var(--bg-elevated);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .placeholder-icon svg {
-      width: 28px;
-      height: 28px;
-      color: var(--text-muted);
-    }
-
-    .placeholder h3 {
-      font-size: 16px;
-      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
       color: var(--text-secondary);
-      margin-bottom: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .placeholder p {
-      font-size: 14px;
+    .nav-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--core);
+      color: var(--core);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .nav-btn svg {
+      width: 14px;
+      height: 14px;
     }
 
     /* Legend panel */
@@ -460,10 +620,22 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.15s ease;
+      border: 1px solid transparent;
     }
 
     .legend-item:hover {
       background: var(--bg-elevated);
+    }
+
+    .legend-item:focus {
+      outline: none;
+      border-color: var(--core);
+      box-shadow: 0 0 0 2px var(--core-glow);
+    }
+
+    .legend-item.selected {
+      background: var(--core-light);
+      border-color: var(--core);
     }
 
     .legend-num {
@@ -538,13 +710,13 @@
 
     .code-block {
       position: relative;
-      background: #1a1a1a;
+      background: #1e293b;
       border-radius: 8px;
       padding: 16px;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 13px;
       line-height: 1.5;
-      color: #e5e5e5;
+      color: #e2e8f0;
       overflow-x: auto;
     }
 
@@ -556,7 +728,7 @@
       background: rgba(255,255,255,0.1);
       border: none;
       border-radius: 4px;
-      color: #999;
+      color: #94a3b8;
       font-family: inherit;
       font-size: 11px;
       font-weight: 500;
@@ -578,6 +750,12 @@
 
     .node-group:hover .node-bg {
       transform: scale(1.1);
+      filter: drop-shadow(0 4px 12px currentColor);
+    }
+
+    .node-group.selected .node-bg {
+      stroke: var(--highlight);
+      stroke-width: 3;
     }
 
     .node-label {
@@ -586,34 +764,103 @@
       fill: white;
       text-anchor: middle;
       dominant-baseline: central;
+      pointer-events: none;
     }
 
     .node-name {
       font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
       fill: var(--text-primary);
       text-anchor: middle;
+      pointer-events: none;
     }
 
     .link-line {
       fill: none;
-      stroke: var(--border);
+      stroke: var(--border-strong);
       stroke-width: 2;
-      opacity: 0.5;
+      opacity: 0.4;
     }
 
     .link-flow {
       fill: none;
-      stroke-width: 3;
-      stroke-dasharray: 8 4;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 8 6;
       opacity: 0;
+    }
+
+    /* Flow animation path */
+    .workflow-path {
+      fill: none;
+      stroke: var(--core);
+      stroke-width: 3;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+
+    .workflow-path.active {
+      opacity: 0.6;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: flowDash 3s ease forwards;
+    }
+
+    @keyframes flowDash {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Progress indicator */
+    .progress-indicator {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .progress-indicator.visible {
+      opacity: 1;
+    }
+
+    .progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .progress-dot.active {
+      background: var(--core);
+      transform: scale(1.25);
+    }
+
+    .progress-dot.done {
+      background: var(--core);
+    }
+
+    .progress-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-left: 8px;
     }
 
     /* Responsive */
     @media (max-width: 1100px) {
       .app {
-        grid-template-columns: 1fr 340px;
+        grid-template-columns: 1fr 360px;
       }
 
       .header-stats {
@@ -656,7 +903,7 @@
       </div>
       <div class="header-stats">
         <div class="stat">
-          <div class="stat-value">20+</div>
+          <div class="stat-value">21</div>
           <div class="stat-label">Agents</div>
         </div>
         <div class="stat">
@@ -671,16 +918,21 @@
     </header>
 
     <main class="main">
+      <!-- Category badges -->
+      <div class="category-badge debug">Debug Suite</div>
+      <div class="category-badge core">Core Development</div>
+      <div class="category-badge review">Review</div>
+
       <svg id="visualization"></svg>
 
       <div class="controls">
-        <button class="btn" id="animateBtn">
+        <button class="btn" id="animateBtn" aria-label="Play workflow animation">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="5 3 19 12 5 21 5 3"/>
           </svg>
           Play Workflow
         </button>
-        <button class="btn" id="resetBtn">
+        <button class="btn" id="resetBtn" aria-label="Reset visualization">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
             <path d="M3 3v5h5"/>
@@ -688,57 +940,111 @@
           Reset
         </button>
       </div>
+
+      <!-- Progress indicator for animation -->
+      <div class="progress-indicator" id="progress">
+        <div class="progress-dot" data-step="0"></div>
+        <div class="progress-dot" data-step="1"></div>
+        <div class="progress-dot" data-step="2"></div>
+        <div class="progress-dot" data-step="3"></div>
+        <div class="progress-dot" data-step="4"></div>
+        <div class="progress-dot" data-step="5"></div>
+        <div class="progress-dot" data-step="6"></div>
+        <div class="progress-dot" data-step="7"></div>
+        <div class="progress-dot" data-step="8"></div>
+        <div class="progress-dot" data-step="9"></div>
+        <span class="progress-label">Workflow Progress</span>
+      </div>
     </main>
 
     <aside class="sidebar">
-      <div class="sidebar-tabs">
-        <button class="tab active" data-tab="detail">Details</button>
-        <button class="tab" data-tab="legend">All Agents</button>
-        <button class="tab" data-tab="start">Get Started</button>
+      <div class="sidebar-tabs" role="tablist">
+        <button class="tab active" data-tab="detail" role="tab" aria-selected="true">Details</button>
+        <button class="tab" data-tab="legend" role="tab" aria-selected="false">All Agents</button>
+        <button class="tab" data-tab="start" role="tab" aria-selected="false">Get Started</button>
       </div>
 
       <div class="sidebar-content">
-        <!-- Detail Panel -->
-        <div class="panel active" id="detail-panel">
-          <div class="placeholder">
-            <div class="placeholder-icon">
+        <!-- Detail Panel - Now with welcome state -->
+        <div class="panel active" id="detail-panel" role="tabpanel">
+          <div class="welcome">
+            <div class="welcome-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 16v-4M12 8h.01"/>
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/>
               </svg>
             </div>
-            <h3>Select an Agent</h3>
-            <p>Click any node to see details</p>
+            <h3>Welcome to AgentFlow</h3>
+            <p>21 specialized AI agents to help you build software products. Click any node to explore, or try these quick actions:</p>
+            <div class="quick-actions">
+              <button class="quick-action" onclick="window.selectAgent(0)" tabindex="0">
+                <div class="quick-action-icon blue">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                </div>
+                <div class="quick-action-text">
+                  <strong>Start with Orchestrator</strong>
+                  <span>Agent 0 guides your next step</span>
+                </div>
+              </button>
+              <button class="quick-action" onclick="document.getElementById('animateBtn').click()" tabindex="0">
+                <div class="quick-action-icon orange">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                </div>
+                <div class="quick-action-text">
+                  <strong>Watch the Workflow</strong>
+                  <span>See how agents work together</span>
+                </div>
+              </button>
+              <button class="quick-action" onclick="document.querySelector('[data-tab=start]').click()" tabindex="0">
+                <div class="quick-action-icon green">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                </div>
+                <div class="quick-action-text">
+                  <strong>Get Started Guide</strong>
+                  <span>Copy-paste prompts to begin</span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- Legend Panel -->
-        <div class="panel" id="legend-panel">
+        <div class="panel" id="legend-panel" role="tabpanel">
           <div class="legend-section">
             <div class="legend-title">
               <span class="legend-dot core"></span>
-              Core Development
+              Core Development (0-9)
             </div>
-            <div class="legend-list" id="core-list"></div>
+            <div class="legend-list" id="core-list" role="listbox"></div>
           </div>
           <div class="legend-section">
             <div class="legend-title">
               <span class="legend-dot debug"></span>
-              Debug Suite
+              Debug Suite (10-16)
             </div>
-            <div class="legend-list" id="debug-list"></div>
+            <div class="legend-list" id="debug-list" role="listbox"></div>
           </div>
           <div class="legend-section">
             <div class="legend-title">
               <span class="legend-dot review"></span>
-              Review & Specialized
+              Review & Specialized (17-20)
             </div>
-            <div class="legend-list" id="review-list"></div>
+            <div class="legend-list" id="review-list" role="listbox"></div>
           </div>
         </div>
 
         <!-- Get Started Panel -->
-        <div class="panel" id="start-panel">
+        <div class="panel" id="start-panel" role="tabpanel">
           <div class="step">
             <div class="step-header">
               <span class="step-num">1</span>
@@ -776,12 +1082,13 @@ What should I do first?</div>
               <span class="step-num">3</span>
               <h3>Follow the Flow</h3>
             </div>
-            <p>Agent 0 will guide you through:</p>
+            <p>Agent 0 will guide you through the development process:</p>
             <div class="code-block">
               <button class="copy-btn" onclick="copyText(this)">Copy</button>
+0 → Orchestrator (start here)
 1 → Problem Brief
 2 → Competitive Analysis
-3 → PRD
+3 → PRD (requirements)
 4 → UX Flows
 5 → Architecture
 6 → Code
@@ -795,7 +1102,7 @@ What should I do first?</div>
   </div>
 
   <script>
-    // Agent data
+    // Agent data with full names
     const agents = [
       { id: 0, name: "Orchestrator", category: "core", description: "Project director that assesses your current state and recommends the next best action. Start here when beginning a new project or feeling stuck.", useCases: ["Starting a new project", "Feeling stuck or unsure", "Need status assessment"], output: "Status summary + next actions" },
       { id: 1, name: "Problem Framer", category: "core", description: "Clarifies vague ideas into concrete problem statements. Identifies target users, their jobs-to-be-done, and success criteria.", useCases: ["Have a vague idea", "Need to define users", "Clarifying the problem"], output: "artifacts/problem-brief-v0.1.md" },
@@ -822,7 +1129,7 @@ What should I do first?</div>
       { id: 20, name: "Design Reviewer", category: "review", description: "Reviews design system consistency, accessibility, and UX patterns.", useCases: ["Design audit", "Accessibility", "UX consistency"], output: "Design review" }
     ];
 
-    // Connections
+    // Connections for workflow
     const connections = [
       {source: 0, target: 1}, {source: 1, target: 2}, {source: 2, target: 3},
       {source: 3, target: 4}, {source: 4, target: 5}, {source: 5, target: 6},
@@ -833,9 +1140,9 @@ What should I do first?</div>
     ];
 
     const colors = {
-      core: { main: '#2563eb', light: '#dbeafe' },
-      debug: { main: '#ea580c', light: '#ffedd5' },
-      review: { main: '#16a34a', light: '#dcfce7' }
+      core: { main: '#3b82f6', light: '#dbeafe', glow: 'rgba(59, 130, 246, 0.4)' },
+      debug: { main: '#f97316', light: '#ffedd5', glow: 'rgba(249, 115, 22, 0.4)' },
+      review: { main: '#22c55e', light: '#dcfce7', glow: 'rgba(34, 197, 94, 0.4)' }
     };
 
     // Setup
@@ -843,17 +1150,19 @@ What should I do first?</div>
     const container = document.querySelector('.main');
     let width = container.clientWidth;
     let height = container.clientHeight;
+    let selectedAgent = null;
 
     svg.attr('width', width).attr('height', height);
 
     const linksGroup = svg.append('g').attr('class', 'links');
+    const flowGroup = svg.append('g').attr('class', 'flow');
     const nodesGroup = svg.append('g').attr('class', 'nodes');
 
-    // Position calculation - improved spacing
+    // Calculate positions with better spacing
     function calculatePositions() {
-      const cx = width * 0.48;
-      const cy = height * 0.5;
-      const coreRadius = Math.min(width, height) * 0.30;
+      const cx = width * 0.5;
+      const cy = height * 0.52;
+      const coreRadius = Math.min(width, height) * 0.32;
 
       // Core agents in circle (centered)
       agents.filter(a => a.category === 'core').forEach((agent, i) => {
@@ -862,34 +1171,34 @@ What should I do first?</div>
         agent.y = cy + Math.sin(angle) * coreRadius;
       });
 
-      // Debug agents - left side in 2 columns for clarity
-      const debugStartX = 80;
-      const debugStartY = height * 0.18;
-      const debugSpacingY = 75;
+      // Debug agents - left side, better organized
+      const debugStartX = 100;
+      const debugStartY = height * 0.22;
+      const debugSpacingY = 70;
 
-      // Detective at top
-      agents[10].x = debugStartX + 40;
+      // Detective at top center
+      agents[10].x = debugStartX + 50;
       agents[10].y = debugStartY;
 
-      // Rest in 2 columns
-      const debugPositions = [
-        { x: debugStartX, y: debugStartY + debugSpacingY },      // 11
-        { x: debugStartX + 80, y: debugStartY + debugSpacingY }, // 12
-        { x: debugStartX, y: debugStartY + debugSpacingY * 2 },  // 13
-        { x: debugStartX + 80, y: debugStartY + debugSpacingY * 2 }, // 14
-        { x: debugStartX, y: debugStartY + debugSpacingY * 3 },  // 15
-        { x: debugStartX + 80, y: debugStartY + debugSpacingY * 3 }  // 16
+      // Rest in 2 columns with more spacing
+      const debugCols = [
+        { x: debugStartX, y: debugStartY + debugSpacingY },
+        { x: debugStartX + 100, y: debugStartY + debugSpacingY },
+        { x: debugStartX, y: debugStartY + debugSpacingY * 2 },
+        { x: debugStartX + 100, y: debugStartY + debugSpacingY * 2 },
+        { x: debugStartX, y: debugStartY + debugSpacingY * 3 },
+        { x: debugStartX + 100, y: debugStartY + debugSpacingY * 3 }
       ];
 
       for (let i = 11; i <= 16; i++) {
-        agents[i].x = debugPositions[i - 11].x;
-        agents[i].y = debugPositions[i - 11].y;
+        agents[i].x = debugCols[i - 11].x;
+        agents[i].y = debugCols[i - 11].y;
       }
 
       // Review agents - right side in column
-      const reviewX = width - 100;
-      const reviewStartY = height * 0.25;
-      const reviewSpacingY = 80;
+      const reviewX = width - 110;
+      const reviewStartY = height * 0.22;
+      const reviewSpacingY = 85;
 
       for (let i = 17; i <= 20; i++) {
         agents[i].x = reviewX;
@@ -898,6 +1207,22 @@ What should I do first?</div>
     }
 
     calculatePositions();
+
+    // Draw workflow flow path (the main 0-9 path)
+    function drawFlowPath() {
+      flowGroup.selectAll('*').remove();
+
+      const corePath = agents.slice(0, 10);
+      const pathData = d3.line()
+        .x(d => d.x)
+        .y(d => d.y)
+        .curve(d3.curveCardinal.tension(0.7));
+
+      flowGroup.append('path')
+        .attr('class', 'workflow-path')
+        .attr('id', 'workflow-flow')
+        .attr('d', pathData(corePath));
+    }
 
     // Draw links
     function drawLinks() {
@@ -924,41 +1249,99 @@ What should I do first?</div>
         .data(agents)
         .enter()
         .append('g')
-        .attr('class', 'node-group')
+        .attr('class', d => `node-group ${d.id === selectedAgent ? 'selected' : ''}`)
         .attr('transform', d => `translate(${d.x}, ${d.y})`)
-        .on('click', (e, d) => showAgent(d));
+        .attr('tabindex', '0')
+        .attr('role', 'button')
+        .attr('aria-label', d => `Agent ${d.id}: ${d.name}`)
+        .on('click', (e, d) => showAgent(d))
+        .on('keydown', (e, d) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showAgent(d);
+          }
+        });
+
+      // Glow effect for selected
+      groups.append('circle')
+        .attr('class', 'node-glow')
+        .attr('r', 32)
+        .attr('fill', d => colors[d.category].glow)
+        .attr('opacity', 0);
 
       // Main circle
       groups.append('circle')
         .attr('class', 'node-bg')
-        .attr('r', 24)
+        .attr('r', 22)
         .attr('fill', d => colors[d.category].main);
 
       // Number
       groups.append('text')
         .attr('class', 'node-label')
-        .attr('font-size', '14px')
+        .attr('font-size', '13px')
         .text(d => d.id);
 
-      // Name below (truncate if needed)
-      groups.append('text')
-        .attr('class', 'node-name')
-        .attr('y', 40)
-        .text(d => d.name.length > 14 ? d.name.slice(0, 12) + '…' : d.name);
+      // Name below - now with full name using two lines if needed
+      groups.each(function(d) {
+        const g = d3.select(this);
+        const name = d.name;
+
+        if (name.length <= 12) {
+          g.append('text')
+            .attr('class', 'node-name')
+            .attr('y', 38)
+            .text(name);
+        } else {
+          // Split into two lines
+          const words = name.split(' ');
+          if (words.length >= 2) {
+            g.append('text')
+              .attr('class', 'node-name')
+              .attr('y', 36)
+              .text(words[0]);
+            g.append('text')
+              .attr('class', 'node-name')
+              .attr('y', 48)
+              .text(words.slice(1).join(' '));
+          } else {
+            g.append('text')
+              .attr('class', 'node-name')
+              .attr('y', 38)
+              .text(name.slice(0, 12) + '…');
+          }
+        }
+      });
     }
 
+    drawFlowPath();
     drawLinks();
     drawNodes();
 
     // Show agent details
     function showAgent(agent) {
+      selectedAgent = agent.id;
+
+      // Update node selection visual
+      nodesGroup.selectAll('.node-group')
+        .classed('selected', d => d.id === agent.id);
+      nodesGroup.selectAll('.node-glow')
+        .attr('opacity', d => d.id === agent.id ? 0.6 : 0);
+
+      // Update legend selection
+      document.querySelectorAll('.legend-item').forEach(item => {
+        item.classList.toggle('selected', parseInt(item.dataset.id) === agent.id);
+      });
+
       const panel = document.getElementById('detail-panel');
+      const prevId = agent.id > 0 ? agent.id - 1 : null;
+      const nextId = agent.id < 20 ? agent.id + 1 : null;
+
       panel.innerHTML = `
         <div class="agent-header">
           <div class="agent-badge ${agent.category}">${agent.id}</div>
           <div class="agent-info">
             <h2>${agent.name}</h2>
-            <span class="agent-tag ${agent.category}">${agent.category}</span>
+            <span class="agent-tag ${agent.category}">${agent.category === 'core' ? 'Core Development' : agent.category === 'debug' ? 'Debug Suite' : 'Review'}</span>
           </div>
         </div>
         <div class="section">
@@ -975,6 +1358,20 @@ What should I do first?</div>
           <div class="section-title">Output</div>
           <span class="output-code">${agent.output}</span>
         </div>
+        <div class="nav-hint">
+          <button class="nav-btn" ${prevId === null ? 'disabled' : ''} onclick="window.selectAgent(${prevId})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Previous
+          </button>
+          <button class="nav-btn" ${nextId === null ? 'disabled' : ''} onclick="window.selectAgent(${nextId})">
+            Next
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
       `;
 
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -986,20 +1383,25 @@ What should I do first?</div>
     // Tab switching
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
         tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
         document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
         document.getElementById(`${tab.dataset.tab}-panel`).classList.add('active');
       });
     });
 
-    // Populate legend
+    // Populate legend with data attributes for selection
     ['core', 'debug', 'review'].forEach(cat => {
       const list = document.getElementById(`${cat}-list`);
       list.innerHTML = agents
         .filter(a => a.category === cat)
         .map(a => `
-          <div class="legend-item" onclick="window.selectAgent(${a.id})">
+          <div class="legend-item" data-id="${a.id}" onclick="window.selectAgent(${a.id})" tabindex="0" role="option"
+               onkeydown="if(event.key==='Enter')window.selectAgent(${a.id})">
             <span class="legend-num ${cat}">${a.id}</span>
             <span class="legend-name">${a.name}</span>
           </div>
@@ -1008,22 +1410,46 @@ What should I do first?</div>
 
     window.selectAgent = id => showAgent(agents[id]);
 
-    // Animation
+    // Animation with progress indicator
     let animating = false;
+    const progressEl = document.getElementById('progress');
+    const progressDots = progressEl.querySelectorAll('.progress-dot');
+
     document.getElementById('animateBtn').addEventListener('click', function() {
       if (animating) return;
       animating = true;
       this.classList.add('active');
+      progressEl.classList.add('visible');
+
+      // Activate flow path animation
+      const flowPath = document.getElementById('workflow-flow');
+      flowPath.classList.add('active');
 
       const path = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       let step = 0;
+
+      // Reset progress dots
+      progressDots.forEach(dot => {
+        dot.classList.remove('active', 'done');
+      });
 
       const animate = () => {
         if (step >= path.length) {
           animating = false;
           document.getElementById('animateBtn').classList.remove('active');
+          setTimeout(() => {
+            progressEl.classList.remove('visible');
+            flowPath.classList.remove('active');
+          }, 2000);
           return;
         }
+
+        // Update progress
+        progressDots.forEach((dot, i) => {
+          dot.classList.remove('active');
+          if (i < step) dot.classList.add('done');
+          if (i === step) dot.classList.add('active');
+        });
 
         const agent = agents[path[step]];
         showAgent(agent);
@@ -1032,11 +1458,18 @@ What should I do first?</div>
         nodesGroup.selectAll('.node-group')
           .filter(d => d.id === path[step])
           .select('.node-bg')
-          .transition().duration(200).attr('r', 32)
-          .transition().duration(300).attr('r', 24);
+          .transition().duration(150).attr('r', 28)
+          .transition().duration(250).attr('r', 22);
+
+        // Glow effect
+        nodesGroup.selectAll('.node-group')
+          .filter(d => d.id === path[step])
+          .select('.node-glow')
+          .transition().duration(150).attr('opacity', 0.8)
+          .transition().duration(400).attr('opacity', 0.3);
 
         step++;
-        setTimeout(animate, 800);
+        setTimeout(animate, 700);
       };
 
       animate();
@@ -1044,9 +1477,69 @@ What should I do first?</div>
 
     // Reset
     document.getElementById('resetBtn').addEventListener('click', () => {
+      selectedAgent = null;
       calculatePositions();
+      drawFlowPath();
       drawLinks();
       drawNodes();
+
+      // Reset to welcome state
+      const panel = document.getElementById('detail-panel');
+      panel.innerHTML = `
+        <div class="welcome">
+          <div class="welcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/>
+            </svg>
+          </div>
+          <h3>Welcome to AgentFlow</h3>
+          <p>21 specialized AI agents to help you build software products. Click any node to explore, or try these quick actions:</p>
+          <div class="quick-actions">
+            <button class="quick-action" onclick="window.selectAgent(0)" tabindex="0">
+              <div class="quick-action-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
+              <div class="quick-action-text">
+                <strong>Start with Orchestrator</strong>
+                <span>Agent 0 guides your next step</span>
+              </div>
+            </button>
+            <button class="quick-action" onclick="document.getElementById('animateBtn').click()" tabindex="0">
+              <div class="quick-action-icon orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <div class="quick-action-text">
+                <strong>Watch the Workflow</strong>
+                <span>See how agents work together</span>
+              </div>
+            </button>
+            <button class="quick-action" onclick="document.querySelector('[data-tab=start]').click()" tabindex="0">
+              <div class="quick-action-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+              </div>
+              <div class="quick-action-text">
+                <strong>Get Started Guide</strong>
+                <span>Copy-paste prompts to begin</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll('.legend-item').forEach(item => {
+        item.classList.remove('selected');
+      });
     });
 
     // Copy helper
@@ -1057,14 +1550,26 @@ What should I do first?</div>
       setTimeout(() => btn.textContent = 'Copy', 1500);
     };
 
-    // Resize
+    // Resize handler
     window.addEventListener('resize', () => {
       width = container.clientWidth;
       height = container.clientHeight;
       svg.attr('width', width).attr('height', height);
       calculatePositions();
+      drawFlowPath();
       drawLinks();
       drawNodes();
+    });
+
+    // Keyboard navigation for nodes
+    document.addEventListener('keydown', (e) => {
+      if (selectedAgent !== null && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        e.preventDefault();
+        const newId = e.key === 'ArrowLeft'
+          ? Math.max(0, selectedAgent - 1)
+          : Math.min(20, selectedAgent + 1);
+        showAgent(agents[newId]);
+      }
     });
   </script>
 </body>
