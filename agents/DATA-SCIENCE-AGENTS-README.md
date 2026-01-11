@@ -2,6 +2,15 @@
 
 A specialized suite of 7 AI agents for end-to-end data science and machine learning workflows.
 
+## Language Support
+
+All agents provide code templates and examples in both **Python** and **R**:
+
+| Language | Key Libraries |
+|----------|---------------|
+| **Python** | pandas, scikit-learn, XGBoost, LightGBM, PyTorch, TensorFlow, SHAP, MLflow |
+| **R** | tidyverse, tidymodels, recipes, parsnip, yardstick, vetiver, xgboost, ranger |
+
 ## Overview
 
 | Agent | Name | Purpose |
@@ -170,6 +179,20 @@ Agent 21 → Iteration planning
 3. **Version everything** - Data, features, models, configs
 4. **Validate continuously** - Agent 26 at each stage
 5. **Plan for production** - Consider MLOps from the start
+
+## Python vs R: When to Use Which
+
+| Scenario | Recommended | Reason |
+|----------|-------------|--------|
+| Deep learning | Python | TensorFlow/PyTorch ecosystem |
+| Statistical modeling | R | tidymodels, rich stats packages |
+| Production APIs | Python | FastAPI, broad deployment support |
+| Interactive reports | R | R Markdown, Shiny |
+| Quick prototyping | Either | Both excel here |
+| MLOps/CI-CD | Python | MLflow, broader tooling |
+| Academic/research | R | Publication-quality outputs |
+
+Both languages are fully supported - use what your team knows best or what fits your deployment environment.
 
 ## Artifacts Structure
 

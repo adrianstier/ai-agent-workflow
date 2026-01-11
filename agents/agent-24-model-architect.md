@@ -382,6 +382,237 @@ transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=6)
 6. **Feature reduction**: Use fewer features
 </production_constraints>
 
+<r_model_templates>
+## R Model Templates
+
+### Model Specification with tidymodels
+```r
+library(tidymodels)
+library(parsnip)
+
+# Logistic Regression
+log_reg_spec <- logistic_reg() %>%
+    set_engine("glm") %>%
+    set_mode("classification")
+
+# Random Forest
+rf_spec <- rand_forest(
+    mtry = tune(),
+    trees = 500,
+    min_n = tune()
+) %>%
+    set_engine("ranger", importance = "impurity") %>%
+    set_mode("classification")
+
+# XGBoost
+xgb_spec <- boost_tree(
+    trees = tune(),
+    tree_depth = tune(),
+    learn_rate = tune(),
+    min_n = tune(),
+    loss_reduction = tune(),
+    sample_size = tune()
+) %>%
+    set_engine("xgboost") %>%
+    set_mode("classification")
+
+# Linear Regression
+lm_spec <- linear_reg() %>%
+    set_engine("lm")
+
+# Regularized Regression (Elastic Net)
+glmnet_spec <- linear_reg(
+    penalty = tune(),
+    mixture = tune()  # 0 = ridge, 1 = lasso
+) %>%
+    set_engine("glmnet")
+```
+
+### Hyperparameter Grids
+```r
+library(dials)
+
+# XGBoost grid
+xgb_grid <- grid_latin_hypercube(
+    trees(range = c(100, 1000)),
+    tree_depth(range = c(3, 10)),
+    learn_rate(range = c(-3, -1)),  # log10 scale
+    min_n(range = c(2, 40)),
+    loss_reduction(),
+    sample_prop(range = c(0.5, 1.0)),
+    size = 30
+)
+
+# Random Forest grid
+rf_grid <- grid_regular(
+    mtry(range = c(2, 10)),
+    min_n(range = c(2, 20)),
+    levels = 5
+)
+
+# Elastic Net grid
+glmnet_grid <- grid_regular(
+    penalty(range = c(-5, 0)),
+    mixture(range = c(0, 1)),
+    levels = 10
+)
+```
+
+### Complete Model Workflow
+```r
+library(tidymodels)
+
+# Define workflow
+create_workflow <- function(recipe, model_spec) {
+    workflow() %>%
+        add_recipe(recipe) %>%
+        add_model(model_spec)
+}
+
+# Tune model
+tune_model <- function(workflow, resamples, grid, metrics = metric_set(roc_auc, accuracy)) {
+    tune_grid(
+        workflow,
+        resamples = resamples,
+        grid = grid,
+        metrics = metrics,
+        control = control_grid(verbose = TRUE, save_pred = TRUE)
+    )
+}
+
+# Get best parameters
+get_best <- function(tune_results, metric = "roc_auc") {
+    tune_results %>%
+        select_best(metric = metric)
+}
+
+# Finalize and fit
+finalize_model <- function(workflow, best_params, train_data) {
+    workflow %>%
+        finalize_workflow(best_params) %>%
+        fit(data = train_data)
+}
+```
+
+### Model Comparison in R
+```r
+library(tidymodels)
+library(workflowsets)
+
+# Create multiple model specifications
+model_specs <- list(
+    log_reg = logistic_reg() %>% set_engine("glm"),
+    rf = rand_forest(trees = 500) %>% set_engine("ranger") %>% set_mode("classification"),
+    xgb = boost_tree(trees = 500) %>% set_engine("xgboost") %>% set_mode("classification"),
+    svm = svm_rbf() %>% set_engine("kernlab") %>% set_mode("classification")
+)
+
+# Create workflow set
+create_model_comparison <- function(recipe, model_specs) {
+    workflow_set(
+        preproc = list(recipe = recipe),
+        models = model_specs,
+        cross = TRUE
+    )
+}
+
+# Fit all models
+compare_models <- function(workflow_set, resamples) {
+    workflow_set %>%
+        workflow_map(
+            "fit_resamples",
+            resamples = resamples,
+            metrics = metric_set(roc_auc, accuracy, f_meas),
+            verbose = TRUE
+        )
+}
+
+# Rank models
+rank_models <- function(results, metric = "roc_auc") {
+    results %>%
+        rank_results(rank_metric = metric) %>%
+        filter(.metric == metric)
+}
+```
+
+### Ensemble in R with stacks
+```r
+library(stacks)
+library(tidymodels)
+
+# Create stacking ensemble
+create_ensemble <- function(train_data, recipe, folds) {
+    # Control for stacking
+    ctrl <- control_stack_grid()
+
+    # Train base models with resampling
+    log_res <- tune_grid(
+        workflow() %>% add_recipe(recipe) %>% add_model(logistic_reg() %>% set_engine("glm")),
+        resamples = folds,
+        control = ctrl
+    )
+
+    rf_res <- tune_grid(
+        workflow() %>% add_recipe(recipe) %>%
+            add_model(rand_forest(mtry = tune(), trees = 500) %>% set_engine("ranger") %>% set_mode("classification")),
+        resamples = folds,
+        grid = 5,
+        control = ctrl
+    )
+
+    xgb_res <- tune_grid(
+        workflow() %>% add_recipe(recipe) %>%
+            add_model(boost_tree(trees = tune(), learn_rate = tune()) %>% set_engine("xgboost") %>% set_mode("classification")),
+        resamples = folds,
+        grid = 10,
+        control = ctrl
+    )
+
+    # Build stack
+    ensemble <- stacks() %>%
+        add_candidates(log_res) %>%
+        add_candidates(rf_res) %>%
+        add_candidates(xgb_res) %>%
+        blend_predictions() %>%  # Determine blending weights
+        fit_members()            # Fit final models
+
+    return(ensemble)
+}
+```
+
+### Cross-Validation Setup
+```r
+library(rsample)
+
+# Standard K-fold
+cv_folds <- function(data, v = 5, strata = NULL) {
+    vfold_cv(data, v = v, strata = all_of(strata))
+}
+
+# Repeated CV
+repeated_cv <- function(data, v = 5, repeats = 3, strata = NULL) {
+    vfold_cv(data, v = v, repeats = repeats, strata = all_of(strata))
+}
+
+# Time series split
+time_series_cv <- function(data, initial = 365, assess = 30, skip = 0) {
+    sliding_period(
+        data,
+        index = date_column,
+        period = "day",
+        lookback = initial,
+        assess_stop = assess,
+        skip = skip
+    )
+}
+
+# Group CV (for user-level splits)
+group_cv <- function(data, group_col, v = 5) {
+    group_vfold_cv(data, group = all_of(group_col), v = v)
+}
+```
+</r_model_templates>
+
 <output_format>
 ## Response Format
 

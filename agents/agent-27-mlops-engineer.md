@@ -242,6 +242,155 @@ endpoint = model.deploy(
     max_replica_count=5
 )
 ```
+
+### R Model Serving with Plumber
+
+#### Basic Plumber API
+```r
+# plumber.R
+library(plumber)
+
+# Load model on startup
+model <- readRDS("model.rds")
+
+#* @apiTitle ML Model API
+#* @apiDescription Production ML model serving
+
+#* Health check endpoint
+#* @get /health
+function() {
+    list(
+        status = "healthy",
+        model_loaded = !is.null(model),
+        timestamp = Sys.time()
+    )
+}
+
+#* Predict endpoint
+#* @param features Numeric vector of features
+#* @post /predict
+function(req, features) {
+    tryCatch({
+        # Parse features
+        X <- matrix(as.numeric(features), nrow = 1)
+
+        # Make prediction
+        prediction <- predict(model, X)
+
+        # Get probability if available
+        probability <- NULL
+        if ("predict_proba" %in% methods(class = class(model)[1])) {
+            probability <- predict(model, X, type = "prob")[, 2]
+        } else if (inherits(model, "workflow")) {
+            prob_pred <- predict(model, as.data.frame(X), type = "prob")
+            probability <- prob_pred$.pred_1
+        }
+
+        list(
+            prediction = as.numeric(prediction),
+            probability = probability,
+            model_version = "1.0.0"
+        )
+    }, error = function(e) {
+        list(error = e$message)
+    })
+}
+
+#* Batch predict endpoint
+#* @param data Data frame of features
+#* @post /predict_batch
+function(req, data) {
+    tryCatch({
+        df <- jsonlite::fromJSON(data)
+        predictions <- predict(model, df)
+
+        list(
+            predictions = as.numeric(predictions),
+            count = length(predictions)
+        )
+    }, error = function(e) {
+        list(error = e$message)
+    })
+}
+```
+
+#### Run Plumber Server
+```r
+# run_api.R
+library(plumber)
+
+# Create and run API
+pr <- plumb("plumber.R")
+pr$run(host = "0.0.0.0", port = 8000)
+```
+
+#### Dockerfile for R Plumber
+```dockerfile
+FROM rocker/r-ver:4.3.0
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install R packages
+RUN R -e "install.packages(c('plumber', 'tidymodels', 'jsonlite', 'xgboost'), repos='https://cran.rstudio.com/')"
+
+WORKDIR /app
+
+COPY model.rds .
+COPY plumber.R .
+COPY run_api.R .
+
+EXPOSE 8000
+
+CMD ["Rscript", "run_api.R"]
+```
+
+#### vetiver for R Model Deployment
+```r
+library(vetiver)
+library(pins)
+
+# Create vetiver model from trained workflow
+v <- vetiver_model(
+    model = final_workflow,
+    model_name = "my_model",
+    metadata = list(
+        training_date = Sys.Date(),
+        metrics = list(accuracy = 0.85, f1 = 0.82)
+    )
+)
+
+# Pin model to board (local, S3, Azure, etc.)
+board <- board_s3("my-bucket/models")
+vetiver_pin_write(board, v)
+
+# Create API
+pr <- vetiver_api(v)
+
+# Deploy to Connect or run locally
+vetiver_deploy_rsconnect(
+    board = board,
+    name = "my_model",
+    account = "my_account",
+    server = "connect.mycompany.com"
+)
+```
+
+#### vetiver Docker Deployment
+```r
+library(vetiver)
+
+# Generate Dockerfile and plumber script
+vetiver_write_docker(v, path = "deployment/")
+
+# Build and run
+# docker build -t my-model deployment/
+# docker run -p 8080:8080 my-model
+```
 </model_serving>
 
 <cicd_pipeline>
@@ -418,7 +567,7 @@ def validate_model(model, X_test, y_test, thresholds):
 | Error rate | Failed predictions | >1% |
 | Throughput | Requests/sec | <expected |
 
-#### Data Drift Detection
+#### Data Drift Detection (Python)
 ```python
 from scipy import stats
 import numpy as np
@@ -460,6 +609,202 @@ def detect_drift(reference_data, production_data, threshold=0.05):
                 }
 
     return drift_results
+```
+
+#### Data Drift Detection (R)
+```r
+library(tidyverse)
+
+detect_drift <- function(reference_data, production_data, threshold = 0.05) {
+    #' Detect data drift using statistical tests
+    #'
+    #' @param reference_data Training/reference data frame
+    #' @param production_data Production data frame
+    #' @param threshold P-value threshold for drift detection
+    #' @return Data frame with drift results
+
+    drift_results <- tibble(
+        feature = character(),
+        test = character(),
+        statistic = numeric(),
+        p_value = numeric(),
+        drift_detected = logical()
+    )
+
+    for (col in names(reference_data)) {
+        ref_col <- reference_data[[col]]
+        prod_col <- production_data[[col]]
+
+        if (is.numeric(ref_col)) {
+            # KS test for numerical features
+            ks_result <- ks.test(
+                na.omit(ref_col),
+                na.omit(prod_col)
+            )
+            drift_results <- drift_results %>%
+                add_row(
+                    feature = col,
+                    test = "ks",
+                    statistic = ks_result$statistic,
+                    p_value = ks_result$p.value,
+                    drift_detected = ks_result$p.value < threshold
+                )
+        } else {
+            # Chi-square for categorical
+            ref_counts <- table(ref_col)
+            prod_counts <- table(prod_col)
+
+            # Align categories
+            all_cats <- union(names(ref_counts), names(prod_counts))
+            ref_aligned <- sapply(all_cats, function(c) ifelse(c %in% names(ref_counts), ref_counts[c], 0))
+            prod_aligned <- sapply(all_cats, function(c) ifelse(c %in% names(prod_counts), prod_counts[c], 0))
+
+            if (sum(prod_aligned) > 0) {
+                chi_result <- chisq.test(prod_aligned, p = ref_aligned / sum(ref_aligned))
+                drift_results <- drift_results %>%
+                    add_row(
+                        feature = col,
+                        test = "chi2",
+                        statistic = chi_result$statistic,
+                        p_value = chi_result$p.value,
+                        drift_detected = chi_result$p.value < threshold
+                    )
+            }
+        }
+    }
+
+    return(drift_results)
+}
+
+# Population Stability Index (PSI) for drift
+calculate_psi <- function(reference, production, bins = 10) {
+    #' Calculate Population Stability Index
+    #'
+    #' @param reference Reference distribution vector
+    #' @param production Production distribution vector
+    #' @param bins Number of bins for discretization
+    #' @return PSI value (>0.25 indicates significant drift)
+
+    # Create bins from reference
+    breaks <- quantile(reference, probs = seq(0, 1, length.out = bins + 1), na.rm = TRUE)
+    breaks[1] <- -Inf
+    breaks[length(breaks)] <- Inf
+
+    # Calculate proportions
+    ref_props <- table(cut(reference, breaks = breaks, include.lowest = TRUE)) / length(reference)
+    prod_props <- table(cut(production, breaks = breaks, include.lowest = TRUE)) / length(production)
+
+    # Add small constant to avoid log(0)
+    ref_props <- pmax(ref_props, 0.0001)
+    prod_props <- pmax(prod_props, 0.0001)
+
+    # Calculate PSI
+    psi <- sum((prod_props - ref_props) * log(prod_props / ref_props))
+
+    return(psi)
+}
+
+# vetiver monitoring
+library(vetiver)
+library(pins)
+
+monitor_model <- function(board, model_name, new_data, metrics_set) {
+    #' Monitor model performance over time with vetiver
+    #'
+    #' @param board pins board where model is stored
+    #' @param model_name Name of the vetiver model
+    #' @param new_data New data with predictions and truth
+    #' @param metrics_set yardstick metric set to compute
+
+    # Load model
+    v <- vetiver_pin_read(board, model_name)
+
+    # Compute metrics on new data
+    metrics <- augment(v, new_data) %>%
+        metrics_set(truth = actual, estimate = .pred)
+
+    # Log metrics
+    vetiver_compute_metrics(
+        new_data,
+        date_var = date,
+        period = "day",
+        truth = actual,
+        estimate = .pred,
+        metric_set = metrics_set
+    )
+
+    return(metrics)
+}
+```
+
+#### Model Monitoring Dashboard with R Shiny
+```r
+library(shiny)
+library(shinydashboard)
+library(plotly)
+library(tidyverse)
+
+ui <- dashboardPage(
+    dashboardHeader(title = "ML Model Monitor"),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Performance", tabName = "performance", icon = icon("chart-line")),
+            menuItem("Data Drift", tabName = "drift", icon = icon("exchange-alt")),
+            menuItem("Predictions", tabName = "predictions", icon = icon("bullseye"))
+        )
+    ),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "performance",
+                fluidRow(
+                    valueBoxOutput("accuracy_box"),
+                    valueBoxOutput("latency_box"),
+                    valueBoxOutput("requests_box")
+                ),
+                fluidRow(
+                    box(plotlyOutput("metric_trend"), width = 12)
+                )
+            ),
+            tabItem(tabName = "drift",
+                fluidRow(
+                    box(plotlyOutput("drift_heatmap"), width = 6),
+                    box(plotlyOutput("psi_chart"), width = 6)
+                )
+            ),
+            tabItem(tabName = "predictions",
+                fluidRow(
+                    box(plotlyOutput("prediction_dist"), width = 6),
+                    box(plotlyOutput("confidence_trend"), width = 6)
+                )
+            )
+        )
+    )
+)
+
+server <- function(input, output, session) {
+    # Reactive data source (from database/API)
+    metrics_data <- reactive({
+        # Fetch metrics from monitoring database
+        invalidateLater(60000)  # Refresh every minute
+        get_metrics_from_db()
+    })
+
+    output$accuracy_box <- renderValueBox({
+        valueBox(
+            sprintf("%.1f%%", metrics_data()$accuracy * 100),
+            "Accuracy (7-day)",
+            icon = icon("check"),
+            color = if(metrics_data()$accuracy > 0.85) "green" else "red"
+        )
+    })
+
+    output$metric_trend <- renderPlotly({
+        plot_ly(metrics_data()$daily, x = ~date, y = ~accuracy, type = "scatter", mode = "lines") %>%
+            layout(title = "Model Accuracy Over Time")
+    })
+}
+
+shinyApp(ui, server)
 ```
 
 ### Prometheus Metrics
@@ -628,7 +973,7 @@ class ExperimentTracker:
         return results
 ```
 
-### Statistical Significance
+### Statistical Significance (Python)
 ```python
 from scipy import stats
 import numpy as np
@@ -663,6 +1008,141 @@ def check_significance(control_outcomes: list, treatment_outcomes: list,
         'effect_size': effect_size,
         'ci_95': ci_95
     }
+```
+
+### A/B Testing in R
+```r
+library(tidyverse)
+
+# Traffic splitting based on user ID
+get_model_version <- function(user_id, experiment_config) {
+    #' Deterministic traffic splitting based on user ID
+    #'
+    #' @param user_id User identifier string
+    #' @param experiment_config List with variants and percentages
+    #' @return Variant name
+
+    # Hash user ID for consistent assignment
+    hash_value <- as.numeric(substr(digest::digest(user_id, algo = "md5"), 1, 8))
+    bucket <- hash_value %% 100
+
+    # Assign to variant based on traffic split
+    cumulative <- 0
+    for (variant in names(experiment_config$variants)) {
+        cumulative <- cumulative + experiment_config$variants[[variant]]
+        if (bucket < cumulative) {
+            return(variant)
+        }
+    }
+
+    return(experiment_config$default)
+}
+
+# Example config
+experiment_config <- list(
+    variants = list(
+        control = 50,
+        treatment_a = 25,
+        treatment_b = 25
+    ),
+    default = "control"
+)
+
+# Statistical significance testing
+check_significance <- function(control_outcomes, treatment_outcomes, alpha = 0.05) {
+    #' Check statistical significance of A/B test
+    #'
+    #' @param control_outcomes Numeric vector of control outcomes
+    #' @param treatment_outcomes Numeric vector of treatment outcomes
+    #' @param alpha Significance level
+    #' @return List with test results
+
+    # Two-sample t-test
+    t_result <- t.test(treatment_outcomes, control_outcomes)
+
+    # Effect size (Cohen's d)
+    pooled_sd <- sqrt((sd(control_outcomes)^2 + sd(treatment_outcomes)^2) / 2)
+    effect_size <- (mean(treatment_outcomes) - mean(control_outcomes)) / pooled_sd
+
+    # Confidence interval
+    diff_mean <- mean(treatment_outcomes) - mean(control_outcomes)
+    diff_se <- sqrt(var(control_outcomes)/length(control_outcomes) +
+                    var(treatment_outcomes)/length(treatment_outcomes))
+    ci_95 <- c(diff_mean - 1.96*diff_se, diff_mean + 1.96*diff_se)
+
+    list(
+        control_mean = mean(control_outcomes),
+        treatment_mean = mean(treatment_outcomes),
+        difference = diff_mean,
+        p_value = t_result$p.value,
+        significant = t_result$p.value < alpha,
+        effect_size = effect_size,
+        ci_95 = ci_95,
+        power = power.t.test(
+            n = min(length(control_outcomes), length(treatment_outcomes)),
+            delta = abs(diff_mean),
+            sd = pooled_sd,
+            type = "two.sample"
+        )$power
+    )
+}
+
+# Bayesian A/B testing
+bayesian_ab_test <- function(control_successes, control_trials,
+                              treatment_successes, treatment_trials,
+                              n_simulations = 100000) {
+    #' Bayesian A/B test for conversion rates
+    #'
+    #' @param control_successes Number of conversions in control
+    #' @param control_trials Total trials in control
+    #' @param treatment_successes Number of conversions in treatment
+    #' @param treatment_trials Total trials in treatment
+    #' @return List with probability treatment is better and expected lift
+
+    # Beta posteriors (using Beta(1,1) prior)
+    control_samples <- rbeta(n_simulations,
+                              control_successes + 1,
+                              control_trials - control_successes + 1)
+    treatment_samples <- rbeta(n_simulations,
+                                treatment_successes + 1,
+                                treatment_trials - treatment_successes + 1)
+
+    # Probability treatment is better
+    prob_better <- mean(treatment_samples > control_samples)
+
+    # Expected lift
+    lift <- (treatment_samples - control_samples) / control_samples
+    expected_lift <- mean(lift)
+    lift_ci <- quantile(lift, c(0.025, 0.975))
+
+    list(
+        prob_treatment_better = prob_better,
+        expected_lift = expected_lift,
+        lift_ci_95 = lift_ci,
+        control_rate = mean(control_samples),
+        treatment_rate = mean(treatment_samples)
+    )
+}
+
+# Sample size calculation
+calculate_sample_size <- function(baseline_rate, mde, alpha = 0.05, power = 0.8) {
+    #' Calculate required sample size for A/B test
+    #'
+    #' @param baseline_rate Current conversion rate
+    #' @param mde Minimum detectable effect (relative)
+    #' @param alpha Significance level
+    #' @param power Desired power
+    #' @return Required sample size per group
+
+    treatment_rate <- baseline_rate * (1 + mde)
+
+    power.prop.test(
+        p1 = baseline_rate,
+        p2 = treatment_rate,
+        sig.level = alpha,
+        power = power
+    )$n
+}
 ```
 </ab_testing>
 
@@ -769,6 +1249,296 @@ deploy_task = PythonOperator(
 )
 
 check_task >> pull_task >> train_task >> validate_task >> deploy_task
+```
+
+### R Retraining Pipeline with targets
+
+#### targets Pipeline Definition
+```r
+# _targets.R
+library(targets)
+library(tarchetypes)
+
+# Source helper functions
+tar_source("R/")
+
+tar_option_set(
+    packages = c("tidyverse", "tidymodels", "vetiver", "pins")
+)
+
+list(
+    # Check if retraining is needed
+    tar_target(
+        drift_check,
+        check_drift_trigger(
+            reference_path = "data/reference.parquet",
+            production_path = "data/production_latest.parquet",
+            threshold = 0.1
+        )
+    ),
+
+    # Pull training data
+    tar_target(
+        training_data,
+        pull_training_data(
+            source = "feature_store",
+            start_date = Sys.Date() - 90,
+            end_date = Sys.Date() - 1
+        ),
+        cue = tar_cue(mode = "always")
+    ),
+
+    # Data split
+    tar_target(
+        data_split,
+        initial_split(training_data, prop = 0.8, strata = target)
+    ),
+
+    # Recipe
+    tar_target(
+        recipe,
+        recipe(target ~ ., data = training(data_split)) %>%
+            step_impute_median(all_numeric_predictors()) %>%
+            step_normalize(all_numeric_predictors()) %>%
+            step_dummy(all_nominal_predictors())
+    ),
+
+    # Model spec
+    tar_target(
+        model_spec,
+        boost_tree(
+            trees = tune(),
+            learn_rate = tune(),
+            tree_depth = tune()
+        ) %>%
+            set_engine("xgboost") %>%
+            set_mode("classification")
+    ),
+
+    # Workflow
+    tar_target(
+        workflow,
+        workflow() %>%
+            add_recipe(recipe) %>%
+            add_model(model_spec)
+    ),
+
+    # Tune model
+    tar_target(
+        tuning_results,
+        tune_grid(
+            workflow,
+            resamples = vfold_cv(training(data_split), v = 5),
+            grid = 20,
+            metrics = metric_set(roc_auc, f_meas)
+        )
+    ),
+
+    # Final model
+    tar_target(
+        final_model,
+        finalize_workflow(workflow, select_best(tuning_results, "roc_auc")) %>%
+            fit(training(data_split))
+    ),
+
+    # Validation
+    tar_target(
+        validation_results,
+        validate_model(
+            model = final_model,
+            test_data = testing(data_split),
+            thresholds = list(
+                min_roc_auc = 0.75,
+                min_f1 = 0.70,
+                max_latency_ms = 50
+            )
+        )
+    ),
+
+    # Create vetiver model
+    tar_target(
+        vetiver_model,
+        vetiver_model(
+            final_model,
+            model_name = "my_model",
+            metadata = list(
+                training_date = Sys.Date(),
+                metrics = validation_results$metrics
+            )
+        )
+    ),
+
+    # Deploy if validation passes
+    tar_target(
+        deployment,
+        deploy_model(
+            vetiver_model,
+            board = board_s3("my-bucket/models"),
+            validation_passed = validation_results$passed
+        )
+    )
+)
+```
+
+#### R Validation Functions
+```r
+# R/validation.R
+library(tidymodels)
+library(tictoc)
+
+validate_model <- function(model, test_data, thresholds) {
+    #' Validate model meets deployment criteria
+    #'
+    #' @param model Fitted workflow
+    #' @param test_data Test data frame
+    #' @param thresholds List of threshold values
+    #' @return List with validation results and pass/fail status
+
+    validations <- list()
+
+    # Get predictions
+    predictions <- predict(model, test_data) %>%
+        bind_cols(predict(model, test_data, type = "prob")) %>%
+        bind_cols(test_data %>% select(target))
+
+    # ROC AUC
+    roc_auc_val <- predictions %>%
+        roc_auc(truth = target, .pred_1) %>%
+        pull(.estimate)
+
+    validations$roc_auc <- list(
+        check = "roc_auc",
+        value = roc_auc_val,
+        threshold = thresholds$min_roc_auc,
+        passed = roc_auc_val >= thresholds$min_roc_auc
+    )
+
+    # F1 Score
+    f1_val <- predictions %>%
+        f_meas(truth = target, .pred_class) %>%
+        pull(.estimate)
+
+    validations$f1 <- list(
+        check = "f1_score",
+        value = f1_val,
+        threshold = thresholds$min_f1,
+        passed = f1_val >= thresholds$min_f1
+    )
+
+    # Latency check
+    tic()
+    for (i in 1:100) {
+        predict(model, test_data[1, ])
+    }
+    time <- toc(quiet = TRUE)
+    latency_ms <- (time$toc - time$tic) / 100 * 1000
+
+    validations$latency <- list(
+        check = "latency_p50_ms",
+        value = latency_ms,
+        threshold = thresholds$max_latency_ms,
+        passed = latency_ms <= thresholds$max_latency_ms
+    )
+
+    # Overall pass
+    all_passed <- all(sapply(validations, function(v) v$passed))
+
+    list(
+        validations = validations,
+        metrics = list(roc_auc = roc_auc_val, f1 = f1_val, latency_ms = latency_ms),
+        passed = all_passed
+    )
+}
+
+check_drift_trigger <- function(reference_path, production_path, threshold) {
+    #' Check if model retraining is needed based on drift
+    #'
+    #' @param reference_path Path to reference data
+    #' @param production_path Path to production data
+    #' @param threshold PSI threshold for triggering retrain
+    #' @return TRUE if retraining needed
+
+    reference <- arrow::read_parquet(reference_path)
+    production <- arrow::read_parquet(production_path)
+
+    # Calculate PSI for each numeric feature
+    numeric_cols <- names(reference)[sapply(reference, is.numeric)]
+
+    psi_values <- sapply(numeric_cols, function(col) {
+        calculate_psi(reference[[col]], production[[col]])
+    })
+
+    # Trigger if any feature exceeds threshold
+    any(psi_values > threshold)
+}
+
+deploy_model <- function(vetiver_model, board, validation_passed) {
+    #' Deploy model if validation passed
+    #'
+    #' @param vetiver_model vetiver model object
+    #' @param board pins board for storage
+    #' @param validation_passed Boolean from validation
+
+    if (!validation_passed) {
+        warning("Validation failed - skipping deployment")
+        return(list(deployed = FALSE, reason = "validation_failed"))
+    }
+
+    # Write to board
+    vetiver_pin_write(board, vetiver_model)
+
+    # Tag as latest
+    pin_version_prune(board, vetiver_model$model_name, n = 5)
+
+    list(
+        deployed = TRUE,
+        version = vetiver_model$metadata$version,
+        timestamp = Sys.time()
+    )
+}
+```
+
+#### GitHub Actions for R Pipeline
+```yaml
+name: R ML Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'R/**'
+      - 'data/**'
+      - '_targets.R'
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:4.3.0
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          install.packages(c('targets', 'tarchetypes', 'tidymodels',
+                            'vetiver', 'pins', 'xgboost', 'arrow'))
+        shell: Rscript {0}
+
+      - name: Run pipeline
+        run: |
+          targets::tar_make()
+        shell: Rscript {0}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: model-artifacts
+          path: |
+            _targets/
+            models/
 ```
 </retraining>
 

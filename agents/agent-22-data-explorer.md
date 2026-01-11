@@ -444,6 +444,162 @@ def visualize_missing(df):
         return fig
     return None
 ```
+
+## R Code Templates
+
+### Quick EDA Function
+```r
+library(tidyverse)
+library(skimr)
+
+quick_eda <- function(df, target = NULL) {
+    # Basic info
+    cat("Dimensions:", nrow(df), "x", ncol(df), "\n\n")
+
+    # Data types
+    cat("Data Types:\n")
+    print(sapply(df, class))
+
+    # Missing values
+    cat("\nMissing Values:\n")
+    missing <- colSums(is.na(df))
+    print(sort(missing[missing > 0], decreasing = TRUE))
+
+    # Summary statistics
+    cat("\nNumerical Summary:\n")
+    print(summary(df))
+
+    # Or use skimr for comprehensive overview
+    # skim(df)
+
+    if (!is.null(target) && target %in% names(df)) {
+        cat("\nTarget Distribution:\n")
+        print(prop.table(table(df[[target]])))
+    }
+}
+```
+
+### Correlation Analysis
+```r
+library(corrr)
+
+analyze_correlations <- function(df, target, threshold = 0.8) {
+    # Select numeric columns
+    numeric_df <- df %>% select(where(is.numeric))
+
+    # Correlation matrix
+    corr_matrix <- cor(numeric_df, use = "pairwise.complete.obs")
+
+    # Find high correlations
+    high_corr <- corr_matrix %>%
+        as.data.frame() %>%
+        rownames_to_column("var1") %>%
+        pivot_longer(-var1, names_to = "var2", values_to = "corr") %>%
+        filter(var1 < var2, abs(corr) > threshold) %>%
+        arrange(desc(abs(corr)))
+
+    cat("High Correlations (>", threshold, "):\n")
+    print(high_corr)
+
+    # Target correlations
+    if (target %in% names(numeric_df)) {
+        target_corr <- corr_matrix[, target] %>%
+            sort(decreasing = TRUE)
+        cat("\nTarget Correlations:\n")
+        print(target_corr)
+    }
+
+    return(list(high_corr = high_corr, corr_matrix = corr_matrix))
+}
+```
+
+### Missing Value Visualization
+```r
+library(naniar)
+library(visdat)
+
+visualize_missing <- function(df) {
+    # Overview of missing data
+    vis_miss(df)
+
+    # Missing patterns
+    gg_miss_upset(df)
+
+    # Missing by variable
+    gg_miss_var(df) + labs(title = "Missing Values by Variable")
+}
+
+# Alternative with base R
+visualize_missing_base <- function(df) {
+    missing <- colSums(is.na(df))
+    missing <- sort(missing[missing > 0], decreasing = TRUE)
+
+    if (length(missing) > 0) {
+        barplot(missing,
+                main = "Missing Values by Column",
+                ylab = "Count",
+                las = 2,
+                col = "steelblue")
+    }
+}
+```
+
+### Comprehensive EDA with DataExplorer
+```r
+library(DataExplorer)
+
+# Generate full EDA report
+create_eda_report <- function(df, output_file = "eda_report.html") {
+    create_report(df, output_file = output_file)
+}
+
+# Individual EDA components
+run_eda <- function(df) {
+    # Data structure
+    plot_intro(df)
+
+    # Missing data
+    plot_missing(df)
+
+    # Distributions
+    plot_histogram(df)
+    plot_bar(df)
+
+    # Correlations
+    plot_correlation(df)
+
+    # PCA
+    plot_prcomp(df)
+}
+```
+
+### Statistical Tests in R
+```r
+library(nortest)  # Normality tests
+
+# Normality tests
+test_normality <- function(x) {
+    list(
+        shapiro = shapiro.test(x[1:min(5000, length(x))]),
+        anderson = ad.test(x),
+        lillie = lillie.test(x)
+    )
+}
+
+# Correlation tests
+test_correlation <- function(x, y, method = "pearson") {
+    cor.test(x, y, method = method)
+}
+
+# Chi-square test for categorical
+test_association <- function(x, y) {
+    tbl <- table(x, y)
+    list(
+        chi_sq = chisq.test(tbl),
+        cramers_v = sqrt(chisq.test(tbl)$statistic / (sum(tbl) * (min(dim(tbl)) - 1)))
+    )
+}
+```
 </code_templates>
 
 <guardrails>

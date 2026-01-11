@@ -499,6 +499,330 @@ model.save_model('model.xgb')
 ```
 </checkpointing>
 
+<r_training_templates>
+## R Training Templates
+
+### Training with tidymodels
+```r
+library(tidymodels)
+
+# Complete training workflow
+train_model <- function(train_data, recipe, model_spec, folds = NULL) {
+    # Create workflow
+    wf <- workflow() %>%
+        add_recipe(recipe) %>%
+        add_model(model_spec)
+
+    if (!is.null(folds)) {
+        # Train with cross-validation
+        results <- fit_resamples(
+            wf,
+            resamples = folds,
+            metrics = metric_set(roc_auc, accuracy, f_meas),
+            control = control_resamples(save_pred = TRUE, verbose = TRUE)
+        )
+        return(results)
+    } else {
+        # Train on full data
+        fitted <- fit(wf, data = train_data)
+        return(fitted)
+    }
+}
+
+# Hyperparameter tuning
+tune_model <- function(train_data, recipe, model_spec, folds, grid_size = 20) {
+    wf <- workflow() %>%
+        add_recipe(recipe) %>%
+        add_model(model_spec)
+
+    # Tune with Bayesian optimization
+    tune_results <- tune_bayes(
+        wf,
+        resamples = folds,
+        initial = 10,
+        iter = grid_size,
+        metrics = metric_set(roc_auc),
+        control = control_bayes(verbose = TRUE, no_improve = 10)
+    )
+
+    return(tune_results)
+}
+```
+
+### XGBoost Training in R
+```r
+library(xgboost)
+
+train_xgboost <- function(X_train, y_train, X_val, y_val, params, nrounds = 1000) {
+    # Create DMatrix
+    dtrain <- xgb.DMatrix(data = as.matrix(X_train), label = y_train)
+    dval <- xgb.DMatrix(data = as.matrix(X_val), label = y_val)
+
+    watchlist <- list(train = dtrain, val = dval)
+
+    # Train with early stopping
+    model <- xgb.train(
+        params = params,
+        data = dtrain,
+        nrounds = nrounds,
+        watchlist = watchlist,
+        early_stopping_rounds = 50,
+        print_every_n = 100,
+        verbose = 1
+    )
+
+    return(model)
+}
+
+# Default XGBoost parameters
+xgb_params <- list(
+    objective = "binary:logistic",
+    eval_metric = "auc",
+    eta = 0.1,
+    max_depth = 6,
+    min_child_weight = 1,
+    subsample = 0.8,
+    colsample_bytree = 0.8,
+    nthread = parallel::detectCores() - 1
+)
+
+# XGBoost with cross-validation
+xgb_cv_train <- function(X, y, params, nfold = 5, nrounds = 1000) {
+    dtrain <- xgb.DMatrix(data = as.matrix(X), label = y)
+
+    cv_results <- xgb.cv(
+        params = params,
+        data = dtrain,
+        nrounds = nrounds,
+        nfold = nfold,
+        early_stopping_rounds = 50,
+        print_every_n = 100,
+        verbose = 1
+    )
+
+    return(cv_results)
+}
+```
+
+### LightGBM Training in R
+```r
+library(lightgbm)
+
+train_lightgbm <- function(X_train, y_train, X_val, y_val, params, nrounds = 1000) {
+    # Create datasets
+    dtrain <- lgb.Dataset(data = as.matrix(X_train), label = y_train)
+    dval <- lgb.Dataset(data = as.matrix(X_val), label = y_val, reference = dtrain)
+
+    # Train
+    model <- lgb.train(
+        params = params,
+        data = dtrain,
+        nrounds = nrounds,
+        valids = list(train = dtrain, val = dval),
+        early_stopping_rounds = 50,
+        verbose = 1
+    )
+
+    return(model)
+}
+
+# LightGBM parameters
+lgb_params <- list(
+    objective = "binary",
+    metric = "auc",
+    learning_rate = 0.1,
+    num_leaves = 31,
+    max_depth = -1,
+    min_data_in_leaf = 20,
+    feature_fraction = 0.8,
+    bagging_fraction = 0.8,
+    bagging_freq = 5,
+    num_threads = parallel::detectCores() - 1
+)
+```
+
+### Random Forest with ranger
+```r
+library(ranger)
+
+train_ranger <- function(formula, data, num.trees = 500, mtry = NULL, importance = "impurity") {
+    if (is.null(mtry)) {
+        # Default: sqrt(p) for classification, p/3 for regression
+        mtry <- floor(sqrt(ncol(data) - 1))
+    }
+
+    model <- ranger(
+        formula = formula,
+        data = data,
+        num.trees = num.trees,
+        mtry = mtry,
+        importance = importance,
+        probability = TRUE,  # For classification probabilities
+        verbose = TRUE
+    )
+
+    return(model)
+}
+
+# Out-of-bag error tracking
+train_ranger_oob <- function(formula, data, num.trees_seq = seq(100, 1000, 100)) {
+    oob_errors <- sapply(num.trees_seq, function(nt) {
+        model <- ranger(formula, data, num.trees = nt, probability = TRUE)
+        model$prediction.error
+    })
+
+    data.frame(num_trees = num.trees_seq, oob_error = oob_errors)
+}
+```
+
+### Caret Training Framework
+```r
+library(caret)
+
+train_with_caret <- function(formula, data, method, tune_grid = NULL) {
+    # Define training control
+    ctrl <- trainControl(
+        method = "cv",
+        number = 5,
+        classProbs = TRUE,
+        summaryFunction = twoClassSummary,
+        verboseIter = TRUE,
+        savePredictions = "final"
+    )
+
+    # Train model
+    model <- train(
+        formula,
+        data = data,
+        method = method,
+        trControl = ctrl,
+        tuneGrid = tune_grid,
+        metric = "ROC"
+    )
+
+    return(model)
+}
+
+# Example tune grids
+xgb_tune_grid <- expand.grid(
+    nrounds = c(100, 500),
+    max_depth = c(3, 6, 9),
+    eta = c(0.01, 0.1),
+    gamma = 0,
+    colsample_bytree = 0.8,
+    min_child_weight = 1,
+    subsample = 0.8
+)
+```
+
+### Model Saving and Loading in R
+```r
+# Save/load with saveRDS (universal)
+save_model <- function(model, path) {
+    saveRDS(model, path)
+}
+
+load_model <- function(path) {
+    readRDS(path)
+}
+
+# Save tidymodels workflow
+save_workflow <- function(fitted_workflow, path) {
+    saveRDS(fitted_workflow, path)
+}
+
+# Save XGBoost model
+save_xgboost <- function(model, path) {
+    xgb.save(model, path)
+}
+
+load_xgboost <- function(path) {
+    xgb.load(path)
+}
+
+# Save LightGBM model
+save_lightgbm <- function(model, path) {
+    lgb.save(model, path)
+}
+
+load_lightgbm <- function(path) {
+    lgb.load(path)
+}
+```
+
+### Experiment Tracking with mlflow
+```r
+library(mlflow)
+
+train_with_mlflow <- function(train_data, recipe, model_spec, experiment_name) {
+    mlflow_set_experiment(experiment_name)
+
+    mlflow_start_run()
+
+    # Log parameters
+    mlflow_log_param("model_type", class(model_spec)[1])
+    mlflow_log_param("recipe_steps", length(recipe$steps))
+
+    # Train
+    wf <- workflow() %>%
+        add_recipe(recipe) %>%
+        add_model(model_spec)
+
+    fitted <- fit(wf, data = train_data)
+
+    # Log metrics (example)
+    # mlflow_log_metric("accuracy", accuracy_value)
+    # mlflow_log_metric("auc", auc_value)
+
+    # Log model
+    mlflow_log_artifact("model.rds")
+
+    mlflow_end_run()
+
+    return(fitted)
+}
+```
+
+### Parallel Training
+```r
+library(doParallel)
+library(foreach)
+
+setup_parallel <- function(n_cores = NULL) {
+    if (is.null(n_cores)) {
+        n_cores <- parallel::detectCores() - 1
+    }
+    cl <- makeCluster(n_cores)
+    registerDoParallel(cl)
+    return(cl)
+}
+
+stop_parallel <- function(cl) {
+    stopCluster(cl)
+    registerDoSEQ()
+}
+
+# Parallel cross-validation
+parallel_cv <- function(model_fn, data, folds, ...) {
+    cl <- setup_parallel()
+    on.exit(stop_parallel(cl))
+
+    results <- foreach(i = seq_along(folds), .combine = rbind, .packages = c("tidymodels")) %dopar% {
+        train_data <- analysis(folds$splits[[i]])
+        val_data <- assessment(folds$splits[[i]])
+
+        model <- model_fn(train_data, ...)
+        predictions <- predict(model, val_data)
+
+        # Return fold results
+        data.frame(fold = i, predictions = predictions)
+    }
+
+    return(results)
+}
+```
+</r_training_templates>
+
 <output_format>
 ## Response Format
 

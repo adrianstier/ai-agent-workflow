@@ -367,6 +367,259 @@ features = {
 ```
 </domain_specific>
 
+<r_code_templates>
+## R Code Templates
+
+### Feature Pipeline with recipes
+```r
+library(tidyverse)
+library(recipes)
+library(tidymodels)
+
+# Build feature engineering pipeline
+build_recipe <- function(df, target, numeric_features, categorical_features) {
+    recipe(as.formula(paste(target, "~ .")), data = df) %>%
+        # Imputation
+        step_impute_median(all_of(numeric_features)) %>%
+        step_impute_mode(all_of(categorical_features)) %>%
+
+        # Numeric transformations
+        step_log(all_of(numeric_features), offset = 1) %>%  # Log transform
+        step_normalize(all_numeric_predictors()) %>%        # Standardize
+
+        # Categorical encoding
+        step_dummy(all_nominal_predictors(), one_hot = TRUE) %>%
+
+        # Remove zero variance
+        step_zv(all_predictors()) %>%
+
+        # Remove highly correlated
+        step_corr(all_numeric_predictors(), threshold = 0.9)
+}
+
+# Apply recipe
+apply_recipe <- function(recipe, train_data, test_data) {
+    # Prep on training data
+    prepped <- prep(recipe, training = train_data)
+
+    # Bake (transform) both datasets
+    train_processed <- bake(prepped, new_data = train_data)
+    test_processed <- bake(prepped, new_data = test_data)
+
+    list(train = train_processed, test = test_processed, recipe = prepped)
+}
+```
+
+### Feature Engineering Functions
+```r
+library(tidyverse)
+
+# Numerical transformations
+transform_numeric <- function(df, col) {
+    df %>%
+        mutate(
+            "{col}_log" := log1p(.data[[col]]),
+            "{col}_sqrt" := sqrt(abs(.data[[col]])),
+            "{col}_squared" := .data[[col]]^2,
+            "{col}_binned" := cut(.data[[col]],
+                                   breaks = quantile(.data[[col]], probs = seq(0, 1, 0.2), na.rm = TRUE),
+                                   include.lowest = TRUE, labels = FALSE)
+        )
+}
+
+# Interaction features
+create_interactions <- function(df, col1, col2) {
+    df %>%
+        mutate(
+            "{col1}_{col2}_ratio" := .data[[col1]] / (.data[[col2]] + 1),
+            "{col1}_{col2}_product" := .data[[col1]] * .data[[col2]],
+            "{col1}_{col2}_diff" := .data[[col1]] - .data[[col2]]
+        )
+}
+
+# Temporal features
+create_time_features <- function(df, date_col) {
+    df %>%
+        mutate(
+            year = year(.data[[date_col]]),
+            month = month(.data[[date_col]]),
+            day = day(.data[[date_col]]),
+            day_of_week = wday(.data[[date_col]]),
+            is_weekend = wday(.data[[date_col]]) %in% c(1, 7),
+            quarter = quarter(.data[[date_col]]),
+            # Cyclical encoding
+            month_sin = sin(2 * pi * month / 12),
+            month_cos = cos(2 * pi * month / 12),
+            day_sin = sin(2 * pi * day_of_week / 7),
+            day_cos = cos(2 * pi * day_of_week / 7)
+        )
+}
+```
+
+### Target Encoding in R
+```r
+library(tidyverse)
+
+# Target encoding with CV to prevent leakage
+target_encode_cv <- function(df, cat_col, target_col, n_folds = 5) {
+    df <- df %>% mutate(.row_id = row_number())
+
+    # Create folds
+    set.seed(42)
+    folds <- sample(rep(1:n_folds, length.out = nrow(df)))
+    df$.fold <- folds
+
+    # Initialize encoded column
+    df[[paste0(cat_col, "_encoded")]] <- NA_real_
+
+    # Encode using out-of-fold means
+    for (fold in 1:n_folds) {
+        train_idx <- df$.fold != fold
+        val_idx <- df$.fold == fold
+
+        # Calculate means from training fold
+        encoding <- df %>%
+            filter(train_idx) %>%
+            group_by(.data[[cat_col]]) %>%
+            summarise(encoding = mean(.data[[target_col]], na.rm = TRUE), .groups = "drop")
+
+        # Apply to validation fold
+        df[val_idx, paste0(cat_col, "_encoded")] <-
+            encoding$encoding[match(df[[cat_col]][val_idx], encoding[[cat_col]])]
+    }
+
+    # Fill NA with global mean
+    global_mean <- mean(df[[target_col]], na.rm = TRUE)
+    df[[paste0(cat_col, "_encoded")]][is.na(df[[paste0(cat_col, "_encoded")]])] <- global_mean
+
+    df %>% select(-.row_id, -.fold)
+}
+```
+
+### Feature Selection in R
+```r
+library(caret)
+library(randomForest)
+
+# Filter methods
+filter_by_variance <- function(df, threshold = 0.01) {
+    # Remove near-zero variance
+    nzv <- nearZeroVar(df, saveMetrics = TRUE)
+    df[, !nzv$nzv]
+}
+
+filter_by_correlation <- function(df, threshold = 0.9) {
+    # Remove highly correlated features
+    cor_matrix <- cor(df %>% select(where(is.numeric)), use = "pairwise.complete.obs")
+    high_cor <- findCorrelation(cor_matrix, cutoff = threshold)
+    df[, -high_cor]
+}
+
+# Embedded method: Random Forest importance
+select_by_importance <- function(df, target, n_features = 20) {
+    # Fit random forest
+    formula <- as.formula(paste(target, "~ ."))
+    rf_model <- randomForest(formula, data = df, ntree = 100, importance = TRUE)
+
+    # Get importance
+    importance_df <- importance(rf_model) %>%
+        as.data.frame() %>%
+        rownames_to_column("feature") %>%
+        arrange(desc(MeanDecreaseGini)) %>%
+        head(n_features)
+
+    return(importance_df)
+}
+
+# Recursive Feature Elimination
+rfe_selection <- function(df, target, sizes = c(5, 10, 15, 20)) {
+    ctrl <- rfeControl(functions = rfFuncs, method = "cv", number = 5)
+
+    X <- df %>% select(-all_of(target))
+    y <- df[[target]]
+
+    results <- rfe(X, y, sizes = sizes, rfeControl = ctrl)
+
+    return(list(
+        optimal_vars = predictors(results),
+        results = results
+    ))
+}
+```
+
+### Time Series Features in R
+```r
+library(tidyverse)
+library(zoo)
+library(tseries)
+
+create_lag_features <- function(df, col, lags = c(1, 7, 14, 30)) {
+    for (lag in lags) {
+        df[[paste0(col, "_lag_", lag)]] <- lag(df[[col]], lag)
+    }
+    df
+}
+
+create_rolling_features <- function(df, col, windows = c(7, 14, 30)) {
+    for (w in windows) {
+        df[[paste0(col, "_roll_mean_", w)]] <- rollmean(df[[col]], w, fill = NA, align = "right")
+        df[[paste0(col, "_roll_sd_", w)]] <- rollapply(df[[col]], w, sd, fill = NA, align = "right")
+        df[[paste0(col, "_roll_min_", w)]] <- rollmin(df[[col]], w, fill = NA, align = "right")
+        df[[paste0(col, "_roll_max_", w)]] <- rollmax(df[[col]], w, fill = NA, align = "right")
+    }
+    df
+}
+
+create_diff_features <- function(df, col, diffs = c(1, 7)) {
+    for (d in diffs) {
+        df[[paste0(col, "_diff_", d)]] <- c(rep(NA, d), diff(df[[col]], lag = d))
+        df[[paste0(col, "_pct_change_", d)]] <- (df[[col]] - lag(df[[col]], d)) / lag(df[[col]], d)
+    }
+    df
+}
+```
+
+### Complete Feature Engineering Pipeline
+```r
+library(tidymodels)
+
+# Full pipeline with tidymodels
+create_full_pipeline <- function(train_data, target) {
+    recipe(as.formula(paste(target, "~ .")), data = train_data) %>%
+        # ID variables
+        update_role(matches("^id$|_id$"), new_role = "ID") %>%
+
+        # Missing data
+        step_impute_bag(all_numeric_predictors()) %>%
+        step_impute_mode(all_nominal_predictors()) %>%
+
+        # Numeric transformations
+        step_YeoJohnson(all_numeric_predictors()) %>%
+        step_normalize(all_numeric_predictors()) %>%
+
+        # Categorical encoding
+        step_novel(all_nominal_predictors()) %>%  # Handle unseen levels
+        step_dummy(all_nominal_predictors(), one_hot = TRUE) %>%
+
+        # Feature selection
+        step_nzv(all_predictors()) %>%
+        step_corr(all_numeric_predictors(), threshold = 0.9) %>%
+
+        # Interactions (optional)
+        step_interact(~ all_numeric_predictors():all_numeric_predictors()) %>%
+
+        # Final cleanup
+        step_zv(all_predictors())
+}
+
+# Usage
+# recipe <- create_full_pipeline(train_data, "target")
+# prepped <- prep(recipe)
+# train_baked <- bake(prepped, new_data = NULL)
+# test_baked <- bake(prepped, new_data = test_data)
+```
+</r_code_templates>
+
 <output_format>
 ## Response Format
 

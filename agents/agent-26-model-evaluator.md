@@ -465,6 +465,359 @@ def compute_permutation_importance(model, X, y, n_repeats=10):
 ```
 </interpretability>
 
+<r_evaluation_templates>
+## R Evaluation Templates
+
+### Classification Metrics
+```r
+library(yardstick)
+library(tidymodels)
+
+evaluate_classifier <- function(predictions_df, truth_col, estimate_col, prob_col = NULL) {
+    # predictions_df should have columns: truth, estimate, and optionally .pred_positive
+
+    # Create metrics set
+    class_metrics <- metric_set(
+        accuracy,
+        precision,
+        recall,
+        f_meas,
+        kap,  # Cohen's kappa
+        mcc   # Matthews correlation coefficient
+    )
+
+    # Classification metrics
+    results <- predictions_df %>%
+        class_metrics(truth = !!sym(truth_col), estimate = !!sym(estimate_col))
+
+    # Add probability-based metrics if available
+    if (!is.null(prob_col)) {
+        prob_metrics <- predictions_df %>%
+            roc_auc(truth = !!sym(truth_col), !!sym(prob_col)) %>%
+            bind_rows(
+                predictions_df %>%
+                    pr_auc(truth = !!sym(truth_col), !!sym(prob_col))
+            )
+        results <- bind_rows(results, prob_metrics)
+    }
+
+    return(results)
+}
+
+# Confusion matrix
+get_confusion_matrix <- function(predictions_df, truth_col, estimate_col) {
+    predictions_df %>%
+        conf_mat(truth = !!sym(truth_col), estimate = !!sym(estimate_col))
+}
+
+# Plot confusion matrix
+plot_confusion_matrix <- function(cm) {
+    autoplot(cm, type = "heatmap") +
+        scale_fill_gradient(low = "white", high = "steelblue")
+}
+```
+
+### Regression Metrics
+```r
+library(yardstick)
+
+evaluate_regressor <- function(predictions_df, truth_col, estimate_col) {
+    reg_metrics <- metric_set(
+        rmse,
+        mae,
+        mape,
+        rsq,
+        huber_loss
+    )
+
+    predictions_df %>%
+        reg_metrics(truth = !!sym(truth_col), estimate = !!sym(estimate_col))
+}
+
+# Residual analysis
+analyze_residuals <- function(predictions_df, truth_col, estimate_col) {
+    df <- predictions_df %>%
+        mutate(
+            residual = !!sym(truth_col) - !!sym(estimate_col),
+            abs_residual = abs(residual),
+            pct_error = residual / !!sym(truth_col) * 100
+        )
+
+    summary_stats <- df %>%
+        summarise(
+            mean_residual = mean(residual),
+            sd_residual = sd(residual),
+            median_residual = median(residual),
+            mean_abs_residual = mean(abs_residual),
+            mape = mean(abs(pct_error), na.rm = TRUE)
+        )
+
+    return(list(data = df, summary = summary_stats))
+}
+```
+
+### ROC and PR Curves
+```r
+library(yardstick)
+library(ggplot2)
+
+plot_roc_curve <- function(predictions_df, truth_col, prob_col) {
+    roc_data <- predictions_df %>%
+        roc_curve(truth = !!sym(truth_col), !!sym(prob_col))
+
+    autoplot(roc_data) +
+        labs(title = "ROC Curve") +
+        theme_minimal()
+}
+
+plot_pr_curve <- function(predictions_df, truth_col, prob_col) {
+    pr_data <- predictions_df %>%
+        pr_curve(truth = !!sym(truth_col), !!sym(prob_col))
+
+    autoplot(pr_data) +
+        labs(title = "Precision-Recall Curve") +
+        theme_minimal()
+}
+
+# Combined curves
+plot_performance_curves <- function(predictions_df, truth_col, prob_col) {
+    library(patchwork)
+
+    p1 <- plot_roc_curve(predictions_df, truth_col, prob_col)
+    p2 <- plot_pr_curve(predictions_df, truth_col, prob_col)
+
+    p1 + p2
+}
+```
+
+### Calibration Analysis
+```r
+library(probably)
+
+# Calibration curve
+plot_calibration <- function(predictions_df, truth_col, prob_col, n_bins = 10) {
+    # Using probably package
+    cal_data <- predictions_df %>%
+        cal_plot_breaks(
+            truth = !!sym(truth_col),
+            estimate = !!sym(prob_col),
+            num_breaks = n_bins
+        )
+
+    return(cal_data)
+}
+
+# Brier score
+calculate_brier <- function(y_true, y_prob) {
+    mean((y_prob - as.numeric(y_true))^2)
+}
+
+# Expected Calibration Error
+calculate_ece <- function(y_true, y_prob, n_bins = 10) {
+    breaks <- seq(0, 1, length.out = n_bins + 1)
+    bins <- cut(y_prob, breaks = breaks, include.lowest = TRUE)
+
+    bin_stats <- data.frame(
+        y_true = as.numeric(y_true) - 1,
+        y_prob = y_prob,
+        bin = bins
+    ) %>%
+        group_by(bin) %>%
+        summarise(
+            avg_prob = mean(y_prob),
+            avg_true = mean(y_true),
+            n = n(),
+            .groups = "drop"
+        ) %>%
+        mutate(
+            calibration_error = abs(avg_prob - avg_true) * n / sum(n)
+        )
+
+    sum(bin_stats$calibration_error, na.rm = TRUE)
+}
+```
+
+### Threshold Optimization
+```r
+find_optimal_threshold <- function(predictions_df, truth_col, prob_col, criterion = "f1") {
+    thresholds <- seq(0.1, 0.9, by = 0.01)
+
+    results <- map_dfr(thresholds, function(thresh) {
+        pred <- ifelse(predictions_df[[prob_col]] >= thresh, levels(predictions_df[[truth_col]])[2], levels(predictions_df[[truth_col]])[1])
+        pred <- factor(pred, levels = levels(predictions_df[[truth_col]]))
+
+        if (criterion == "f1") {
+            score <- f_meas_vec(predictions_df[[truth_col]], pred)
+        } else if (criterion == "precision") {
+            score <- precision_vec(predictions_df[[truth_col]], pred)
+        } else if (criterion == "recall") {
+            score <- recall_vec(predictions_df[[truth_col]], pred)
+        }
+
+        data.frame(threshold = thresh, score = score)
+    })
+
+    optimal <- results %>% filter(score == max(score, na.rm = TRUE)) %>% slice(1)
+
+    return(list(
+        optimal_threshold = optimal$threshold,
+        optimal_score = optimal$score,
+        all_results = results
+    ))
+}
+```
+
+### Fairness Evaluation
+```r
+library(fairmodels)
+
+evaluate_fairness <- function(model, data, protected_attr, target) {
+    # Create explainer
+    explainer <- DALEX::explain(
+        model,
+        data = data %>% select(-all_of(target)),
+        y = data[[target]]
+    )
+
+    # Fairness check
+    fobject <- fairness_check(
+        explainer,
+        protected = data[[protected_attr]],
+        privileged = levels(data[[protected_attr]])[1]
+    )
+
+    return(fobject)
+}
+
+# Manual fairness metrics
+calculate_fairness_metrics <- function(predictions_df, truth_col, pred_col, protected_col) {
+    groups <- unique(predictions_df[[protected_col]])
+
+    metrics <- map_dfr(groups, function(g) {
+        subset <- predictions_df %>% filter(!!sym(protected_col) == g)
+
+        data.frame(
+            group = g,
+            n = nrow(subset),
+            positive_rate = mean(subset[[pred_col]] == levels(subset[[pred_col]])[2]),
+            tpr = recall_vec(subset[[truth_col]], subset[[pred_col]]),
+            accuracy = accuracy_vec(subset[[truth_col]], subset[[pred_col]])
+        )
+    })
+
+    # Calculate ratios
+    if (nrow(metrics) >= 2) {
+        metrics <- metrics %>%
+            mutate(
+                demographic_parity_ratio = positive_rate / positive_rate[1],
+                equal_opportunity_ratio = tpr / tpr[1]
+            )
+    }
+
+    return(metrics)
+}
+```
+
+### SHAP in R
+```r
+library(shapviz)
+library(xgboost)
+
+shap_analysis_r <- function(model, X) {
+    # For XGBoost models
+    if (inherits(model, "xgb.Booster")) {
+        shap_values <- shapviz(model, X_pred = as.matrix(X))
+
+        # Summary plot
+        sv_importance(shap_values, kind = "beeswarm")
+
+        # Waterfall plot for single prediction
+        sv_waterfall(shap_values, row_id = 1)
+
+        # Dependence plot
+        sv_dependence(shap_values, v = names(X)[1])
+
+        return(shap_values)
+    }
+
+    # For other models using DALEX
+    library(DALEX)
+    library(ingredients)
+
+    explainer <- explain(model, data = X)
+    shap <- predict_parts(explainer, new_observation = X[1, ], type = "shap")
+
+    return(shap)
+}
+```
+
+### Variable Importance
+```r
+library(vip)
+
+# Variable importance plots
+plot_importance <- function(model, X = NULL, type = "model") {
+    if (type == "model") {
+        # Model-based importance (for tree models)
+        vip(model) +
+            labs(title = "Variable Importance")
+    } else if (type == "permutation") {
+        # Permutation importance
+        vip(model, method = "permute", train = X,
+            target = "target", metric = "auc",
+            nsim = 10) +
+            labs(title = "Permutation Importance")
+    }
+}
+
+# Partial dependence plots
+library(pdp)
+
+plot_pdp <- function(model, train_data, feature) {
+    pd <- partial(model, pred.var = feature, train = train_data)
+    autoplot(pd) +
+        labs(title = paste("Partial Dependence:", feature))
+}
+```
+
+### Complete Evaluation Report
+```r
+generate_evaluation_report <- function(model, test_data, target, protected_attrs = NULL) {
+    # Predictions
+    predictions <- predict(model, test_data, type = "prob") %>%
+        bind_cols(predict(model, test_data)) %>%
+        bind_cols(test_data %>% select(all_of(target)))
+
+    # Classification metrics
+    class_metrics <- evaluate_classifier(predictions, target, ".pred_class", ".pred_positive")
+
+    # Confusion matrix
+    cm <- get_confusion_matrix(predictions, target, ".pred_class")
+
+    # ROC-AUC
+    roc <- roc_auc(predictions, truth = !!sym(target), .pred_positive)
+
+    # Calibration
+    brier <- calculate_brier(predictions[[target]], predictions$.pred_positive)
+
+    # Fairness (if protected attributes provided)
+    fairness_results <- NULL
+    if (!is.null(protected_attrs)) {
+        predictions <- predictions %>% bind_cols(test_data %>% select(all_of(protected_attrs)))
+        fairness_results <- calculate_fairness_metrics(predictions, target, ".pred_class", protected_attrs[1])
+    }
+
+    return(list(
+        metrics = class_metrics,
+        confusion_matrix = cm,
+        roc_auc = roc,
+        brier_score = brier,
+        fairness = fairness_results
+    ))
+}
+```
+</r_evaluation_templates>
+
 <output_format>
 ## Response Format
 
