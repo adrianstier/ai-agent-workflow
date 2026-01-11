@@ -1,6 +1,6 @@
 # AI Agent Prompt Library
 
-This directory contains ready-to-use prompts for **20+ specialized AI agents** in the product development workflow.
+This directory contains ready-to-use prompts for **27 specialized AI agents** covering product development, debugging, code review, and data science workflows.
 
 ## Quick Start
 
@@ -70,6 +70,20 @@ See [DEBUG-AGENTS-README.md](DEBUG-AGENTS-README.md) for detailed usage.
 | **Agent 18** | [agent-18-code-reviewer.md](agent-18-code-reviewer.md) | Code review for PRs |
 | **Agent 19** | [agent-19-database-engineer.md](agent-19-database-engineer.md) | Database migrations, query optimization |
 | **Agent 20** | [agent-20-design-reviewer.md](agent-20-design-reviewer.md) | Design system consistency review |
+
+## Data Science Suite (21-27)
+
+See [DATA-SCIENCE-AGENTS-README.md](DATA-SCIENCE-AGENTS-README.md) for detailed usage.
+
+| Agent | File | Use When |
+|-------|------|----------|
+| **Agent 21** | [agent-21-ds-orchestrator.md](agent-21-ds-orchestrator.md) | Starting ML project, need methodology selection |
+| **Agent 22** | [agent-22-data-explorer.md](agent-22-data-explorer.md) | EDA, data profiling, quality assessment |
+| **Agent 23** | [agent-23-feature-engineer.md](agent-23-feature-engineer.md) | Feature creation, selection, encoding |
+| **Agent 24** | [agent-24-model-architect.md](agent-24-model-architect.md) | Model selection, architecture design |
+| **Agent 25** | [agent-25-ml-engineer.md](agent-25-ml-engineer.md) | Model training, hyperparameter optimization |
+| **Agent 26** | [agent-26-model-evaluator.md](agent-26-model-evaluator.md) | Evaluation, fairness audit, interpretability |
+| **Agent 27** | [agent-27-mlops-engineer.md](agent-27-mlops-engineer.md) | Deployment, monitoring, retraining pipelines |
 
 ## Typical Workflow
 

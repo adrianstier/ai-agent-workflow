@@ -1,24 +1,29 @@
 # AI-Augmented Product Development Workflow
 
-**Build software products faster with 20+ specialized, battle-tested AI agents**
+**Build software products faster with 27 specialized, battle-tested AI agents**
 
-![Version](https://img.shields.io/badge/version-1.1-blue)
-![Agents](https://img.shields.io/badge/agents-20+-purple)
+![Version](https://img.shields.io/badge/version-1.2-blue)
+![Agents](https://img.shields.io/badge/agents-27-purple)
 ![Tested](https://img.shields.io/badge/tested-yes-green)
 ![Rating](https://img.shields.io/badge/rating-91%25+-brightgreen)
 
 ---
 
-## What's New (v1.1)
+## What's New (v1.2)
 
-### 20+ Specialized Agents with Automated Testing
+### 27 Specialized Agents Including Data Science Suite
 
-**New in v1.1:**
-- **10 New Debug Agents** (Agents 10-16): Specialized debugging for visual bugs, performance, networking, state, errors, and memory leaks
-- **4 New Review Agents** (Agents 17-20): Security auditor, code reviewer, database engineer, design reviewer
+**New in v1.2:**
+- **7 Data Science Agents** (Agents 21-27): Complete ML pipeline from EDA to MLOps deployment
+  - DS Orchestrator, Data Explorer, Feature Engineer, Model Architect, ML Engineer, Model Evaluator, MLOps Engineer
+- Full coverage for classification, regression, clustering, NLP, CV, and time series
+- Fairness auditing, interpretability (SHAP), and production monitoring
+
+**Previous (v1.1):**
+- **Debug Agents** (Agents 10-16): Visual, performance, network, state, errors, memory leaks
+- **Review Agents** (Agents 17-20): Security, code review, database, design
 - **Automated Testing Framework**: JSON-based scenarios with weighted scoring (91%+ pass rates)
 - **Edge Case Protocols**: Vague input handling, security refusal, destructive operation safeguards
-- **Project Integration Guides**: Ready-to-use templates for integrating agents with existing projects
 
 **Key Improvements**:
 - All agents tested with automated scenarios and edge cases
@@ -60,6 +65,15 @@ This repository contains a complete, production-ready system for building softwa
 - Agent 19: Database Engineer
 - Agent 20: Design Reviewer
 
+**Data Science Suite (Agents 21-27):**
+- Agent 21: DS Orchestrator (coordinates ML projects)
+- Agent 22: Data Explorer (EDA, profiling)
+- Agent 23: Feature Engineer (features, encoding)
+- Agent 24: Model Architect (model selection, architecture)
+- Agent 25: ML Engineer (training, optimization)
+- Agent 26: Model Evaluator (evaluation, fairness, interpretability)
+- Agent 27: MLOps Engineer (deployment, monitoring)
+
 **Plus**: A full-stack web dashboard to orchestrate everything!
 
 ---
@@ -85,7 +99,7 @@ cd my-project && claude
 
 ### 🎨 Interactive Visualization
 
-**[Open the Interactive Agent Map](visualization/index.html)** - Explore all 20+ agents in a visual, interactive constellation map with animated workflows.
+**[Open the Interactive Agent Map](visualization/index.html)** - Explore all 27 agents in a visual, interactive constellation map with animated workflows.
 
 ### 📚 For Users (Just Want to Build Products)
 
@@ -133,12 +147,14 @@ ai-agent-workflow/
 │   ├── CHEAT_SHEET.md                 # Quick reference
 │   └── AGENT_OPTIMIZATION_SUMMARY.md  # Optimization details
 │
-├── 🤖 Agents (20+ Ready-to-Use Prompts)
+├── 🤖 Agents (27 Ready-to-Use Prompts)
 │   ├── agent-0 to agent-9             # Core development agents
 │   ├── agent-10 to agent-16           # Debug suite agents
 │   ├── agent-17 to agent-20           # Review & specialized agents
+│   ├── agent-21 to agent-27           # Data science suite agents
 │   ├── README.md                      # Agent usage guide
-│   └── DEBUG-AGENTS-README.md         # Debug agent guide
+│   ├── DEBUG-AGENTS-README.md         # Debug agent guide
+│   └── DATA-SCIENCE-AGENTS-README.md  # Data science agent guide
 │
 ├── 🚀 Claude Code Integration
 │   ├── templates/CLAUDE.md.template   # Project template for Claude Code
@@ -276,6 +292,18 @@ ai-agent-workflow/
 | **Agent 18** | Code review |
 | **Agent 19** | Database migrations & optimization |
 | **Agent 20** | Design system review |
+
+### Data Science Suite (21-27)
+
+| Agent | Purpose |
+|-------|---------|
+| **Agent 21** | DS Orchestrator - coordinates ML projects |
+| **Agent 22** | Data Explorer - EDA, profiling, quality |
+| **Agent 23** | Feature Engineer - features, encoding, selection |
+| **Agent 24** | Model Architect - model selection, architecture |
+| **Agent 25** | ML Engineer - training, hyperparameter tuning |
+| **Agent 26** | Model Evaluator - evaluation, fairness, interpretability |
+| **Agent 27** | MLOps Engineer - deployment, monitoring, retraining |
 
 **Overall**: **91%+** pass rate on automated testing
 
