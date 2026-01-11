@@ -66,6 +66,10 @@ This repository contains a complete, production-ready system for building softwa
 
 ## Quick Links
 
+### 🎨 Interactive Visualization
+
+**[Open the Interactive Agent Map](visualization/index.html)** - Explore all 20+ agents in a visual, interactive constellation map with animated workflows.
+
 ### 📚 For Users (Just Want to Build Products)
 
 | Document | Purpose | Time |
